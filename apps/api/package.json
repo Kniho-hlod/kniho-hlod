@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "description": "Kniho-hlod REST API on @eleansphere/be-core",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsdown",

@@ -51,14 +51,17 @@ pnpm build
 
 | Part | Where | Notes |
 |---|---|---|
-| API | Railway | [`apps/api/railway.json`](apps/api/railway.json); root directory is the repository root |
+| API | Railway | [`railway.json`](railway.json) builds [`apps/api/Dockerfile`](apps/api/Dockerfile) from the repository root; every push to `main` that touches the API deploys |
 | Database | Railway Postgres | `DATABASE_URL` |
 | Web | Vercel | [`apps/web/vercel.json`](apps/web/vercel.json); root directory `apps/web` |
 | Files | Cloudflare R2 | the `R2_*` variables |
 | Email | Resend | `RESEND_API_KEY`, `EMAIL_FROM` |
 
 Both hosts need `NODE_AUTH_TOKEN` as a build variable, and it has to reach pnpm through the
-user-level npm config, as above (CI gets that from `actions/setup-node`'s `registry-url`).
+user-level npm config, as above (CI gets that from `actions/setup-node`'s `registry-url`, the
+API image from its Dockerfile). In production the API refuses to start without Resend and R2;
+`ALLOW_MISSING_EMAIL_AND_STORAGE=true` lets it run without them for now (reset emails only
+logged, uploads kept in memory).
 Environment variables are documented in
 [`apps/api/.env.example`](apps/api/.env.example) and
 [`apps/web/.env.example`](apps/web/.env.example).

@@ -89,14 +89,35 @@ function readStorage(variables: Variables): StorageSettings {
   };
 }
 
-function assertProductionReady(environment: Environment): void {
-  if (!environment.isProduction) return;
+/**
+ * Lets production start without email and file storage — for a first deploy, before the Resend
+ * and R2 accounts exist. Password-reset emails are then only logged and uploads live in memory.
+ */
+export const ALLOW_MISSING_SERVICES_FLAG = 'ALLOW_MISSING_EMAIL_AND_STORAGE';
+
+/** What production still lacks, each with what goes wrong without it. */
+function findProductionGaps(environment: Environment): string[] {
+  const gaps: string[] = [];
   if (environment.email.kind === 'log') {
-    throw new Error('Production needs RESEND_API_KEY or SMTP_HOST: emails would only be logged');
+    gaps.push('RESEND_API_KEY or SMTP_HOST: emails would only be logged');
   }
   if (environment.storage.kind === 'memory') {
-    throw new Error('Production needs the R2_* variables: uploads would be lost on restart');
+    gaps.push('the R2_* variables: uploads would be lost on restart');
   }
+  return gaps;
+}
+
+function assertProductionReady(environment: Environment, variables: Variables): void {
+  if (!environment.isProduction) return;
+  const gaps = findProductionGaps(environment);
+  if (gaps.length === 0) return;
+  if (variables[ALLOW_MISSING_SERVICES_FLAG] !== 'true') {
+    throw new Error(
+      `Production needs ${gaps.join('; and ')}. ` +
+        `Set ${ALLOW_MISSING_SERVICES_FLAG}=true to start without them for now.`
+    );
+  }
+  for (const gap of gaps) console.warn(`${ALLOW_MISSING_SERVICES_FLAG}: running without ${gap}`);
 }
 
 /** Reads and checks the API's configuration. Throws on anything missing or unsafe. */
@@ -115,6 +136,6 @@ export function readEnvironment(variables: Variables = process.env): Environment
     email: readEmailTransport(variables),
     storage: readStorage(variables),
   };
-  assertProductionReady(environment);
+  assertProductionReady(environment, variables);
   return environment;
 }
