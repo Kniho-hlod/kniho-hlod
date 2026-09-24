@@ -6,6 +6,7 @@
     "watchPatterns": [
       "apps/api/**",
       "packages/**",
+      "tooling/**",
       "package.json",
       "pnpm-lock.yaml",
       "pnpm-workspace.yaml",

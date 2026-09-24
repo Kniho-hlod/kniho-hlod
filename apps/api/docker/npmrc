@@ -1,3 +1,0 @@
-# The build stage's user-level npm config. pnpm fills ${NODE_AUTH_TOKEN} in from the build arg.
-# Naming the token in a RUN line instead would print its value in the build log.
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}

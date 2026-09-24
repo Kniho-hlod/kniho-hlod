@@ -58,8 +58,9 @@ pnpm build
 | Email | Resend | `RESEND_API_KEY`, `EMAIL_FROM` |
 
 Both hosts need `NODE_AUTH_TOKEN` as a build variable, and it has to reach pnpm through the
-user-level npm config, as above (CI gets that from `actions/setup-node`'s `registry-url`, the
-API image from its Dockerfile). In production the API refuses to start without Resend and R2;
+user-level npm config, as above (CI gets that from `actions/setup-node`'s `registry-url`; the API
+Dockerfile and the Vercel install copy [`tooling/user.npmrc`](tooling/user.npmrc)). The web's API
+address comes from [`apps/web/.env.production`](apps/web/.env.production). In production the API refuses to start without Resend and R2;
 `ALLOW_MISSING_EMAIL_AND_STORAGE=true` lets it run without them for now (reset emails only
 logged, uploads kept in memory).
 Environment variables are documented in

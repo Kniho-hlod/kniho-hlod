@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm --filter @kniho-hlod/web build",
+  "installCommand": "cp ../../tooling/user.npmrc ~/.npmrc && corepack pnpm install --frozen-lockfile",
+  "buildCommand": "corepack pnpm --filter @kniho-hlod/web build",
   "outputDirectory": "dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

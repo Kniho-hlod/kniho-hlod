@@ -55,7 +55,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Deploy: Railway builds `apps/api/Dockerfile` (root `railway.json`) on every push to `main` that
   touches the API. `NODE_AUTH_TOKEN` arrives as a build arg; never name it in a `RUN` line —
   BuildKit prints RUN lines with args expanded, which once leaked the token into the build log.
-  It reaches pnpm through the `${NODE_AUTH_TOKEN}` placeholder in `apps/api/docker/npmrc`.
+  It reaches pnpm through the `${NODE_AUTH_TOKEN}` placeholder in `tooling/user.npmrc`, which
+  the Vercel build (`apps/web/vercel.json`) copies the same way.
 
 ## Frontend
 

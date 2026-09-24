@@ -12,7 +12,7 @@ COPY . .
 # which pnpm fills in from this build arg: never name the token in a RUN line, BuildKit prints
 # RUN lines with build args expanded. Nothing of it reaches the final stage.
 ARG NODE_AUTH_TOKEN
-COPY apps/api/docker/npmrc /root/.npmrc
+COPY tooling/user.npmrc /root/.npmrc
 RUN pnpm install --frozen-lockfile --filter @kniho-hlod/api... \
   && pnpm --filter @kniho-hlod/api build \
   && pnpm --filter @kniho-hlod/api deploy --prod --legacy /app
