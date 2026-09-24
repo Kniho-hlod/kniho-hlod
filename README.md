@@ -26,7 +26,12 @@ pnpm dev                             # API on :3000, web on :5173
 ```
 
 Reading `@eleansphere/*` from GitHub Packages needs `NODE_AUTH_TOKEN` (a classic PAT with
-`read:packages`) in your environment.
+`read:packages`) in your environment, plus this line in your user-level `~/.npmrc` — pnpm ignores
+registry tokens in the project's `.npmrc`:
+
+```
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+```
 
 ```bash
 pnpm --filter @kniho-hlod/api seed:admin   # the first administrator, from ADMIN_* in apps/api/.env
@@ -52,6 +57,8 @@ pnpm build
 | Files | Cloudflare R2 | the `R2_*` variables |
 | Email | Resend | `RESEND_API_KEY`, `EMAIL_FROM` |
 
-Both hosts need `NODE_AUTH_TOKEN` as a build variable. Environment variables are documented in
+Both hosts need `NODE_AUTH_TOKEN` as a build variable, and it has to reach pnpm through the
+user-level npm config, as above (CI gets that from `actions/setup-node`'s `registry-url`).
+Environment variables are documented in
 [`apps/api/.env.example`](apps/api/.env.example) and
 [`apps/web/.env.example`](apps/web/.env.example).

@@ -40,6 +40,10 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
+          # pnpm takes the registry token only from the user-level npm config, never from the
+          # project's .npmrc; setup-node writes one that reads NODE_AUTH_TOKEN.
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@eleansphere'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
