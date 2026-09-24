@@ -8,13 +8,14 @@ RUN corepack enable
 WORKDIR /repo
 COPY . .
 
+# pnpm takes registry tokens only from the user-level config. That file holds a placeholder
+# which pnpm fills in from this build arg: never name the token in a RUN line, BuildKit prints
+# RUN lines with build args expanded. Nothing of it reaches the final stage.
 ARG NODE_AUTH_TOKEN
-# pnpm takes registry tokens only from the user-level config. It never leaves this stage.
-RUN printf '//npm.pkg.github.com/:_authToken=%s\n' "$NODE_AUTH_TOKEN" > /root/.npmrc \
-  && pnpm install --frozen-lockfile --filter @kniho-hlod/api... \
+COPY apps/api/docker/npmrc /root/.npmrc
+RUN pnpm install --frozen-lockfile --filter @kniho-hlod/api... \
   && pnpm --filter @kniho-hlod/api build \
-  && pnpm --filter @kniho-hlod/api deploy --prod --legacy /app \
-  && rm /root/.npmrc
+  && pnpm --filter @kniho-hlod/api deploy --prod --legacy /app
 
 FROM node:24-bookworm-slim
 ENV NODE_ENV=production
