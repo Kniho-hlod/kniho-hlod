@@ -1,0 +1,82 @@
+{
+  "app": {
+    "name": "Kniho-hlod",
+    "tagline": "Your library, and who has borrowed what."
+  },
+  "nav": {
+    "home": "Overview",
+    "books": "Books",
+    "loans": "Loans",
+    "account": "Account",
+    "admin": "Admin",
+    "signOut": "Sign out"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "back": "Back",
+    "loading": "Loading…",
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "language": "Language",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Name",
+    "signIn": "Sign in",
+    "signInTitle": "Sign in",
+    "signUp": "Create account",
+    "signUpTitle": "Create account",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "forgotPassword": "Forgot password",
+    "forgotPasswordTitle": "Reset password",
+    "forgotPasswordHint": "We'll email you a link to set a new password.",
+    "forgotPasswordSent": "If an account with that email exists, we've sent it a link.",
+    "resetPasswordTitle": "New password",
+    "newPassword": "New password",
+    "currentPassword": "Current password",
+    "resetPasswordDone": "Your password has been changed, you can sign in.",
+    "resetPasswordInvalid": "This link is no longer valid. Please request a new one.",
+    "invalidCredentials": "Wrong email or password.",
+    "emailTaken": "An account with this email already exists.",
+    "tooManyAttempts": "Too many attempts. Please try again shortly.",
+    "sessionExpired": "Your session expired, please sign in again.",
+    "send": "Send"
+  },
+  "account": {
+    "title": "Account",
+    "profile": "Profile",
+    "profileSaved": "Your changes are saved.",
+    "timezone": "Time zone",
+    "emailReminders": "Email reminders",
+    "reminderDaysBefore": "Remind me days before the due date",
+    "avatar": "Profile picture",
+    "avatarHint": "JPG, PNG or WebP up to 5 MB.",
+    "changePassword": "Change password",
+    "passwordChanged": "Your password has been changed.",
+    "dangerZone": "Delete account",
+    "deleteAccount": "Delete account",
+    "deleteAccountHint": "Deletes your account with all your books and loans. This cannot be undone.",
+    "deleteAccountConfirm": "Enter your password to confirm."
+  },
+  "home": {
+    "welcome": "Welcome, {name}!",
+    "empty": "Books and loans arrive in the next phase."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "type": "This value has the wrong format.",
+    "enum": "Pick one of the offered options.",
+    "minLength": "Use at least {minLength} characters.",
+    "maxLength": "Use at most {maxLength} characters.",
+    "min": "Must be at least {min}.",
+    "max": "Must be at most {max}.",
+    "format": "Enter a valid {format}.",
+    "unique": "This value is already taken.",
+    "reference": "The selected item does not exist."
+  }
+}

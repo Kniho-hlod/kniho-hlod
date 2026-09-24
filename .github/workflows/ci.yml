@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: kniho
+          POSTGRES_PASSWORD: kniho
+          POSTGRES_DB: kniho
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U kniho"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Classic PAT with read:packages, able to read the Eleansphere organization's packages.
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+      TEST_DATABASE_URL: postgres://kniho:kniho@localhost:5432/kniho
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

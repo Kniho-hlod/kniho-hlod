@@ -1,0 +1,31 @@
+{
+  "name": "@kniho-hlod/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kniho-hlod REST API on @eleansphere/be-core",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsdown",
+    "start": "node dist/index.cjs",
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@eleansphere/be-core": "^3.0.0",
+    "@eleansphere/entity-core": "^4.0.0",
+    "@eleansphere/schema": "^1.0.0",
+    "@kniho-hlod/domain": "workspace:*",
+    "bcrypt": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^22.20.3",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
+    "tsdown": "^0.23.0",
+    "tsx": "^4.23.13",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.1"
+  }
+}

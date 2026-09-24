@@ -1,0 +1,82 @@
+{
+  "app": {
+    "name": "Kniho-hlod",
+    "tagline": "Vaše knihovna a přehled o tom, komu jste co půjčili."
+  },
+  "nav": {
+    "home": "Přehled",
+    "books": "Knihy",
+    "loans": "Výpůjčky",
+    "account": "Účet",
+    "admin": "Správa",
+    "signOut": "Odhlásit se"
+  },
+  "common": {
+    "save": "Uložit",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "back": "Zpět",
+    "loading": "Načítám…",
+    "light": "Světlý režim",
+    "dark": "Tmavý režim",
+    "language": "Jazyk",
+    "somethingWentWrong": "Něco se nepovedlo. Zkuste to prosím znovu."
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Heslo",
+    "displayName": "Jméno",
+    "signIn": "Přihlásit se",
+    "signInTitle": "Přihlášení",
+    "signUp": "Založit účet",
+    "signUpTitle": "Registrace",
+    "noAccount": "Ještě nemáte účet?",
+    "haveAccount": "Už máte účet?",
+    "forgotPassword": "Zapomenuté heslo",
+    "forgotPasswordTitle": "Obnovení hesla",
+    "forgotPasswordHint": "Pošleme vám odkaz na nastavení nového hesla.",
+    "forgotPasswordSent": "Pokud účet s tímto e-mailem existuje, poslali jsme na něj odkaz.",
+    "resetPasswordTitle": "Nové heslo",
+    "newPassword": "Nové heslo",
+    "currentPassword": "Současné heslo",
+    "resetPasswordDone": "Heslo je změněné, můžete se přihlásit.",
+    "resetPasswordInvalid": "Odkaz už neplatí. Požádejte o nový.",
+    "invalidCredentials": "Nesprávný e-mail nebo heslo.",
+    "emailTaken": "Účet s tímto e-mailem už existuje.",
+    "tooManyAttempts": "Příliš mnoho pokusů. Zkuste to za chvíli.",
+    "sessionExpired": "Přihlášení vypršelo, přihlaste se prosím znovu.",
+    "send": "Odeslat"
+  },
+  "account": {
+    "title": "Účet",
+    "profile": "Profil",
+    "profileSaved": "Změny jsou uložené.",
+    "timezone": "Časové pásmo",
+    "emailReminders": "Upomínky e-mailem",
+    "reminderDaysBefore": "Upozornit dní před vrácením",
+    "avatar": "Profilový obrázek",
+    "avatarHint": "JPG, PNG nebo WebP do 5 MB.",
+    "changePassword": "Změna hesla",
+    "passwordChanged": "Heslo je změněné.",
+    "dangerZone": "Smazání účtu",
+    "deleteAccount": "Smazat účet",
+    "deleteAccountHint": "Smaže účet i všechny vaše knihy a výpůjčky. Tohle nelze vrátit.",
+    "deleteAccountConfirm": "Pro potvrzení zadejte heslo."
+  },
+  "home": {
+    "welcome": "Vítejte, {name}!",
+    "empty": "Knihy a výpůjčky přibydou v další fázi."
+  },
+  "validation": {
+    "required": "Vyplňte prosím tuto položku.",
+    "type": "Hodnota má špatný formát.",
+    "enum": "Vyberte jednu z nabízených možností.",
+    "minLength": "Zadejte alespoň {minLength} znaků.",
+    "maxLength": "Nejvýše {maxLength} znaků.",
+    "min": "Hodnota musí být alespoň {min}.",
+    "max": "Hodnota smí být nejvýše {max}.",
+    "format": "Zadejte platný {format}.",
+    "unique": "Tahle hodnota už je obsazená.",
+    "reference": "Vybraná položka neexistuje."
+  }
+}
