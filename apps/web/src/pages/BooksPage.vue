@@ -22,7 +22,8 @@ const isFiltered = computed(
   () =>
     filters.value.q.trim() !== '' ||
     filters.value.readingStatus !== null ||
-    filters.value.minRating !== null
+    filters.value.minRating !== null ||
+    filters.value.availability !== null
 );
 
 function loadMore(): void {

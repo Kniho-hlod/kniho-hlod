@@ -2,13 +2,16 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import type { RouteLocationRaw } from 'vue-router';
 import { useSessionStore } from '@/features/auth/session-store';
+import { useLibraryStats } from '@/features/loans/api';
 import AppearanceMenu from '@/components/AppearanceMenu.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
 
 const { t } = useI18n();
 const router = useRouter();
 const session = useSessionStore();
+const { data: stats } = useLibraryStats();
 
 /**
  * When an item is highlighted: `exact` only on its own page — every signed-in page sits under
@@ -30,25 +33,40 @@ function highlightClasses(match: NavigationMatch) {
     : { activeClass: ACTIVE_CLASS, exactActiveClass: '' };
 }
 
-/** Loans join this list in the next phase. */
-const navigation = computed(() => [
+interface NavigationItem {
+  label: string;
+  icon: string;
+  to: RouteLocationRaw;
+  match: NavigationMatch;
+  /** A count to call out next to the item — overdue loans; none when 0. */
+  alertCount?: number;
+}
+
+const navigation = computed<NavigationItem[]>(() => [
   {
     label: t('nav.home'),
     icon: 'i-lucide-house',
     to: { name: 'home' },
-    match: 'exact' as NavigationMatch,
+    match: 'exact',
   },
   {
     label: t('nav.books'),
     icon: 'i-lucide-library',
     to: { name: 'books' },
-    match: 'section' as NavigationMatch,
+    match: 'section',
+  },
+  {
+    label: t('nav.loans'),
+    icon: 'i-lucide-hand-helping',
+    to: { name: 'loans' },
+    match: 'section',
+    alertCount: stats.value?.overdue ?? 0,
   },
   {
     label: t('nav.account'),
     icon: 'i-lucide-user-round',
     to: { name: 'account' },
-    match: 'section' as NavigationMatch,
+    match: 'section',
   },
 ]);
 
@@ -83,7 +101,11 @@ async function signOut(): Promise<void> {
           variant="ghost"
           active-color="primary"
           active-variant="soft"
-        />
+        >
+          <template v-if="item.alertCount" #trailing>
+            <UBadge color="error" size="sm" :label="String(item.alertCount)" />
+          </template>
+        </UButton>
       </nav>
 
       <div class="flex items-center gap-1">
@@ -113,7 +135,15 @@ async function signOut(): Promise<void> {
             class="flex flex-col items-center gap-1 py-3 text-xs text-muted"
             v-bind="highlightClasses(item.match)"
           >
-            <UIcon :name="item.icon" class="size-5" />
+            <span class="relative">
+              <UIcon :name="item.icon" class="size-5" />
+              <span
+                v-if="item.alertCount"
+                class="absolute -top-1.5 -right-2.5 min-w-4 rounded-full bg-error px-1 text-center text-[0.625rem] leading-4 font-semibold text-inverted"
+              >
+                {{ item.alertCount }}
+              </span>
+            </span>
             {{ item.label }}
           </RouterLink>
         </li>

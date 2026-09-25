@@ -20,7 +20,10 @@
     "light": "Light mode",
     "dark": "Dark mode",
     "language": "Language",
-    "somethingWentWrong": "Something went wrong. Please try again."
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "edit": "Edit",
+    "loadMore": "Load more",
+    "conflict": "This clashed with another change. Reload the page and try again."
   },
   "auth": {
     "email": "Email",
@@ -65,15 +68,23 @@
   },
   "home": {
     "welcome": "Welcome, {name}!",
-    "empty": "Your library lives under Books. Loans arrive in the next phase.",
-    "toBooks": "Open my books"
+    "empty": "Your library is empty so far. Add your first book — its ISBN is enough.",
+    "stats": {
+      "books": "Books",
+      "reading": "Reading now",
+      "lent": "Lent out",
+      "overdue": "Overdue"
+    },
+    "dueBack": "Due back",
+    "nothingDue": "Nothing is overdue and nothing is due back in the next few days.",
+    "allLoans": "All loans"
   },
   "books": {
     "title": "Books",
     "add": "Add a book",
     "edit": "Edit book",
     "delete": "Delete book",
-    "deleteConfirm": "Really delete “{title}”? This cannot be undone.",
+    "deleteConfirm": "Really delete “{title}”? Its loan history goes too. This cannot be undone.",
     "deleted": "The book has been deleted.",
     "saved": "The book has been saved.",
     "savedWithoutCover": "The book has been saved, but its cover could not be uploaded.",
@@ -123,6 +134,18 @@
       "want": "Want to read",
       "reading": "Reading",
       "read": "Read"
+    },
+    "deleteBlockedByLoan": "A lent book cannot be deleted. Mark it returned first.",
+    "lent": "Lent out",
+    "lend": "Lend",
+    "atHome": "The book is at home.",
+    "loan": "Loan",
+    "loanHistory": "Loan history",
+    "availability": {
+      "label": "At home or lent out",
+      "any": "At home and lent out",
+      "home": "At home",
+      "lent": "Lent out"
     }
   },
   "validation": {
@@ -139,6 +162,83 @@
     "formats": {
       "email": "email address",
       "isbn": "ISBN"
+    },
+    "minDate": "The date can't be before {min}."
+  },
+  "loans": {
+    "title": "Loans",
+    "lend": "Lend a book",
+    "edit": "Edit loan",
+    "delete": "Delete loan",
+    "deleteConfirm": "Delete the record of lending “{title}”? This cannot be undone.",
+    "deleted": "The loan is deleted.",
+    "lentToast": "“{title}” is lent out.",
+    "saved": "The loan is saved.",
+    "markReturned": "Returned",
+    "markReturnedLabel": "Mark “{title}” as returned",
+    "returnedToast": "“{title}” is back home.",
+    "alreadyLent": "This book is already lent out.",
+    "alreadyReturned": "This loan is already returned.",
+    "notFound": "We couldn't find this loan.",
+    "contacts": "Contacts",
+    "tabs": {
+      "active": "Lent out",
+      "returned": "Returned"
+    },
+    "empty": {
+      "active": "Nothing is lent out right now.",
+      "returned": "No book has come back yet."
+    },
+    "lentOn": "Lent {date}",
+    "dueOn": "due {date}",
+    "returnedOn": "returned {date}",
+    "noDueDate": "no due date",
+    "lentTo": "To: {name}",
+    "status": {
+      "active": "Lent out",
+      "dueSoon": "Due soon",
+      "overdue": "Overdue",
+      "returned": "Returned"
+    },
+    "fields": {
+      "book": "Book",
+      "contact": "Lent to",
+      "lentAt": "Lent on",
+      "dueAt": "Due back",
+      "returnedAt": "Returned on",
+      "note": "Note"
+    },
+    "pickBook": "Choose a book",
+    "pickBookHint": "Showing the books you have at home.",
+    "noBooksAtHome": "There is no book at home to lend right now.",
+    "pickContact": "Choose a contact or type a new name",
+    "searchContacts": "Search or type a name",
+    "newContact": "New contact: {name}",
+    "contactHint": "Just type a new name — the contact is created with the loan.",
+    "noHistory": "No returned loans yet."
+  },
+  "contacts": {
+    "title": "Contacts",
+    "add": "Add contact",
+    "edit": "Edit contact",
+    "delete": "Delete contact",
+    "deleteConfirm": "Really delete the contact “{name}”? Their loan history goes too.",
+    "deleteBlocked": "A contact cannot be deleted while they have a book.",
+    "deleted": "The contact is deleted.",
+    "saved": "The contact is saved.",
+    "notFound": "We couldn't find this contact.",
+    "empty": "No contacts yet. They appear when you lend someone a book.",
+    "emptyFiltered": "No contact matches the search.",
+    "search": "Search by name, e-mail or phone",
+    "borrowing": "Has {count} of your books",
+    "borrowed": "Has now",
+    "nothingBorrowed": "Has nothing of yours right now.",
+    "history": "Returned books",
+    "fields": {
+      "name": "Name",
+      "email": "E-mail",
+      "phone": "Phone",
+      "note": "Note"
     }
   }
 }

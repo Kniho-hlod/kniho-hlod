@@ -20,3 +20,5 @@ export {
   type IsbnLookupResult,
 } from './isbn';
 export { IsbnService } from './isbn-service';
+export { readerToday } from './reader-today';
+export { STATS_PATH, StatsService, type LibraryStats } from './stats';

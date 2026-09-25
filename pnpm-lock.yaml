@@ -194,14 +194,14 @@ importers:
   apps/api:
     dependencies:
       '@eleansphere/be-core':
-        specifier: ^3.0.1
-        version: 3.0.1(@types/node@22.20.3)(supports-color@8.1.1)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/node@22.20.3)(supports-color@8.1.1)
       '@eleansphere/entity-core':
-        specifier: ^4.0.0
-        version: 4.0.0
+        specifier: ^4.1.0
+        version: 4.1.0
       '@eleansphere/schema':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.1.0
+        version: 1.1.0
       '@kniho-hlod/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -240,8 +240,11 @@ importers:
   apps/web:
     dependencies:
       '@eleansphere/entity-core':
-        specifier: ^4.0.0
-        version: 4.0.0
+        specifier: ^4.1.0
+        version: 4.1.0
+      '@eleansphere/schema':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@internationalized/date':
         specifier: ^3.12.4
         version: 3.12.4
@@ -304,11 +307,11 @@ importers:
   packages/domain:
     dependencies:
       '@eleansphere/entity-core':
-        specifier: ^4.0.0
-        version: 4.0.0
+        specifier: ^4.1.0
+        version: 4.1.0
       '@eleansphere/schema':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.1.0
+        version: 1.1.0
     devDependencies:
       typescript:
         specifier: ~5.9.3
@@ -976,14 +979,14 @@ packages:
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
 
-  '@eleansphere/be-core@3.0.1':
-    resolution: {integrity: sha512-mOn/qqfw90x6bt1us4ilYfrYFhckXXEDqEqveZjIbj7/s7aRaujdF2H7c7Q9kV+m9InobIOBUnEFKqNuo8azUw==, tarball: https://npm.pkg.github.com/download/@eleansphere/be-core/3.0.1/908085b6e5542962f4ed9329b3c9fb121e276647}
+  '@eleansphere/be-core@3.1.0':
+    resolution: {integrity: sha512-rZtirkHrX9T1iRnhL4m7qV9ID+DFq68NK0rn8IJHtux5lcqJyHg/wc8IzoOcM6TGwF2KM387L/VCHgw/F7Deqg==, tarball: https://npm.pkg.github.com/download/@eleansphere/be-core/3.1.0/a4e70bf5d92d0bf80f87adf577c63aa810fdab12}
 
-  '@eleansphere/entity-core@4.0.0':
-    resolution: {integrity: sha512-0G02thChnsb+sx6RRy/J/N3ls54TVIre6rqWotMj+041EetW1eEsdKD6vUOhN+TrozM/T6tF3kZ5APndirGyPg==, tarball: https://npm.pkg.github.com/download/@eleansphere/entity-core/4.0.0/ec48eaf8ca9c061253f96cbd967513559633cd92}
+  '@eleansphere/entity-core@4.1.0':
+    resolution: {integrity: sha512-TGR5/FPJ7WhuDpRP335AHjuW1pgpwRc6h7n3XKxH2c66ycPDt5W/6/qto3GVW8sb5WzVtjWvJ3z0KYIVbjWNHQ==, tarball: https://npm.pkg.github.com/download/@eleansphere/entity-core/4.1.0/5559d95e0ba054c7722f3f8fbd54fd15d9aeeb05}
 
-  '@eleansphere/schema@1.0.0':
-    resolution: {integrity: sha512-pZJoN1wLoGWUQN36kj86x3gGYr1bD4BzIHILDTNRIunmWH2HlFK0MdhCeXg6H2ppcaW7MOEwioY1PyvZwTu0pA==, tarball: https://npm.pkg.github.com/download/@eleansphere/schema/1.0.0/05e94bb411218295f9e32cff68058d5a800c8a78}
+  '@eleansphere/schema@1.1.0':
+    resolution: {integrity: sha512-KUeMK6ptOy1wfoJMHF7ubT5H+VG+scMZRrgLdLTChkunR11BKPluOFngzqtaOcSdANc888lQ1edfQFbKEp5lNA==, tarball: https://npm.pkg.github.com/download/@eleansphere/schema/1.1.0/5779c9c9332d137eeccfecb5c1f6bc5a1eedb171}
 
   '@esbuild/aix-ppc64@0.27.7':
     resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
@@ -6621,11 +6624,11 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.0': {}
 
-  '@eleansphere/be-core@3.0.1(@types/node@22.20.3)(supports-color@8.1.1)':
+  '@eleansphere/be-core@3.1.0(@types/node@22.20.3)(supports-color@8.1.1)':
     dependencies:
       '@aws-sdk/client-s3': 3.1132.0
       '@aws-sdk/s3-request-presigner': 3.1132.0
-      '@eleansphere/schema': 1.0.0
+      '@eleansphere/schema': 1.1.0
       bcrypt: 6.0.0
       body-parser: 1.20.8(supports-color@8.1.1)
       cors: 2.8.6
@@ -6650,11 +6653,11 @@ snapshots:
       - supports-color
       - tedious
 
-  '@eleansphere/entity-core@4.0.0':
+  '@eleansphere/entity-core@4.1.0':
     dependencies:
-      '@eleansphere/schema': 1.0.0
+      '@eleansphere/schema': 1.1.0
 
-  '@eleansphere/schema@1.0.0': {}
+  '@eleansphere/schema@1.1.0': {}
 
   '@esbuild/aix-ppc64@0.27.7':
     optional: true

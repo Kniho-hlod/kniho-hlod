@@ -24,7 +24,7 @@ async function signUp(): Promise<void> {
     await session.register({ ...state, locale: locale.value as 'cs' | 'en' });
     await router.push({ name: 'home' });
   } catch (err) {
-    errorMessage.value = describeError(err);
+    errorMessage.value = describeError(err, { conflict: t('auth.emailTaken') });
   } finally {
     isSubmitting.value = false;
   }

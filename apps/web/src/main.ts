@@ -1,7 +1,7 @@
 import './assets/main.css';
-import { createApp } from 'vue';
+import { createApp, watch } from 'vue';
 import { createPinia } from 'pinia';
-import { VueQueryPlugin } from '@tanstack/vue-query';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import ui from '@nuxt/ui/vue-plugin';
 import { ApiError } from '@eleansphere/entity-core';
 import App from './App.vue';
@@ -24,13 +24,19 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(i18n);
 app.use(ui);
-app.use(VueQueryPlugin, {
-  queryClientConfig: {
-    defaultOptions: { queries: { retry: retryQuery, staleTime: STALE_TIME_MS } },
-  },
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: retryQuery, staleTime: STALE_TIME_MS } },
 });
+app.use(VueQueryPlugin, { queryClient });
 
 const session = useSessionStore();
+
+// Cached server data belongs to whoever was signed in; once that changes, none of it may show.
+watch(
+  () => session.user?.id,
+  () => queryClient.clear()
+);
+
 onSessionExpired(() => {
   session.forget();
   void router.push({ name: 'sign-in' });

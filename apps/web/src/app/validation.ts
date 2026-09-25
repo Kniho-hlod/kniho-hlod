@@ -7,6 +7,8 @@ import type {
 } from '@eleansphere/entity-core';
 import type { FormOutput } from '@eleansphere/entity-core';
 import type { FormInputEvents } from '@nuxt/ui';
+import { isDateOnly } from '@eleansphere/schema';
+import { formatDate } from './dates';
 import { i18n, translate } from './i18n';
 
 /**
@@ -26,6 +28,10 @@ function withReadableFormat(params: ValidationIssue['params']): ValidationIssue[
 
 /** `{ path: 'title', code: 'minLength', params: { minLength: 2 } }` → the translated message. */
 export function translateIssue(issue: ValidationIssue): string {
+  const min = issue.params?.min;
+  if (issue.code === 'min' && isDateOnly(min)) {
+    return translate('validation.minDate', { min: formatDate(min) });
+  }
   return translate(`validation.${issue.code}`, withReadableFormat(issue.params));
 }
 

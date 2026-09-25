@@ -10,10 +10,13 @@ import { toModelConfigs } from '@eleansphere/entity-core';
 import {
   allEntities,
   bookEntity,
+  contactEntity,
   ENTITIES_WITHOUT_CRUD_ROUTES,
   findActiveRangeIssues,
   findIsbnIssues,
+  findLoanDatesIssues,
   findReadingDatesIssues,
+  loanEntity,
   PROFILE_FIELDS,
   REGISTRATION_FIELDS,
   SINGLE_FILE_ROLES,
@@ -27,6 +30,12 @@ import { createFileAuthorizer } from './files/authorize-file-access';
 import { createBookCovers } from './books/book-covers';
 import { createIsbnCatalogue } from './isbn/isbn-catalogue';
 import { createIsbnPlugin, ISBN_RATE_LIMIT } from './isbn/isbn-plugin';
+import { createActiveLoans } from './loans/active-loans';
+import { createLoanDetails } from './loans/loan-details';
+import { createLoanHistory } from './loans/loan-history';
+import { createReaderToday } from './loans/reader-today';
+import { createReturnLoanPlugin } from './loans/return-loan-plugin';
+import { createStatsPlugin } from './stats/stats-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 
 const ACCESS_TOKEN_LIFETIME = '15m';
@@ -41,6 +50,8 @@ export interface AppConfigOverrides {
   rateLimit?: RateLimitConfig | 'off';
   /** Answers the ISBN catalogue lookups instead of the real Open Library and Google Books. */
   fetch?: typeof fetch;
+  /** The clock behind "today" (returning a loan, due dates in the stats). */
+  now?: () => Date;
 }
 
 interface BookInput {
@@ -49,16 +60,33 @@ interface BookInput {
   finishedAt?: string | null;
 }
 
+interface LoanInput {
+  lentAt?: string | null;
+  dueAt?: string | null;
+  returnedAt?: string | null;
+}
+
 const rejectInvalidActiveRange: CrudHook = async (data) => {
   const issues = findActiveRangeIssues(data as { activeFrom?: string; activeTo?: string });
   if (issues.length > 0) throw new ValidationError(issues);
   return data;
 };
 
-/** Book rules beyond single fields: a valid ISBN, and reading dates in order. */
-const rejectInvalidBook: CrudHook = async (data) => {
-  const book = data as BookInput;
-  const issues = [...findIsbnIssues(book), ...findReadingDatesIssues(book)];
+/**
+ * Book rules beyond single fields: a valid ISBN, and reading dates in order — checked against the
+ * stored dates too, since a PATCH may send only one of them.
+ */
+const rejectInvalidBook: CrudHook = async (data, _req, stored) => {
+  const sent = data as BookInput;
+  const book = { ...stored, ...data } as BookInput;
+  const issues = [...findIsbnIssues(sent), ...findReadingDatesIssues(book)];
+  if (issues.length > 0) throw new ValidationError(issues);
+  return data;
+};
+
+/** Due and return dates can't precede the day of lending, stored dates included. */
+const rejectInvalidLoanDates: CrudHook = async (data, _req, stored) => {
+  const issues = findLoanDatesIssues({ ...stored, ...data } as LoanInput);
   if (issues.length > 0) throw new ValidationError(issues);
   return data;
 };
@@ -70,8 +98,11 @@ const storeIsbnAsIsbn13: CrudHook = async (data) => {
 };
 
 function chainHooks(...hooks: CrudHook[]): CrudHook {
-  return (data, req) =>
-    hooks.reduce((result, hook) => result.then((next) => hook(next, req)), Promise.resolve(data));
+  return (data, req, stored) =>
+    hooks.reduce(
+      (result, hook) => result.then((next) => hook(next, req, stored)),
+      Promise.resolve(data)
+    );
 }
 
 const beforeSavingBook = chainHooks(rejectInvalidBook, storeIsbnAsIsbn13);
@@ -93,6 +124,10 @@ export function buildAppConfig(
   const models = createModelRegistry();
   const storageAdapter = buildStorageAdapter(environment.storage, overrides.storageAdapter);
   const bookCovers = createBookCovers(models, storageAdapter);
+  const activeLoans = createActiveLoans(models);
+  const loanHistory = createLoanHistory(models);
+  const loanDetails = createLoanDetails(models, bookCovers);
+  const readerToday = createReaderToday(models, overrides.now);
   const isbnPlugin = createIsbnPlugin({
     catalogue: createIsbnCatalogue({ fetch: overrides.fetch }),
     jwtSecret: environment.jwtSecret,
@@ -114,11 +149,33 @@ export function buildAppConfig(
       },
       [bookEntity.config.name]: {
         hooks: { beforeCreate: beforeSavingBook, beforeUpdate: beforeSavingBook },
-        enrich: bookCovers.attach,
-        beforeDelete: bookCovers.removeWithBook,
+        enrich: async (books) => activeLoans.attachToBooks(await bookCovers.attach(books)),
+        customFilters: { lent: activeLoans.lentFilter },
+        beforeDelete: async (book, req) => {
+          await loanHistory.clearForBook(book, req);
+          await bookCovers.removeWithBook(book, req);
+        },
+      },
+      [contactEntity.config.name]: {
+        enrich: activeLoans.countForContacts,
+        beforeDelete: loanHistory.clearForContact,
+      },
+      [loanEntity.config.name]: {
+        hooks: { beforeCreate: rejectInvalidLoanDates, beforeUpdate: rejectInvalidLoanDates },
+        enrich: loanDetails,
       },
     },
-    plugins: [models.plugin, isbnPlugin],
+    plugins: [
+      models.plugin,
+      isbnPlugin,
+      createReturnLoanPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        readerToday,
+        loanDetails,
+      }),
+      createStatsPlugin({ jwtSecret: environment.jwtSecret, registry: models, readerToday }),
+    ],
     email: {
       from: environment.emailFrom,
       transport: overrides.emailTransport ?? environment.email,

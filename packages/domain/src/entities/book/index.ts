@@ -1,5 +1,6 @@
 import { defineEntity, withFiles } from '@eleansphere/entity-core';
 import type { FileDto } from '@eleansphere/entity-core';
+import type { ActiveLoan } from '../loan';
 import { FILE_REF_TYPES, FILE_ROLES } from '../../constants';
 import { bookFields } from './fields';
 
@@ -17,6 +18,8 @@ export const bookEntity = defineEntity({
   fields: bookFields,
   query: {
     filter: { readingStatus: 'in', rating: 'range' },
+    /** `true`: books out on a loan; `false`: books at home. */
+    customFilters: { lent: 'BOOLEAN' },
     sort: ['title', 'author', 'publishedYear', 'rating', 'createdAt'],
     defaultSort: '-createdAt',
     search: ['title', 'author', 'isbn'],
@@ -26,5 +29,5 @@ export const bookEntity = defineEntity({
 
 export type Book = InstanceType<typeof bookEntity.Dto>;
 
-/** A book as the API returns it: with its cover attached, or `null` without one. */
-export type BookWithCover = Book & { cover: FileDto | null };
+/** A book as the API returns it: with its cover and the loan it is out on (`null` for none). */
+export type BookWithDetails = Book & { cover: FileDto | null; activeLoan: ActiveLoan | null };

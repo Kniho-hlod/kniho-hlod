@@ -29,6 +29,14 @@ export const DEFAULT_BOOK_VISIBILITY: BookVisibility = 'private';
 export const RATING_MIN = 1;
 export const RATING_MAX = 5;
 
+/** Where a loan stands on a given day; see `loanStatus`. */
+export const LOAN_STATUSES = ['active', 'dueSoon', 'overdue', 'returned'] as const;
+export type LoanStatus = (typeof LOAN_STATUSES)[number];
+/** A loan counts as due soon from this many days before its due date. */
+export const DUE_SOON_DAYS = 7;
+/** The due date a new loan suggests: this many days after lending. */
+export const DEFAULT_LOAN_DAYS = 30;
+
 /** What an uploaded file is attached to (be-core file service `refType`). */
 export const FILE_REF_TYPES = {
   user: 'user',

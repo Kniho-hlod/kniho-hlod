@@ -87,7 +87,19 @@ describe('Books', () => {
     ]);
     expect(badDates.status).toBe(400);
     expect(badDates.body.issues).toEqual([
-      { path: 'finishedAt', code: 'min', params: { after: 'startedAt' } },
+      { path: 'finishedAt', code: 'min', params: { min: '2026-05-02' } },
+    ]);
+
+    // A partial update is checked against the date already stored.
+    const { body: started } = await createBook(token, { title: 'X', startedAt: '2026-05-02' });
+    const badPatch = await app
+      .api()
+      .patch(`/api/books/${started.id}`)
+      .set('Authorization', bearer(token))
+      .send({ finishedAt: '2026-05-01' });
+    expect(badPatch.status).toBe(400);
+    expect(badPatch.body.issues).toEqual([
+      { path: 'finishedAt', code: 'min', params: { min: '2026-05-02' } },
     ]);
   });
 

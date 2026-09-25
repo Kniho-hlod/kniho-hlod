@@ -40,6 +40,42 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
+      {
+        // Contacts sit under loans: they are the people books are lent to.
+        path: 'loans',
+        children: [
+          { path: '', name: 'loans', component: () => import('@/pages/LoansPage.vue') },
+          { path: 'new', name: 'loan-new', component: () => import('@/pages/LoanFormPage.vue') },
+          {
+            path: ':id/edit',
+            name: 'loan-edit',
+            component: () => import('@/pages/LoanFormPage.vue'),
+            props: true,
+          },
+          {
+            path: 'contacts',
+            name: 'contacts',
+            component: () => import('@/pages/ContactsPage.vue'),
+          },
+          {
+            path: 'contacts/new',
+            name: 'contact-new',
+            component: () => import('@/pages/ContactFormPage.vue'),
+          },
+          {
+            path: 'contacts/:id',
+            name: 'contact',
+            component: () => import('@/pages/ContactDetailPage.vue'),
+            props: true,
+          },
+          {
+            path: 'contacts/:id/edit',
+            name: 'contact-edit',
+            component: () => import('@/pages/ContactFormPage.vue'),
+            props: true,
+          },
+        ],
+      },
       { path: 'account', name: 'account', component: () => import('@/pages/AccountPage.vue') },
     ],
   },

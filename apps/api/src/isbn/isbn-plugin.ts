@@ -7,7 +7,8 @@ import {
 import type { ProjectPlugin, RateLimitConfig } from '@eleansphere/be-core';
 import { findIsbnIssues, toIsbn13 } from '@kniho-hlod/domain';
 import type { IsbnCover, IsbnLookupResult } from '@kniho-hlod/domain';
-import type { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { RequestHandler } from 'express';
+import { asyncHandler } from '../http/async-handler';
 import { CatalogueUnavailableError } from './isbn-catalogue';
 import type { CatalogueEntry, IsbnCatalogue } from './isbn-catalogue';
 
@@ -23,12 +24,6 @@ export interface IsbnPluginOptions {
   catalogue: IsbnCatalogue;
   jwtSecret: string;
   rateLimit: RateLimitConfig | 'off';
-}
-
-function handle(body: (req: Request, res: Response) => Promise<void>): RequestHandler {
-  return (req: Request, res: Response, next: NextFunction) => {
-    body(req, res).catch(next);
-  };
 }
 
 /** The ISBN-13 in the route, or a 400 with the same issue the book form shows. */
@@ -73,7 +68,7 @@ export function createIsbnPlugin({
       app.get(
         `${ISBN_ROUTE}/:isbn`,
         ...guards,
-        handle(async (req, res) => {
+        asyncHandler(async (req, res) => {
           const isbn = parseIsbn(req.params.isbn);
           const { details, coverUrl } = await findOrThrow(catalogue, isbn);
           const result: IsbnLookupResult = { isbn, ...details, hasCover: coverUrl !== null };
@@ -84,7 +79,7 @@ export function createIsbnPlugin({
       app.get(
         `${ISBN_ROUTE}/:isbn/cover`,
         ...guards,
-        handle(async (req, res) => {
+        asyncHandler(async (req, res) => {
           const entry = await findOrThrow(catalogue, parseIsbn(req.params.isbn));
           const cover = await catalogue.fetchCover(entry);
           if (!cover) throw new HttpError(NOT_FOUND, 'The catalogue has no cover for this ISBN');

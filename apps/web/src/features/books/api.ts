@@ -1,13 +1,21 @@
 import { computed } from 'vue';
 import type { Ref } from 'vue';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query';
 import { ApiError } from '@eleansphere/entity-core';
 import type { PaginatedResponse } from '@eleansphere/entity-core';
 import { FILE_ROLES } from '@kniho-hlod/domain';
-import type { Book, BookWithCover, ReadingStatus } from '@kniho-hlod/domain';
+import type { Book, BookWithDetails, ReadingStatus } from '@kniho-hlod/domain';
 import { services } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { translate } from '@/app/i18n';
+import { invalidateLibrary, QUERY_KEYS } from '@/app/library-queries';
+import { nextPageNumber } from '@/app/pagination';
 import { base64ToBlob, resizeImage } from '@/shared/resize-image';
 import { toBookPayload } from './book-form';
 import type { BookFormState, CoverChange } from './book-form';
@@ -15,20 +23,30 @@ import type { BookFormState, CoverChange } from './book-form';
 export const BOOKS_PAGE_SIZE = 24;
 /** Covers are stored at most this many pixels along their longer side. */
 const COVER_MAX_SIZE = 1000;
-const BOOKS_QUERY_KEY = 'books';
+/** How many matches the book picker offers at once. */
+const PICKER_LIMIT = 20;
 
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const SERVICE_UNAVAILABLE = 503;
+
+/** Whether a book is at home or out on a loan; `null` for both. */
+export type Availability = 'home' | 'lent';
 
 export interface BookListFilters {
   /** Searched in the title, author and ISBN. */
   q: string;
   readingStatus: ReadingStatus | null;
   minRating: number | null;
+  availability: Availability | null;
 }
 
-export const NO_BOOK_FILTERS: BookListFilters = { q: '', readingStatus: null, minRating: null };
+export const NO_BOOK_FILTERS: BookListFilters = {
+  q: '',
+  readingStatus: null,
+  minRating: null,
+  availability: null,
+};
 
 function toListRequest(filters: BookListFilters, page: number) {
   return {
@@ -38,6 +56,7 @@ function toListRequest(filters: BookListFilters, page: number) {
     filter: {
       readingStatus: filters.readingStatus ? [filters.readingStatus] : undefined,
       rating: filters.minRating ? { gte: filters.minRating } : undefined,
+      lent: filters.availability === null ? undefined : filters.availability === 'lent',
     },
   };
 }
@@ -45,25 +64,37 @@ function toListRequest(filters: BookListFilters, page: number) {
 /** The reader's books, newest first, a page at a time — `fetchNextPage` loads more. */
 export function useBookList(filters: Ref<BookListFilters>) {
   return useInfiniteQuery({
-    queryKey: [BOOKS_QUERY_KEY, 'list', filters],
+    queryKey: [QUERY_KEYS.books, 'list', filters],
     queryFn: ({ pageParam }) =>
       services.books.getAll(toListRequest(filters.value, pageParam)) as Promise<
-        PaginatedResponse<BookWithCover>
+        PaginatedResponse<BookWithDetails>
       >,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => {
-      const loaded = pages.reduce((count, page) => count + page.data.length, 0);
-      return loaded < lastPage.total ? pages.length + 1 : undefined;
-    },
+    getNextPageParam: nextPageNumber,
+  });
+}
+
+/** Books at home matching what is typed into a picker — the ones that can be lent. */
+export function useBooksAtHome(search: Ref<string>) {
+  return useQuery({
+    queryKey: [QUERY_KEYS.books, 'at-home', search],
+    queryFn: () =>
+      services.books.getAll({
+        limit: PICKER_LIMIT,
+        q: search.value.trim() || undefined,
+        filter: { lent: false },
+        sort: 'title',
+      }),
+    placeholderData: keepPreviousData,
   });
 }
 
 export function useBook(id: Ref<string | undefined>) {
   return useQuery({
-    queryKey: [BOOKS_QUERY_KEY, 'detail', id],
+    queryKey: [QUERY_KEYS.books, 'detail', id],
     queryFn: () => {
       if (!id.value) throw new Error('No book to load');
-      return services.books.getById(id.value) as Promise<BookWithCover>;
+      return services.books.getById(id.value) as Promise<BookWithDetails>;
     },
     enabled: computed(() => id.value !== undefined),
   });
@@ -108,7 +139,7 @@ export function useSaveBook() {
         return { book, coverSaved: false };
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: [BOOKS_QUERY_KEY] }),
+    onSuccess: () => invalidateLibrary(queryClient),
   });
 }
 
@@ -117,8 +148,8 @@ export function useDeleteBook() {
   return useMutation({
     mutationFn: (id: string) => services.books.delete(id),
     onSuccess: (_result, id) => {
-      queryClient.removeQueries({ queryKey: [BOOKS_QUERY_KEY, 'detail', id] });
-      return queryClient.invalidateQueries({ queryKey: [BOOKS_QUERY_KEY, 'list'] });
+      queryClient.removeQueries({ queryKey: [QUERY_KEYS.books, 'detail', id] });
+      return invalidateLibrary(queryClient);
     },
   });
 }

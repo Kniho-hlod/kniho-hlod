@@ -20,7 +20,10 @@
     "light": "Světlý režim",
     "dark": "Tmavý režim",
     "language": "Jazyk",
-    "somethingWentWrong": "Něco se nepovedlo. Zkuste to prosím znovu."
+    "somethingWentWrong": "Něco se nepovedlo. Zkuste to prosím znovu.",
+    "edit": "Upravit",
+    "loadMore": "Načíst další",
+    "conflict": "Tohle se střetlo s jinou změnou. Obnovte stránku a zkuste to znovu."
   },
   "auth": {
     "email": "E-mail",
@@ -65,15 +68,23 @@
   },
   "home": {
     "welcome": "Vítejte, {name}!",
-    "empty": "Vaši knihovnu najdete v sekci Knihy. Výpůjčky přibydou v další fázi.",
-    "toBooks": "Otevřít moje knihy"
+    "empty": "Vaše knihovna je zatím prázdná. Přidejte první knihu — stačí její ISBN.",
+    "stats": {
+      "books": "Knihy",
+      "reading": "Právě čtu",
+      "lent": "Půjčené",
+      "overdue": "Po termínu"
+    },
+    "dueBack": "K vrácení",
+    "nothingDue": "Nic není po termínu a nic se v příštích dnech nevrací.",
+    "allLoans": "Všechny výpůjčky"
   },
   "books": {
     "title": "Knihy",
     "add": "Přidat knihu",
     "edit": "Upravit knihu",
     "delete": "Smazat knihu",
-    "deleteConfirm": "Opravdu smazat „{title}“? Tohle nelze vrátit.",
+    "deleteConfirm": "Opravdu smazat „{title}“? Smaže se i historie jejích výpůjček. Tohle nelze vrátit.",
     "deleted": "Kniha je smazaná.",
     "saved": "Kniha je uložená.",
     "savedWithoutCover": "Kniha je uložená, ale obálku se nepodařilo nahrát.",
@@ -123,6 +134,18 @@
       "want": "Chci číst",
       "reading": "Čtu",
       "read": "Přečteno"
+    },
+    "deleteBlockedByLoan": "Půjčenou knihu nejde smazat. Nejdřív ji označte jako vrácenou.",
+    "lent": "Půjčeno",
+    "lend": "Půjčit",
+    "atHome": "Kniha je doma.",
+    "loan": "Výpůjčka",
+    "loanHistory": "Historie výpůjček",
+    "availability": {
+      "label": "Doma nebo půjčené",
+      "any": "Doma i půjčené",
+      "home": "Doma",
+      "lent": "Půjčené"
     }
   },
   "validation": {
@@ -139,6 +162,83 @@
     "formats": {
       "email": "e-mail",
       "isbn": "kód ISBN"
+    },
+    "minDate": "Datum nesmí být dřív než {min}."
+  },
+  "loans": {
+    "title": "Výpůjčky",
+    "lend": "Půjčit knihu",
+    "edit": "Upravit výpůjčku",
+    "delete": "Smazat výpůjčku",
+    "deleteConfirm": "Smazat záznam o výpůjčce „{title}“? Tohle nelze vrátit.",
+    "deleted": "Výpůjčka je smazaná.",
+    "lentToast": "„{title}“ je půjčená.",
+    "saved": "Výpůjčka je uložená.",
+    "markReturned": "Vráceno",
+    "markReturnedLabel": "Označit „{title}“ jako vrácenou",
+    "returnedToast": "„{title}“ je zpátky doma.",
+    "alreadyLent": "Tahle kniha už je půjčená.",
+    "alreadyReturned": "Tahle výpůjčka už je vrácená.",
+    "notFound": "Tuhle výpůjčku jsme nenašli.",
+    "contacts": "Kontakty",
+    "tabs": {
+      "active": "Půjčené",
+      "returned": "Vrácené"
+    },
+    "empty": {
+      "active": "Teď nemáte nic půjčeného.",
+      "returned": "Zatím se vám žádná kniha nevrátila."
+    },
+    "lentOn": "Půjčeno {date}",
+    "dueOn": "vrátit do {date}",
+    "returnedOn": "vráceno {date}",
+    "noDueDate": "bez termínu",
+    "lentTo": "Komu: {name}",
+    "status": {
+      "active": "Půjčeno",
+      "dueSoon": "Brzy vrátit",
+      "overdue": "Po termínu",
+      "returned": "Vráceno"
+    },
+    "fields": {
+      "book": "Kniha",
+      "contact": "Komu",
+      "lentAt": "Půjčeno dne",
+      "dueAt": "Vrátit do",
+      "returnedAt": "Vráceno dne",
+      "note": "Poznámka"
+    },
+    "pickBook": "Vyberte knihu",
+    "pickBookHint": "Nabízíme knihy, které máte doma.",
+    "noBooksAtHome": "Doma teď nemáte žádnou knihu, kterou by šlo půjčit.",
+    "pickContact": "Vyberte kontakt nebo napište nové jméno",
+    "searchContacts": "Hledat nebo napsat jméno",
+    "newContact": "Nový kontakt: {name}",
+    "contactHint": "Nového člověka stačí napsat — kontakt se založí s výpůjčkou.",
+    "noHistory": "Zatím žádná vrácená výpůjčka."
+  },
+  "contacts": {
+    "title": "Kontakty",
+    "add": "Přidat kontakt",
+    "edit": "Upravit kontakt",
+    "delete": "Smazat kontakt",
+    "deleteConfirm": "Opravdu smazat kontakt „{name}“? Smaže se i historie jeho výpůjček.",
+    "deleteBlocked": "Kontakt nejde smazat, dokud má něco půjčeného.",
+    "deleted": "Kontakt je smazaný.",
+    "saved": "Kontakt je uložený.",
+    "notFound": "Tenhle kontakt jsme nenašli.",
+    "empty": "Zatím nemáte žádné kontakty. Přibudou, když někomu půjčíte knihu.",
+    "emptyFiltered": "Hledání neodpovídá žádný kontakt.",
+    "search": "Hledat podle jména, e-mailu nebo telefonu",
+    "borrowing": "Má půjčeno: {count}",
+    "borrowed": "Má půjčené",
+    "nothingBorrowed": "Teď nemá nic půjčeného.",
+    "history": "Vrácené knihy",
+    "fields": {
+      "name": "Jméno",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "note": "Poznámka"
     }
   }
 }

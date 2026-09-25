@@ -9,8 +9,10 @@ import { fileUrl } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { useBook, useDeleteBook } from '@/features/books/api';
 import BookCover from '@/features/books/BookCover.vue';
+import BookLoanCard from '@/features/books/BookLoanCard.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
+import LoanList from '@/features/loans/LoanList.vue';
 
 const NOT_FOUND = 404;
 
@@ -58,7 +60,10 @@ async function confirmDelete(): Promise<void> {
     toast.add({ title: t('books.deleted'), color: 'success' });
     await router.push({ name: 'books' });
   } catch (err) {
-    toast.add({ title: describeError(err), color: 'error' });
+    toast.add({
+      title: describeError(err, { conflict: t('books.deleteBlockedByLoan') }),
+      color: 'error',
+    });
   } finally {
     isConfirmingDelete.value = false;
   }
@@ -118,6 +123,8 @@ async function confirmDelete(): Promise<void> {
           {{ book.description }}
         </p>
 
+        <BookLoanCard :book="book" />
+
         <div class="flex flex-wrap gap-2">
           <UButton :to="{ name: 'book-edit', params: { id: book.id } }" icon="i-lucide-pencil">
             {{ t('books.edit') }}
@@ -133,6 +140,15 @@ async function confirmDelete(): Promise<void> {
         </div>
       </div>
     </article>
+
+    <section v-if="book" class="flex flex-col gap-3">
+      <h2 class="text-lg font-semibold text-highlighted">{{ t('books.loanHistory') }}</h2>
+      <LoanList
+        :filters="{ state: 'returned', bookId: book.id }"
+        :empty-text="t('loans.noHistory')"
+        seen-from="book"
+      />
+    </section>
 
     <UModal
       v-model:open="isConfirmingDelete"

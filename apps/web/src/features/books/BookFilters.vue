@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RATING_MAX, RATING_MIN, READING_STATUSES } from '@kniho-hlod/domain';
 import type { ReadingStatus } from '@kniho-hlod/domain';
-import type { BookListFilters } from './api';
+import type { Availability, BookListFilters } from './api';
 
 /** Searching waits for a pause in typing, so each keystroke doesn't fire a request. */
 const SEARCH_DELAY_MS = 300;
@@ -38,6 +38,16 @@ const statusItems = computed(() => [
   })),
 ]);
 
+const AVAILABILITIES: Availability[] = ['home', 'lent'];
+
+const availabilityItems = computed(() => [
+  { label: t('books.availability.any'), value: ANY },
+  ...AVAILABILITIES.map((availability) => ({
+    label: t(`books.availability.${availability}`),
+    value: availability,
+  })),
+]);
+
 const ratingItems = computed(() => [
   { label: t('books.anyRating'), value: ANY },
   ...RATINGS_FROM_BEST.map((rating) => ({
@@ -54,6 +64,16 @@ const readingStatus = computed({
   },
 });
 
+const availability = computed({
+  get: () => filters.value.availability ?? ANY,
+  set: (value: string) => {
+    filters.value = {
+      ...filters.value,
+      availability: value === ANY ? null : (value as Availability),
+    };
+  },
+});
+
 const minRating = computed({
   get: () => (filters.value.minRating === null ? ANY : String(filters.value.minRating)),
   set: (value: string) => {
@@ -63,26 +83,32 @@ const minRating = computed({
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 sm:flex-row">
+  <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
     <UInput
       v-model="search"
       type="search"
       icon="i-lucide-search"
       :placeholder="t('books.search')"
       :aria-label="t('books.search')"
-      class="flex-1"
+      class="sm:basis-full lg:flex-1 lg:basis-0"
     />
     <USelect
       v-model="readingStatus"
       :items="statusItems"
       :aria-label="t('books.fields.readingStatus')"
-      class="sm:w-44"
+      class="sm:flex-1 lg:w-44 lg:flex-none"
     />
     <USelect
       v-model="minRating"
       :items="ratingItems"
       :aria-label="t('books.fields.rating')"
-      class="sm:w-44"
+      class="sm:flex-1 lg:w-44 lg:flex-none"
+    />
+    <USelect
+      v-model="availability"
+      :items="availabilityItems"
+      :aria-label="t('books.availability.label')"
+      class="sm:flex-1 lg:w-44 lg:flex-none"
     />
   </div>
 </template>

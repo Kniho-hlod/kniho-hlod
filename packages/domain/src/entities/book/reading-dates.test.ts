@@ -13,7 +13,7 @@ describe('findReadingDatesIssues', () => {
 
   it('rejects a book finished before it was started', () => {
     expect(findReadingDatesIssues({ startedAt: '2026-03-01', finishedAt: '2026-02-28' })).toEqual([
-      { path: 'finishedAt', code: 'min', params: { after: 'startedAt' } },
+      { path: 'finishedAt', code: 'min', params: { min: '2026-03-01' } },
     ]);
   });
 

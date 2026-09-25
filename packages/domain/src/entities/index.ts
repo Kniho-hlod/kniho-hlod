@@ -1,6 +1,8 @@
 import { userEntity } from './user';
 import { systemNotificationEntity } from './system-notification';
 import { bookEntity } from './book';
+import { contactEntity } from './contact';
+import { loanEntity } from './loan';
 
 export { userEntity, type User } from './user';
 export { userFields } from './user/fields';
@@ -9,14 +11,31 @@ export {
   findActiveRangeIssues,
   type SystemNotification,
 } from './system-notification';
-export { bookEntity, findReadingDatesIssues, type Book, type BookWithCover } from './book';
+export { bookEntity, findReadingDatesIssues, type Book, type BookWithDetails } from './book';
 export { bookFields } from './book/fields';
+export { contactEntity, type Contact, type ContactWithLoans } from './contact';
+export { contactFields } from './contact/fields';
+export {
+  loanEntity,
+  LOANS_PATH,
+  findLoanDatesIssues,
+  loanStatus,
+  type ActiveLoan,
+  type Loan,
+  type LoanBook,
+  type LoanContact,
+  type LoanWithDetails,
+  type ReturnLoanRequest,
+} from './loan';
+export { loanFields } from './loan/fields';
 
 /** Every entity, for the API's `toModelConfigs(allEntities)`. */
 export const allEntities = {
   user: userEntity,
   systemNotification: systemNotificationEntity,
   book: bookEntity,
+  contact: contactEntity,
+  loan: loanEntity,
 };
 
 /** Entities whose `/api` CRUD routes are not mounted (yet). */

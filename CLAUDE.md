@@ -47,14 +47,26 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Auth is be-core's: registration, login with rotating refresh tokens, `GET/PATCH/DELETE /api/auth/me`,
   password change and single-use reset links, rate limiting.
 - Access: `user` is `admin`-only and currently has no CRUD routes; `systemNotification` is
-  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book` is
-  `owner`-only (another reader's book answers 404).
+  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book`, `contact`
+  and `loan` are `owner`-only (another reader's row answers 404).
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
 - `GET /api/isbn/:isbn` (`src/isbn/`) asks Open Library, then Google Books, and caches answers;
   `…/cover` hands the catalogue's cover over as base64 JSON, which the app imports like an upload.
   Covers are only downloaded from the catalogues' own image hosts. Tests pass a fake `fetch`.
+- Loans (`src/loans/`): a partial unique index allows one open loan per book (a race answers 409).
+  Every book carries `activeLoan`, every contact `activeLoans`, every loan its `book` and
+  `contact`. `?lent=true|false` on books is a custom list filter (`query.customFilters` in the
+  entity, resolved in `routes.book.customFilters`). Loans reference book and contact with
+  `RESTRICT`: deleting either refuses (409) while a loan is out and otherwise takes its returned
+  loans along. `POST /api/loans/:id/return` returns a loan today in the reader's time zone.
+- "Today" is `readerToday(timezone)` from the domain package — the API (return, stats) and the app
+  (loan status, default dates) count the same day. `loanStatus(loan, today)` says `active`,
+  `dueSoon` (within `DUE_SOON_DAYS`), `overdue` or `returned`.
+- `GET /api/stats` (`src/stats/`) counts books, books being read, contacts and open loans by status.
+- Cross-field rules check `{ ...stored, ...data }`: be-core hands `beforeUpdate` the stored row, so a
+  PATCH of one date is still compared with the other.
 - Files go through be-core's `/api/files`. `src/files/authorize-file-access.ts` decides who may
   upload what: your own avatar and covers of your own books.
 - Callbacks that run per request but are declared before the models exist (`enrich`,
@@ -77,6 +89,16 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   the moment it is installed, and its guard must already know who is signed in.
 - Books live in `src/features/books/` (vue-query composables in `api.ts`, form state in
   `book-form.ts`); covers are scaled to WebP in the browser (`src/shared/resize-image.ts`).
+- Loans in `src/features/loans/`, contacts in `src/features/contacts/`; their pages sit under
+  `/loans` so the Loans tab stays highlighted. Lending to a new name creates the contact first
+  (`ContactPicker`). Books, contacts, loans and stats show parts of each other, so every mutation
+  calls `invalidateLibrary` (`src/app/library-queries.ts`).
+- `describeError(err, { conflict })` — a 409 means something different per action (e-mail taken,
+  book lent out, …), so the caller names it. The query cache is cleared whenever the signed-in user
+  changes (`main.ts`).
+- `USelectMenu` needs an `aria-label`: Reka names its trigger "Show popup", which beats the
+  `UFormField` label. Form grids use `grid-cols-1 sm:grid-cols-2` — an implicit column grows with
+  a long, unwrapped placeholder and pushes the card's content sideways.
 - `src/features/auth/session-store.ts` — Pinia store: who is signed in, and every action that
   changes it. Server state elsewhere goes through TanStack Query.
 - Routing is in `src/app/router.ts`; `meta.requiresAuth` / `meta.guestOnly` / `meta.requiresRole`
@@ -111,6 +133,6 @@ pnpm --filter @kniho-hlod/api seed:admin
 
 ## Status
 
-Phase 1 (skeleton, auth, account, announcements) and phase 2 (books, ISBN lookup, covers) are in
-place. Loans, contacts, shelves, reading dates, barcode scanning, reminders and the admin section
-arrive in the later phases; the plan lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).
+Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers) and phase 3
+(contacts, loans, dashboard) are in place. Shelves, reading dates, barcode scanning, reminders and
+the admin section arrive in the later phases; the plan lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).
