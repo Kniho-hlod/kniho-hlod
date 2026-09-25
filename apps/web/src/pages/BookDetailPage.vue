@@ -5,16 +5,28 @@ import { useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
 import { ApiError } from '@eleansphere/entity-core';
 import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
+import type { ReadingStatus } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
+import { formatDate } from '@/app/dates';
 import { describeError } from '@/app/errors';
-import { useBook, useDeleteBook } from '@/features/books/api';
+import { useBook, useChangeReadingStatus, useDeleteBook } from '@/features/books/api';
 import BookCover from '@/features/books/BookCover.vue';
 import BookLoanCard from '@/features/books/BookLoanCard.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
 import LoanList from '@/features/loans/LoanList.vue';
+import { useToday } from '@/features/loans/use-today';
+import ShelfChips from '@/features/shelves/ShelfChips.vue';
 
 const NOT_FOUND = 404;
+
+/** The reading status a book moves on to with one tap: begin it, then finish it. */
+const NEXT_READING_STATUS: Record<ReadingStatus, ReadingStatus | null> = {
+  none: 'reading',
+  want: 'reading',
+  reading: 'read',
+  read: null,
+};
 
 const props = defineProps<{ id: string }>();
 
@@ -50,6 +62,35 @@ const details = computed(() => {
   ];
   return rows.filter((row) => row.value !== null && row.value !== undefined && row.value !== '');
 });
+
+/** When the reader read the book, from the dates they have: both, only the start, or only the end. */
+const readingPeriod = computed(() => {
+  const startedAt = book.value?.startedAt;
+  const finishedAt = book.value?.finishedAt;
+  if (startedAt && finishedAt) {
+    return t('books.readFromTo', { from: formatDate(startedAt), to: formatDate(finishedAt) });
+  }
+  if (startedAt) return t('books.readingSince', { date: formatDate(startedAt) });
+  if (finishedAt) return t('books.finishedOn', { date: formatDate(finishedAt) });
+  return null;
+});
+
+const today = useToday();
+const nextReadingStatus = computed(() =>
+  book.value ? NEXT_READING_STATUS[book.value.readingStatus ?? DEFAULT_READING_STATUS] : null
+);
+const { mutateAsync: changeReadingStatus, isPending: isChangingStatus } = useChangeReadingStatus();
+
+async function moveToNextReadingStatus(): Promise<void> {
+  const status = nextReadingStatus.value;
+  if (!book.value || !status) return;
+  try {
+    await changeReadingStatus({ book: book.value, status, today: today.value });
+    toast.add({ title: t(`books.readingStatusChanged.${status}`), color: 'success' });
+  } catch (err) {
+    toast.add({ title: describeError(err), color: 'error' });
+  }
+}
 
 const isConfirmingDelete = ref(false);
 const { mutateAsync: deleteBook, isPending: isDeleting } = useDeleteBook();
@@ -110,7 +151,10 @@ async function confirmDelete(): Promise<void> {
         <div class="flex flex-wrap items-center gap-3">
           <ReadingStatusBadge :status="book.readingStatus ?? DEFAULT_READING_STATUS" />
           <RatingStars v-if="book.rating" :rating="book.rating" />
+          <span v-if="readingPeriod" class="text-sm text-muted">{{ readingPeriod }}</span>
         </div>
+
+        <ShelfChips v-if="book.shelves.length > 0" :shelves="book.shelves" />
 
         <dl v-if="details.length > 0" class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
           <template v-for="detail in details" :key="detail.label">
@@ -123,9 +167,24 @@ async function confirmDelete(): Promise<void> {
           {{ book.description }}
         </p>
 
+        <section v-if="book.notes" class="flex flex-col gap-1">
+          <h2 class="text-sm font-semibold text-highlighted">{{ t('books.fields.notes') }}</h2>
+          <p class="whitespace-pre-line text-default">{{ book.notes }}</p>
+        </section>
+
         <BookLoanCard :book="book" />
 
         <div class="flex flex-wrap gap-2">
+          <UButton
+            v-if="nextReadingStatus"
+            :icon="nextReadingStatus === 'reading' ? 'i-lucide-book-open' : 'i-lucide-book-check'"
+            color="primary"
+            variant="soft"
+            :loading="isChangingStatus"
+            @click="moveToNextReadingStatus"
+          >
+            {{ t(`books.nextReadingStatus.${nextReadingStatus}`) }}
+          </UButton>
           <UButton :to="{ name: 'book-edit', params: { id: book.id } }" icon="i-lucide-pencil">
             {{ t('books.edit') }}
           </UButton>

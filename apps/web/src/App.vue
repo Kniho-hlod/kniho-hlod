@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { cs, en } from '@nuxt/ui/locale';
+import UpdatePrompt from '@/components/UpdatePrompt.vue';
 
 const { locale } = useI18n();
 
@@ -12,5 +13,6 @@ const uiLocale = computed(() => (locale.value === 'en' ? en : cs));
 <template>
   <UApp :locale="uiLocale">
     <RouterView />
+    <UpdatePrompt />
   </UApp>
 </template>

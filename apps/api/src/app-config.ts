@@ -3,6 +3,7 @@ import type {
   AppConfig,
   CrudHook,
   EmailTransport,
+  ModelRouteOverrides,
   RateLimitConfig,
   StorageAdapter,
 } from '@eleansphere/be-core';
@@ -19,6 +20,7 @@ import {
   loanEntity,
   PROFILE_FIELDS,
   REGISTRATION_FIELDS,
+  shelfEntity,
   SINGLE_FILE_ROLES,
   systemNotificationEntity,
   toIsbn13,
@@ -35,6 +37,9 @@ import { createLoanDetails } from './loans/loan-details';
 import { createLoanHistory } from './loans/loan-history';
 import { createReaderToday } from './loans/reader-today';
 import { createReturnLoanPlugin } from './loans/return-loan-plugin';
+import { createBookShelves } from './shelves/book-shelves';
+import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
+import { createShelfNameCheck } from './shelves/shelf-names';
 import { createStatsPlugin } from './stats/stats-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 
@@ -127,6 +132,10 @@ export function buildAppConfig(
   const activeLoans = createActiveLoans(models);
   const loanHistory = createLoanHistory(models);
   const loanDetails = createLoanDetails(models, bookCovers);
+  const bookShelves = createBookShelves(models);
+  const bookDetails: NonNullable<ModelRouteOverrides['enrich']> = async (books) =>
+    bookShelves.attachToBooks(await activeLoans.attachToBooks(await bookCovers.attach(books)));
+  const rejectDuplicateShelfName = createShelfNameCheck(models);
   const readerToday = createReaderToday(models, overrides.now);
   const isbnPlugin = createIsbnPlugin({
     catalogue: createIsbnCatalogue({
@@ -152,8 +161,8 @@ export function buildAppConfig(
       },
       [bookEntity.config.name]: {
         hooks: { beforeCreate: beforeSavingBook, beforeUpdate: beforeSavingBook },
-        enrich: async (books) => activeLoans.attachToBooks(await bookCovers.attach(books)),
-        customFilters: { lent: activeLoans.lentFilter },
+        enrich: bookDetails,
+        customFilters: { lent: activeLoans.lentFilter, shelf: bookShelves.shelfFilter },
         beforeDelete: async (book, req) => {
           await loanHistory.clearForBook(book, req);
           await bookCovers.removeWithBook(book, req);
@@ -167,6 +176,10 @@ export function buildAppConfig(
         hooks: { beforeCreate: rejectInvalidLoanDates, beforeUpdate: rejectInvalidLoanDates },
         enrich: loanDetails,
       },
+      [shelfEntity.config.name]: {
+        hooks: { beforeCreate: rejectDuplicateShelfName, beforeUpdate: rejectDuplicateShelfName },
+        enrich: bookShelves.countBooks,
+      },
     },
     plugins: [
       models.plugin,
@@ -178,6 +191,7 @@ export function buildAppConfig(
         loanDetails,
       }),
       createStatsPlugin({ jwtSecret: environment.jwtSecret, registry: models, readerToday }),
+      createBookShelvesPlugin({ jwtSecret: environment.jwtSecret, registry: models, bookDetails }),
     ],
     email: {
       from: environment.emailFrom,

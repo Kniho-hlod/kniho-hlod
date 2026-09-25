@@ -29,6 +29,24 @@ export const DEFAULT_BOOK_VISIBILITY: BookVisibility = 'private';
 export const RATING_MIN = 1;
 export const RATING_MAX = 5;
 
+/** The colours a shelf can be marked with, named after the Tailwind palette the web draws them in. */
+export const SHELF_COLORS = [
+  'neutral',
+  'red',
+  'orange',
+  'amber',
+  'green',
+  'teal',
+  'sky',
+  'blue',
+  'violet',
+  'pink',
+] as const;
+export type ShelfColor = (typeof SHELF_COLORS)[number];
+export const DEFAULT_SHELF_COLOR: ShelfColor = 'neutral';
+/** How many shelves one book can be put on at once. */
+export const MAX_SHELVES_PER_BOOK = 50;
+
 /** Where a loan stands on a given day; see `loanStatus`. */
 export const LOAN_STATUSES = ['active', 'dueSoon', 'overdue', 'returned'] as const;
 export type LoanStatus = (typeof LOAN_STATUSES)[number];

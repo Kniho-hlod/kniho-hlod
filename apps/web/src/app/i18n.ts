@@ -17,11 +17,24 @@ export function readPreferredLocale(): Locale {
   return isLocale(fromBrowser) ? fromBrowser : DEFAULT_LOCALE;
 }
 
+/** Which of a Czech plural message's forms to use: `žádná kniha | 1 kniha | 2 knihy | 5 knih`. */
+const CZECH_PLURAL_FORMS = { zero: 0, one: 1, few: 2, many: 3 } as const;
+const CZECH_FEW_MAX = 4;
+
+export function czechPluralForm(count: number): number {
+  const absolute = Math.abs(count);
+  if (absolute === 0) return CZECH_PLURAL_FORMS.zero;
+  if (absolute === 1) return CZECH_PLURAL_FORMS.one;
+  if (Number.isInteger(absolute) && absolute <= CZECH_FEW_MAX) return CZECH_PLURAL_FORMS.few;
+  return CZECH_PLURAL_FORMS.many;
+}
+
 export const i18n = createI18n({
   legacy: false,
   locale: readPreferredLocale(),
   fallbackLocale: DEFAULT_LOCALE,
   messages: { cs, en },
+  pluralRules: { cs: czechPluralForm },
 });
 
 export function setLocale(locale: Locale): void {

@@ -47,8 +47,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Auth is be-core's: registration, login with rotating refresh tokens, `GET/PATCH/DELETE /api/auth/me`,
   password change and single-use reset links, rate limiting.
 - Access: `user` is `admin`-only and currently has no CRUD routes; `systemNotification` is
-  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book`, `contact`
-  and `loan` are `owner`-only (another reader's row answers 404).
+  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book`, `contact`,
+  `loan` and `shelf` are `owner`-only (another reader's row answers 404).
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
@@ -68,6 +68,11 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   (loan status, default dates) count the same day. `loanStatus(loan, today)` says `active`,
   `dueSoon` (within `DUE_SOON_DAYS`), `overdue` or `returned`.
 - `GET /api/stats` (`src/stats/`) counts books, books being read, contacts and open loans by status.
+- Shelves (`src/shelves/`): `bookShelf` pairs a book with a shelf (both `CASCADE`) and has no CRUD
+  routes; `PUT /api/books/:id/shelves { shelfIds }` replaces a book's shelves in one transaction
+  (a shelf that isn't the reader's is a `reference` issue). Every book carries `shelves` (in the
+  reader's shelf order), every shelf `bookCount`; `?shelf=<id>` on books is a custom filter and
+  `?isbn=` finds the reader's copy of a book. Shelf names are unique per reader, letter case aside.
 - Cross-field rules check `{ ...stored, ...data }`: be-core hands `beforeUpdate` the stored row, so a
   PATCH of one date is still compared with the other.
 - Files go through be-core's `/api/files`. `src/files/authorize-file-access.ts` decides who may
@@ -96,6 +101,18 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `/loans` so the Loans tab stays highlighted. Lending to a new name creates the contact first
   (`ContactPicker`). Books, contacts, loans and stats show parts of each other, so every mutation
   calls `invalidateLibrary` (`src/app/library-queries.ts`).
+- Shelves in `src/features/shelves/`, managed at `/books/shelves`; the books list takes its shelf
+  from `?shelf=`, so a shelf can be linked to. Picking a reading status in the form dates the start
+  or end today (`readingDatesForStatus` in the domain) — only on the reader's own choice, never
+  when a stored book fills the form.
+- ISBN scanning (`src/features/scanner/`): the native `BarcodeDetector` where it reads EAN-13,
+  else the `barcode-detector` ponyfill, whose `.wasm` is served with the app (not from its default
+  CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away.
+  The e2e test films a generated barcode through Chromium's fake camera (`e2e/barcode-video.ts`).
+- PWA: `UpdatePrompt` registers the service worker and offers a reload once a new version waits;
+  `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)
+  and tells iOS readers to use the Share menu. The web's `icons` script draws the icons into
+  `public/`. Czech plurals use `czechPluralForm` (`žádná | 1 | 2–4 | 5+`).
 - `describeError(err, { conflict })` — a 409 means something different per action (e-mail taken,
   book lent out, …), so the caller names it. The query cache is cleared whenever the signed-in user
   changes (`main.ts`).
@@ -136,6 +153,7 @@ pnpm --filter @kniho-hlod/api seed:admin
 
 ## Status
 
-Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers) and phase 3
-(contacts, loans, dashboard) are in place. Shelves, reading dates, barcode scanning, reminders and
-the admin section arrive in the later phases; the plan lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).
+Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
+(contacts, loans, dashboard) and phase 4 (shelves, reading dates and notes, barcode scanning,
+installable PWA) are in place. Reminders and the admin section arrive in phase 5; the plan lives in
+the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

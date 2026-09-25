@@ -20,7 +20,9 @@ export default defineConfig({
       registerType: 'prompt',
       // The API is never cached: reads must reflect what the server has.
       workbox: { navigateFallbackDenylist: [/^\/api\//] },
+      // The icons come from `pnpm icons` (scripts/generate-icons.mjs).
       manifest: {
+        id: '/',
         name: 'Kniho-hlod',
         short_name: 'Kniho-hlod',
         description: 'Vaše knihovna a přehled o tom, komu jste co půjčili.',
@@ -32,7 +34,12 @@ export default defineConfig({
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          {
+            src: '/icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ],
       },
     }),

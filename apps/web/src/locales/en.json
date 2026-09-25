@@ -1,7 +1,10 @@
 {
   "app": {
     "name": "Kniho-hlod",
-    "tagline": "Your library, and who has borrowed what."
+    "tagline": "Your library, and who has borrowed what.",
+    "updateReady": "A new version of Kniho-hlod is ready.",
+    "updateHint": "It loads once you reload the page.",
+    "reload": "Reload"
   },
   "nav": {
     "home": "Overview",
@@ -77,7 +80,8 @@
     },
     "dueBack": "Due back",
     "nothingDue": "Nothing is overdue and nothing is due back in the next few days.",
-    "allLoans": "All loans"
+    "allLoans": "All loans",
+    "readingNow": "Reading now"
   },
   "books": {
     "title": "Books",
@@ -127,7 +131,10 @@
       "language": "Language",
       "description": "Description",
       "readingStatus": "Reading status",
-      "rating": "Rating"
+      "rating": "Rating",
+      "startedAt": "Started on",
+      "finishedAt": "Finished on",
+      "notes": "Notes"
     },
     "readingStatus": {
       "none": "No status",
@@ -146,6 +153,22 @@
       "any": "At home and lent out",
       "home": "At home",
       "lent": "Lent out"
+    },
+    "reading": "Reading",
+    "notesPlaceholder": "What you liked, a quote, who to recommend it to…",
+    "savedWithoutShelves": "The book is saved, but its shelves could not be changed.",
+    "duplicate": "This book is in your library already: “{title}”.",
+    "openDuplicate": "Open",
+    "readFromTo": "Read {from} – {to}",
+    "readingSince": "Reading since {date}",
+    "finishedOn": "Finished {date}",
+    "nextReadingStatus": {
+      "reading": "Start reading",
+      "read": "Finished"
+    },
+    "readingStatusChanged": {
+      "reading": "Happy reading!",
+      "read": "Finished. Remember to rate it."
     }
   },
   "validation": {
@@ -240,5 +263,66 @@
       "phone": "Phone",
       "note": "Note"
     }
+  },
+  "shelves": {
+    "title": "Shelves",
+    "hint": "Group your books your way — favourites, to give away, the kids’ room. A book can be on several shelves.",
+    "allBooks": "All books",
+    "manage": "Edit shelves",
+    "createFirst": "Create shelves",
+    "add": "Add",
+    "namePlaceholder": "Favourites, for example",
+    "created": "The shelf “{name}” is created.",
+    "saved": "The shelf is saved.",
+    "deleted": "The shelf is deleted.",
+    "empty": "You have no shelves yet.",
+    "emptyShelf": "Nothing on this shelf yet. Put a book on it from the book’s form.",
+    "bookCount": "no books | {count} book | {count} books",
+    "moveUp": "Move “{name}” up",
+    "moveDown": "Move “{name}” down",
+    "edit": "Edit “{name}”",
+    "editTitle": "Edit shelf",
+    "delete": "Delete “{name}”",
+    "deleteTitle": "Delete shelf",
+    "deleteConfirm": "Delete the shelf “{name}”? The books stay in your library, only off this shelf.",
+    "pick": "Choose shelves",
+    "pickHint": "Type a name to create a new shelf.",
+    "searchOrCreate": "Search or type a new one",
+    "create": "New shelf: {name}",
+    "fields": {
+      "name": "Name",
+      "color": "Colour"
+    },
+    "colors": {
+      "neutral": "Grey",
+      "red": "Red",
+      "orange": "Orange",
+      "amber": "Yellow",
+      "green": "Green",
+      "teal": "Teal",
+      "sky": "Sky blue",
+      "blue": "Blue",
+      "violet": "Violet",
+      "pink": "Pink"
+    }
+  },
+  "scanner": {
+    "scan": "Scan",
+    "title": "Scan the ISBN",
+    "description": "The barcode is on the back of the book.",
+    "hint": "Point the camera at the ISBN barcode and hold it still for a moment.",
+    "viewfinder": "Camera view",
+    "cameraDenied": "Kniho-hlod may not use the camera. Allow it in your browser settings, or type the ISBN.",
+    "noCamera": "No camera found. Please type the ISBN.",
+    "cameraBusy": "Another app is using the camera. Close it and try again.",
+    "cameraFailed": "The camera would not start. Please type the ISBN.",
+    "readerFailed": "The barcode reader would not load. Check your connection, or type the ISBN."
+  },
+  "install": {
+    "title": "Kniho-hlod as an app",
+    "description": "Install Kniho-hlod on your home screen. It opens as an app of its own, with ISBN scanning at hand.",
+    "shareMenuSteps": "In Safari, tap Share, then “Add to Home Screen”.",
+    "install": "Install",
+    "notNow": "Not now"
   }
 }

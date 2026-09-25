@@ -5,6 +5,7 @@ import {
   bookEntity,
   contactEntity,
   loanEntity,
+  shelfEntity,
   systemNotificationEntity,
   userEntity,
 } from './entities';
@@ -21,6 +22,7 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       books: bookEntity,
       contacts: contactEntity,
       loans: loanEntity,
+      shelves: shelfEntity,
       isbn: IsbnService,
       stats: StatsService,
     },

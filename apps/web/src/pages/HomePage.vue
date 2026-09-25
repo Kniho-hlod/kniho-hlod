@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { RouteLocationRaw } from 'vue-router';
 import { addDays } from '@eleansphere/schema';
 import { DUE_SOON_DAYS } from '@kniho-hlod/domain';
 import type { LibraryStats } from '@kniho-hlod/domain';
 import { describeError } from '@/app/errors';
+import InstallAppCard from '@/components/InstallAppCard.vue';
 import { useSessionStore } from '@/features/auth/session-store';
+import ReadingNow from '@/features/books/ReadingNow.vue';
 import { useLibraryStats } from '@/features/loans/api';
 import LoanList from '@/features/loans/LoanList.vue';
 import { useToday } from '@/features/loans/use-today';
@@ -42,6 +44,28 @@ const dueFilters = computed(() => ({
 
 function isAlarming(tile: StatTile): boolean {
   return tile.key === 'overdue' && (stats.value?.overdue ?? 0) > 0;
+}
+
+/** "Not now" on the install offer holds on this device; the account page still offers it. */
+const INSTALL_OFFER_DISMISSED_KEY = 'kniho-hlod.install-offer-dismissed';
+
+function readInstallOfferDismissed(): boolean {
+  try {
+    return localStorage.getItem(INSTALL_OFFER_DISMISSED_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+const isInstallOfferDismissed = ref(readInstallOfferDismissed());
+
+function dismissInstallOffer(): void {
+  isInstallOfferDismissed.value = true;
+  try {
+    localStorage.setItem(INSTALL_OFFER_DISMISSED_KEY, 'true');
+  } catch {
+    // Without storage the offer simply comes back next time.
+  }
 }
 </script>
 
@@ -101,5 +125,15 @@ function isAlarming(tile: StatTile): boolean {
       <LoanList v-if="hasLoansDue" :filters="dueFilters" :empty-text="t('home.nothingDue')" />
       <p v-else class="text-muted">{{ t('home.nothingDue') }}</p>
     </section>
+
+    <ReadingNow v-if="hasBooks" />
+
+    <InstallAppCard v-if="!isInstallOfferDismissed">
+      <template #actions>
+        <UButton color="neutral" variant="ghost" @click="dismissInstallOffer">
+          {{ t('install.notNow') }}
+        </UButton>
+      </template>
+    </InstallAppCard>
   </section>
 </template>

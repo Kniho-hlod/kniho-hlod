@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import InstallAppCard from '@/components/InstallAppCard.vue';
 import AvatarCard from '@/features/account/AvatarCard.vue';
 import ProfileCard from '@/features/account/ProfileCard.vue';
 import PasswordCard from '@/features/account/PasswordCard.vue';
@@ -14,6 +15,7 @@ const { t } = useI18n();
 
     <AvatarCard />
     <ProfileCard />
+    <InstallAppCard />
     <PasswordCard />
     <DeleteAccountCard />
   </section>

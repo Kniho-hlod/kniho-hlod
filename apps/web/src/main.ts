@@ -9,6 +9,9 @@ import { router } from './app/router';
 import { i18n } from './app/i18n';
 import { onSessionExpired } from './app/api';
 import { useSessionStore } from './features/auth/session-store';
+import { listenForInstallPrompt } from './shared/install-prompt';
+
+listenForInstallPrompt();
 
 const MAX_QUERY_RETRIES = 2;
 const STALE_TIME_MS = 30_000;

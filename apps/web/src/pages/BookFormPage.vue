@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { computed, reactive, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
-import { bookFields, findIsbnIssues, READING_STATUSES, toIsbn13 } from '@kniho-hlod/domain';
+import {
+  bookFields,
+  findIsbnIssues,
+  findReadingDatesIssues,
+  READING_STATUSES,
+  readingDatesForStatus,
+  toIsbn13,
+} from '@kniho-hlod/domain';
+import type { Book, ReadingStatus } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
@@ -11,6 +19,7 @@ import { formSchema, VALIDATE_ON } from '@/app/validation';
 import {
   describeIsbnLookupError,
   fetchCatalogueCover,
+  findBookByIsbn,
   useBook,
   useIsbnLookup,
   useSaveBook,
@@ -20,11 +29,16 @@ import {
   bookFormFrom,
   emptyBookForm,
   KEEP_COVER,
+  shelvesChange,
   withCatalogueDetails,
 } from '@/features/books/book-form';
-import type { CoverChange } from '@/features/books/book-form';
+import type { BookFormState, CoverChange } from '@/features/books/book-form';
 import CoverPicker from '@/features/books/CoverPicker.vue';
 import RatingInput from '@/features/books/RatingInput.vue';
+import { useToday } from '@/features/loans/use-today';
+import { canUseCamera } from '@/features/scanner/camera-support';
+import IsbnScanner from '@/features/scanner/IsbnScanner.vue';
+import ShelfPicker from '@/features/shelves/ShelfPicker.vue';
 
 type AlertColor = 'success' | 'warning' | 'error';
 
@@ -33,24 +47,33 @@ interface Notice {
   text: string;
 }
 
+/** `?scan=1` on the new-book page opens the barcode scanner right away. */
+const SCAN_QUERY_VALUE = '1';
+
 /** Without `id` the form adds a book; with it, it edits that book. */
 const props = defineProps<{ id?: string }>();
 
 const { t } = useI18n();
+const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+const today = useToday();
 
 const bookId = toRef(props, 'id');
 const isEditing = computed(() => bookId.value !== undefined);
 const { data: book, error: loadError, isPending: isLoading } = useBook(bookId);
 
 const schema = formSchema(pickFields(bookFields, BOOK_FORM_FIELDS), 'create', {
-  refine: findIsbnIssues,
+  refine: (form) => [...findIsbnIssues(form), ...findReadingDatesIssues(form)],
 });
 const state = reactive(emptyBookForm());
 const cover = ref<CoverChange>(KEEP_COVER);
+const storedShelfIds = ref<string[]>([]);
+const shelfIds = ref<string[]>([]);
 const errorMessage = ref('');
 const lookupNotice = ref<Notice>();
+/** The reader's other book with the ISBN just looked up: adding it again is likely a mistake. */
+const duplicate = ref<Book>();
 
 const readingStatusItems = computed(() =>
   READING_STATUSES.map((status) => ({ label: t(`books.readingStatus.${status}`), value: status }))
@@ -63,10 +86,21 @@ watch(
   (loaded) => {
     if (!loaded || hasFilledForm.value) return;
     Object.assign(state, bookFormFrom(loaded));
+    storedShelfIds.value = loaded.shelves.map((shelf) => shelf.id);
+    shelfIds.value = [...storedShelfIds.value];
     hasFilledForm.value = true;
   },
   { immediate: true }
 );
+
+/**
+ * Starting or finishing a book dates it today, unless it's dated already. Only the reader's own
+ * choice does this — filling the form with a stored book must not change its dates.
+ */
+function chooseReadingStatus(status: ReadingStatus): void {
+  state.readingStatus = status;
+  Object.assign(state, readingDatesForStatus(status, state, today.value));
+}
 
 // A chosen but not yet uploaded image is previewed from a temporary object URL.
 const pendingCoverUrl = ref<string>();
@@ -127,14 +161,26 @@ async function importCatalogueCover(isbn: string): Promise<void> {
   }
 }
 
+async function checkForDuplicate(isbn: string): Promise<void> {
+  try {
+    const existing = await findBookByIsbn(isbn);
+    duplicate.value = existing && existing.id !== bookId.value ? existing : undefined;
+  } catch {
+    // Only a hint: without it the reader can still save.
+    duplicate.value = undefined;
+  }
+}
+
 async function fillFromCatalogue(): Promise<void> {
   const isbn = lookupIsbn.value;
+  duplicate.value = undefined;
   // Say why nothing is looked up, instead of a button that silently stays grey.
   if (!isbn) {
     lookupNotice.value = { color: 'warning', text: t('books.isbnInvalid') };
     return;
   }
   lookupNotice.value = undefined;
+  void checkForDuplicate(isbn);
   try {
     const found = await lookUp(isbn);
     Object.assign(state, withCatalogueDetails(state, found));
@@ -145,17 +191,37 @@ async function fillFromCatalogue(): Promise<void> {
   }
 }
 
+const canScan = canUseCamera();
+const isScanning = ref(!isEditing.value && canScan && route.query.scan === SCAN_QUERY_VALUE);
+
+async function fillFromScannedIsbn(isbn: string): Promise<void> {
+  state.isbn = isbn;
+  await fillFromCatalogue();
+}
+
 const { mutateAsync: saveBook, isPending: isSaving } = useSaveBook();
+
+function savedToastTitle(coverSaved: boolean, shelvesSaved: boolean): string {
+  if (!coverSaved) return t('books.savedWithoutCover');
+  if (!shelvesSaved) return t('books.savedWithoutShelves');
+  return t('books.saved');
+}
 
 async function submit(): Promise<void> {
   errorMessage.value = '';
   try {
-    const saved = await saveBook({ id: bookId.value, form: { ...state }, cover: cover.value });
-    toast.add(
-      saved.coverSaved
-        ? { title: t('books.saved'), color: 'success' }
-        : { title: t('books.savedWithoutCover'), color: 'warning' }
-    );
+    const form: BookFormState = { ...state };
+    const saved = await saveBook({
+      id: bookId.value,
+      form,
+      cover: cover.value,
+      shelves: shelvesChange(storedShelfIds.value, shelfIds.value),
+    });
+    const isComplete = saved.coverSaved && saved.shelvesSaved;
+    toast.add({
+      title: savedToastTitle(saved.coverSaved, saved.shelvesSaved),
+      color: isComplete ? 'success' : 'warning',
+    });
     await router.push({ name: 'book', params: { id: saved.book.id } });
   } catch (err) {
     errorMessage.value = describeError(err);
@@ -207,8 +273,17 @@ function cancel(): void {
                 v-model.nullable="state.isbn"
                 inputmode="numeric"
                 autocomplete="off"
-                class="flex-1"
+                class="min-w-0 flex-1"
                 @keydown.enter.prevent="fillFromCatalogue"
+              />
+              <UButton
+                v-if="canScan"
+                icon="i-lucide-scan-barcode"
+                color="neutral"
+                variant="outline"
+                :aria-label="t('scanner.scan')"
+                :title="t('scanner.scan')"
+                @click="isScanning = true"
               />
               <UButton
                 icon="i-lucide-search"
@@ -227,6 +302,22 @@ function cancel(): void {
             variant="subtle"
             :description="lookupNotice.text"
           />
+
+          <UAlert
+            v-if="duplicate"
+            color="info"
+            variant="subtle"
+            icon="i-lucide-copy"
+            :description="t('books.duplicate', { title: duplicate.title })"
+            :actions="[
+              {
+                label: t('books.openDuplicate'),
+                to: { name: 'book', params: { id: duplicate.id } },
+                color: 'info',
+                variant: 'outline',
+              },
+            ]"
+          />
         </div>
       </UCard>
 
@@ -235,7 +326,7 @@ function cancel(): void {
           <h2 class="font-semibold text-highlighted">{{ t('books.details') }}</h2>
         </template>
 
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <UFormField :label="t('books.fields.title')" name="title" required class="sm:col-span-2">
             <UInput v-model="state.title" class="w-full" />
           </UFormField>
@@ -270,14 +361,6 @@ function cancel(): void {
             <UInput v-model.nullable="state.language" placeholder="cs" class="w-full" />
           </UFormField>
 
-          <UFormField :label="t('books.fields.readingStatus')" name="readingStatus">
-            <USelect v-model="state.readingStatus" :items="readingStatusItems" class="w-full" />
-          </UFormField>
-
-          <UFormField :label="t('books.fields.rating')" name="rating">
-            <RatingInput v-model="state.rating" />
-          </UFormField>
-
           <UFormField
             :label="t('books.fields.description')"
             name="description"
@@ -287,6 +370,55 @@ function cancel(): void {
               v-model="state.description"
               :model-modifiers="{ nullable: true }"
               :rows="5"
+              autoresize
+              class="w-full"
+            />
+          </UFormField>
+        </div>
+      </UCard>
+
+      <UCard>
+        <template #header>
+          <h2 class="font-semibold text-highlighted">{{ t('books.reading') }}</h2>
+        </template>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <UFormField :label="t('books.fields.readingStatus')" name="readingStatus">
+            <USelect
+              :model-value="state.readingStatus"
+              :items="readingStatusItems"
+              class="w-full"
+              @update:model-value="chooseReadingStatus"
+            />
+          </UFormField>
+
+          <UFormField :label="t('books.fields.rating')" name="rating">
+            <RatingInput v-model="state.rating" />
+          </UFormField>
+
+          <UFormField :label="t('books.fields.startedAt')" name="startedAt">
+            <UInput v-model.nullable="state.startedAt" type="date" class="w-full" />
+          </UFormField>
+
+          <UFormField :label="t('books.fields.finishedAt')" name="finishedAt">
+            <UInput v-model.nullable="state.finishedAt" type="date" class="w-full" />
+          </UFormField>
+
+          <UFormField
+            :label="t('shelves.title')"
+            name="shelves"
+            :help="t('shelves.pickHint')"
+            class="sm:col-span-2"
+          >
+            <ShelfPicker v-model="shelfIds" />
+          </UFormField>
+
+          <UFormField :label="t('books.fields.notes')" name="notes" class="sm:col-span-2">
+            <UTextarea
+              v-model="state.notes"
+              :model-modifiers="{ nullable: true }"
+              :rows="3"
+              :placeholder="t('books.notesPlaceholder')"
               autoresize
               class="w-full"
             />
@@ -315,5 +447,7 @@ function cancel(): void {
         </UButton>
       </div>
     </UForm>
+
+    <IsbnScanner v-if="canScan" v-model:open="isScanning" @detected="fillFromScannedIsbn" />
   </section>
 </template>

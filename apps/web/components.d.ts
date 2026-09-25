@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppearanceMenu: typeof import('./src/components/AppearanceMenu.vue')['default']
+    InstallAppCard: typeof import('./src/components/InstallAppCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SystemNotificationBanner: typeof import('./src/components/SystemNotificationBanner.vue')['default']
@@ -29,6 +30,7 @@ declare module 'vue' {
     UInputNumber: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/InputNumber.vue')['default']
     ULink: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/vue/overrides/vue-router/Link.vue')['default']
     UModal: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Modal.vue')['default']
+    UpdatePrompt: typeof import('./src/components/UpdatePrompt.vue')['default']
     USelect: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Select.vue')['default']
     USelectMenu: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/SelectMenu.vue')['default']
     USkeleton: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Skeleton.vue')['default']

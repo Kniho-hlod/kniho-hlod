@@ -1,7 +1,10 @@
 import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
 import type { Book, IsbnLookupResult, ReadingStatus } from '@kniho-hlod/domain';
 
-/** The book fields the form edits. Reading dates, notes and visibility arrive in a later phase. */
+/**
+ * The book fields the form edits. Visibility waits for community lending: until then every book
+ * is private.
+ */
 export const BOOK_FORM_FIELDS = [
   'title',
   'author',
@@ -13,6 +16,9 @@ export const BOOK_FORM_FIELDS = [
   'description',
   'readingStatus',
   'rating',
+  'startedAt',
+  'finishedAt',
+  'notes',
 ] as const;
 
 export interface BookFormState {
@@ -26,6 +32,9 @@ export interface BookFormState {
   description: string | null;
   readingStatus: ReadingStatus;
   rating: number | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  notes: string | null;
 }
 
 /** What happens to the cover when the form is saved. */
@@ -35,6 +44,16 @@ export type CoverChange =
   | { kind: 'remove'; fileId: string };
 
 export const KEEP_COVER: CoverChange = { kind: 'keep' };
+
+/** What happens to the book's shelves when the form is saved. */
+export type ShelvesChange = { kind: 'keep' } | { kind: 'set'; shelfIds: string[] };
+
+/** `set` only when the chosen shelves differ from those the book is on — order aside. */
+export function shelvesChange(stored: readonly string[], chosen: readonly string[]): ShelvesChange {
+  const storedIds = new Set(stored);
+  const isSame = storedIds.size === new Set(chosen).size && chosen.every((id) => storedIds.has(id));
+  return isSame ? { kind: 'keep' } : { kind: 'set', shelfIds: [...chosen] };
+}
 
 export function emptyBookForm(): BookFormState {
   return {
@@ -48,6 +67,9 @@ export function emptyBookForm(): BookFormState {
     description: null,
     readingStatus: DEFAULT_READING_STATUS,
     rating: null,
+    startedAt: null,
+    finishedAt: null,
+    notes: null,
   };
 }
 
@@ -63,12 +85,15 @@ export function bookFormFrom(book: Book): BookFormState {
     description: book.description ?? null,
     readingStatus: book.readingStatus ?? DEFAULT_READING_STATUS,
     rating: book.rating ?? null,
+    startedAt: book.startedAt ?? null,
+    finishedAt: book.finishedAt ?? null,
+    notes: book.notes ?? null,
   };
 }
 
 /**
  * The catalogue's answer filled into the form. What the catalogue doesn't know keeps what the reader
- * already typed; the reading status and rating are the reader's own and never change.
+ * already typed; the reader's own fields (reading, rating, notes) never change.
  */
 export function withCatalogueDetails(form: BookFormState, found: IsbnLookupResult): BookFormState {
   return {
@@ -89,7 +114,7 @@ function trimmedOrNull(value: string | null): string | null {
   return trimmed ? trimmed : null;
 }
 
-/** The form as the API wants it: text trimmed, empty text as `null`. */
+/** The form as the API wants it: text trimmed, empty text and cleared dates as `null`. */
 export function toBookPayload(form: BookFormState): BookFormState {
   return {
     ...form,
@@ -99,5 +124,8 @@ export function toBookPayload(form: BookFormState): BookFormState {
     publisher: trimmedOrNull(form.publisher),
     language: trimmedOrNull(form.language),
     description: trimmedOrNull(form.description),
+    startedAt: form.startedAt || null,
+    finishedAt: form.finishedAt || null,
+    notes: trimmedOrNull(form.notes),
   };
 }

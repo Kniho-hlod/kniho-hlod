@@ -1,7 +1,10 @@
 {
   "app": {
     "name": "Kniho-hlod",
-    "tagline": "Vaše knihovna a přehled o tom, komu jste co půjčili."
+    "tagline": "Vaše knihovna a přehled o tom, komu jste co půjčili.",
+    "updateReady": "Je tu nová verze Kniho-hlodu.",
+    "updateHint": "Načte se, až stránku obnovíte.",
+    "reload": "Obnovit"
   },
   "nav": {
     "home": "Přehled",
@@ -77,7 +80,8 @@
     },
     "dueBack": "K vrácení",
     "nothingDue": "Nic není po termínu a nic se v příštích dnech nevrací.",
-    "allLoans": "Všechny výpůjčky"
+    "allLoans": "Všechny výpůjčky",
+    "readingNow": "Právě čtu"
   },
   "books": {
     "title": "Knihy",
@@ -127,7 +131,10 @@
       "language": "Jazyk",
       "description": "Popis",
       "readingStatus": "Stav čtení",
-      "rating": "Hodnocení"
+      "rating": "Hodnocení",
+      "startedAt": "Začátek čtení",
+      "finishedAt": "Dočteno dne",
+      "notes": "Poznámky"
     },
     "readingStatus": {
       "none": "Bez stavu",
@@ -146,6 +153,22 @@
       "any": "Doma i půjčené",
       "home": "Doma",
       "lent": "Půjčené"
+    },
+    "reading": "Čtení",
+    "notesPlaceholder": "Co se vám líbilo, citát, komu knihu doporučit…",
+    "savedWithoutShelves": "Kniha je uložená, ale police se nepodařilo změnit.",
+    "duplicate": "Tuhle knihu už v knihovně máte: „{title}“.",
+    "openDuplicate": "Otevřít",
+    "readFromTo": "Čteno {from} – {to}",
+    "readingSince": "Čtu od {date}",
+    "finishedOn": "Dočteno {date}",
+    "nextReadingStatus": {
+      "reading": "Začít číst",
+      "read": "Dočteno"
+    },
+    "readingStatusChanged": {
+      "reading": "Hezké čtení!",
+      "read": "Dočteno. Nezapomeňte knihu ohodnotit."
     }
   },
   "validation": {
@@ -240,5 +263,66 @@
       "phone": "Telefon",
       "note": "Poznámka"
     }
+  },
+  "shelves": {
+    "title": "Police",
+    "hint": "Seskupte si knihy podle sebe — oblíbené, na rozdání, dětský pokoj. Kniha může být na více policích.",
+    "allBooks": "Všechny knihy",
+    "manage": "Upravit police",
+    "createFirst": "Vytvořit police",
+    "add": "Přidat",
+    "namePlaceholder": "Například Oblíbené",
+    "created": "Police „{name}“ je vytvořená.",
+    "saved": "Police je uložená.",
+    "deleted": "Police je smazaná.",
+    "empty": "Zatím nemáte žádnou polici.",
+    "emptyShelf": "Na téhle polici zatím nic není. Knihu na polici dáte v jejím formuláři.",
+    "bookCount": "žádná kniha | {count} kniha | {count} knihy | {count} knih",
+    "moveUp": "Posunout „{name}“ nahoru",
+    "moveDown": "Posunout „{name}“ dolů",
+    "edit": "Upravit „{name}“",
+    "editTitle": "Upravit polici",
+    "delete": "Smazat „{name}“",
+    "deleteTitle": "Smazat polici",
+    "deleteConfirm": "Smazat polici „{name}“? Knihy v knihovně zůstanou, jen z police zmizí.",
+    "pick": "Vyberte police",
+    "pickHint": "Novou polici stačí napsat.",
+    "searchOrCreate": "Hledat nebo napsat novou",
+    "create": "Nová police: {name}",
+    "fields": {
+      "name": "Název",
+      "color": "Barva"
+    },
+    "colors": {
+      "neutral": "Šedá",
+      "red": "Červená",
+      "orange": "Oranžová",
+      "amber": "Žlutá",
+      "green": "Zelená",
+      "teal": "Tyrkysová",
+      "sky": "Blankytná",
+      "blue": "Modrá",
+      "violet": "Fialová",
+      "pink": "Růžová"
+    }
+  },
+  "scanner": {
+    "scan": "Naskenovat",
+    "title": "Naskenovat ISBN",
+    "description": "Čárový kód najdete na zadní straně knihy.",
+    "hint": "Namiřte kameru na čárový kód s ISBN a chvíli ji podržte v klidu.",
+    "viewfinder": "Obraz z kamery",
+    "cameraDenied": "Kniho-hlod nemá přístup ke kameře. Povolte ho v nastavení prohlížeče, nebo ISBN opište.",
+    "noCamera": "Nenašli jsme žádnou kameru. ISBN prosím opište.",
+    "cameraBusy": "Kameru teď používá jiná aplikace. Zavřete ji a zkuste to znovu.",
+    "cameraFailed": "Kameru se nepodařilo spustit. ISBN prosím opište.",
+    "readerFailed": "Čtečku čárových kódů se nepodařilo načíst. Zkontrolujte připojení, nebo ISBN opište."
+  },
+  "install": {
+    "title": "Kniho-hlod jako aplikace",
+    "description": "Nainstalujte si Kniho-hlod na plochu. Otevře se jako samostatná aplikace a skenování ISBN máte po ruce.",
+    "shareMenuSteps": "V Safari klepněte na Sdílet a pak na „Přidat na plochu“.",
+    "install": "Nainstalovat",
+    "notNow": "Teď ne"
   }
 }
