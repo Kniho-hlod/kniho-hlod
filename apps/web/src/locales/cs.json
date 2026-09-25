@@ -65,7 +65,65 @@
   },
   "home": {
     "welcome": "Vítejte, {name}!",
-    "empty": "Knihy a výpůjčky přibydou v další fázi."
+    "empty": "Vaši knihovnu najdete v sekci Knihy. Výpůjčky přibydou v další fázi.",
+    "toBooks": "Otevřít moje knihy"
+  },
+  "books": {
+    "title": "Knihy",
+    "add": "Přidat knihu",
+    "edit": "Upravit knihu",
+    "delete": "Smazat knihu",
+    "deleteConfirm": "Opravdu smazat „{title}“? Tohle nelze vrátit.",
+    "deleted": "Kniha je smazaná.",
+    "saved": "Kniha je uložená.",
+    "savedWithoutCover": "Kniha je uložená, ale obálku se nepodařilo nahrát.",
+    "notFound": "Tuhle knihu jsme nenašli.",
+    "empty": "Zatím tu nemáte žádnou knihu. Přidejte první — stačí její ISBN.",
+    "emptyFiltered": "Hledání ani filtrům neodpovídá žádná kniha.",
+    "total": "Celkem: {count}",
+    "search": "Hledat podle názvu, autora nebo ISBN",
+    "loadMore": "Načíst další",
+    "anyStatus": "Jakýkoli stav",
+    "anyRating": "Jakékoli hodnocení",
+    "ratingAtLeast": "Alespoň {rating} ★",
+    "ratingOutOf": "{rating} z {max}",
+    "rateAs": "Ohodnotit {rating} z {max}",
+    "noRating": "Bez hodnocení",
+    "isbnLookup": "Vyhledat podle ISBN",
+    "isbnLookupHint": "Název, autora a obálku doplníme z Open Library nebo Google Books.",
+    "isbnSearch": "Vyhledat",
+    "isbnFilled": "Údaje jsme doplnili z katalogu. Zkontrolujte je a uložte.",
+    "isbnNotFound": "Knihu s tímto ISBN katalogy neznají. Vyplňte ji prosím ručně.",
+    "isbnUnavailable": "Katalogy knih teď nejsou dostupné. Zkuste to později, nebo knihu vyplňte ručně.",
+    "isbnInvalid": "Tohle není platné ISBN.",
+    "details": "Údaje o knize",
+    "cover": "Obálka",
+    "coverOf": "Obálka knihy {title}",
+    "addCover": "Nahrát obálku",
+    "changeCover": "Změnit obálku",
+    "removeCover": "Odebrat obálku",
+    "coverHint": "JPG, PNG nebo WebP. Zmenšíme ji na nejvýše 1000 px.",
+    "coverTooLarge": "Obrázek je příliš velký, vyberte prosím menší než 20 MB.",
+    "coverFromCatalogue": "Obálka z katalogu — uloží se spolu s knihou.",
+    "untitled": "Bez názvu",
+    "fields": {
+      "title": "Název",
+      "author": "Autor",
+      "isbn": "ISBN",
+      "publisher": "Nakladatel",
+      "publishedYear": "Rok vydání",
+      "pageCount": "Počet stran",
+      "language": "Jazyk",
+      "description": "Popis",
+      "readingStatus": "Stav čtení",
+      "rating": "Hodnocení"
+    },
+    "readingStatus": {
+      "none": "Bez stavu",
+      "want": "Chci číst",
+      "reading": "Čtu",
+      "read": "Přečteno"
+    }
   },
   "validation": {
     "required": "Vyplňte prosím tuto položku.",
@@ -77,6 +135,10 @@
     "max": "Hodnota smí být nejvýše {max}.",
     "format": "Zadejte platný {format}.",
     "unique": "Tahle hodnota už je obsazená.",
-    "reference": "Vybraná položka neexistuje."
+    "reference": "Vybraná položka neexistuje.",
+    "formats": {
+      "email": "e-mail",
+      "isbn": "kód ISBN"
+    }
   }
 }

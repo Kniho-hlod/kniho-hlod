@@ -47,9 +47,18 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Auth is be-core's: registration, login with rotating refresh tokens, `GET/PATCH/DELETE /api/auth/me`,
   password change and single-use reset links, rate limiting.
 - Access: `user` is `admin`-only and currently has no CRUD routes; `systemNotification` is
-  `admin`-only for writes, with a public `GET /api/system-notifications/active`.
+  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book` is
+  `owner`-only (another reader's book answers 404).
+- Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
+  as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
+  deleted book takes its cover with it.
+- `GET /api/isbn/:isbn` (`src/isbn/`) asks Open Library, then Google Books, and caches answers;
+  `…/cover` hands the catalogue's cover over as base64 JSON, which the app imports like an upload.
+  Covers are only downloaded from the catalogues' own image hosts. Tests pass a fake `fetch`.
 - Files go through be-core's `/api/files`. `src/files/authorize-file-access.ts` decides who may
-  upload what — today only your own avatar.
+  upload what: your own avatar and covers of your own books.
+- Callbacks that run per request but are declared before the models exist (`enrich`,
+  `beforeDelete`, the file authorizer) get models from `src/models-registry.ts`.
 - Tests are integration tests (`*.integration.test.ts` / `app.integration.test.ts`) against the
   Postgres container, each in its own schema.
 - Deploy: Railway builds `apps/api/Dockerfile` (root `railway.json`) on every push to `main` that
@@ -61,13 +70,22 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 ## Frontend
 
 - `src/app/api.ts` — the `AuthSession` (tokens, automatic renewal after a 401) and the service
-  container. Everything else imports `services` from here.
+  container. Everything else imports `services` from here. Show uploaded files through
+  `fileUrl(file)`: without a CDN the API answers with its own `/api/files/:id` path, which lives
+  on the API's origin, not the app's.
+- `main.ts` installs the router only after the stored session is restored — the router navigates
+  the moment it is installed, and its guard must already know who is signed in.
+- Books live in `src/features/books/` (vue-query composables in `api.ts`, form state in
+  `book-form.ts`); covers are scaled to WebP in the browser (`src/shared/resize-image.ts`).
 - `src/features/auth/session-store.ts` — Pinia store: who is signed in, and every action that
   changes it. Server state elsewhere goes through TanStack Query.
 - Routing is in `src/app/router.ts`; `meta.requiresAuth` / `meta.guestOnly` / `meta.requiresRole`
   drive the guard. Layouts: `AppLayout` (signed in) and `GuestLayout` (sign-in and friends).
-- UI is Nuxt UI v4 in plain-Vue mode; components auto-import. All texts go through vue-i18n
-  (`src/locales/{cs,en}.json`) — including validation messages, keyed by issue code.
+- UI is Nuxt UI v4 in plain-Vue mode; components auto-import, composables don't (import
+  `useToast` from `@nuxt/ui/composables`). Icons are bundled at build time from literal names in
+  `src/**/*.{vue,ts}` (`vite.config.ts`); a name only known at runtime would be fetched from the
+  Iconify API. All texts go through vue-i18n (`src/locales/{cs,en}.json`) — including validation
+  messages, keyed by issue code, with `validation.formats.*` naming formats such as `isbn`.
 - Every `UForm` binds `:validate-on="VALIDATE_ON"` (`src/app/validation.ts`). Nuxt UI's default
   also validates on blur, so leaving an untouched field shows an error and shifts the layout under
   the pointer — the link or button being clicked moves away and the click is lost.
@@ -93,6 +111,6 @@ pnpm --filter @kniho-hlod/api seed:admin
 
 ## Status
 
-Phase 1 (skeleton, auth, account, announcements) is in place. Books, loans, contacts, shelves,
-ISBN lookup, reminders and the admin section arrive in the later phases; the plan lives in the
-user's Obsidian vault (`moje_projekty/Kniho-hlod`).
+Phase 1 (skeleton, auth, account, announcements) and phase 2 (books, ISBN lookup, covers) are in
+place. Loans, contacts, shelves, reading dates, barcode scanning, reminders and the admin section
+arrive in the later phases; the plan lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

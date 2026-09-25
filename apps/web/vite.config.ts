@@ -9,7 +9,13 @@ const THEME_COLOR = '#0f766e';
 export default defineConfig({
   plugins: [
     vue(),
-    ui(),
+    ui({
+      // Bundle every icon the sources name instead of fetching it from the Iconify API at
+      // runtime: no third-party requests, no icons popping in late, and icons work offline.
+      icon: {
+        clientBundle: { scan: { globInclude: ['src/**/*.{vue,ts}'] } },
+      },
+    }),
     VitePWA({
       registerType: 'prompt',
       // The API is never cached: reads must reflect what the server has.

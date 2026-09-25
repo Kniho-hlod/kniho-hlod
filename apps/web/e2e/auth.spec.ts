@@ -21,6 +21,11 @@ test('a reader registers, signs out, resets their password and signs back in', a
     await expect(page.getByRole('heading', { name: /Vítejte, E2E Reader/ })).toBeVisible();
   });
 
+  await test.step('stay signed in across a reload', async () => {
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /Vítejte, E2E Reader/ })).toBeVisible();
+  });
+
   await test.step('sign out', async () => {
     await page.getByRole('button', { name: 'Odhlásit se' }).click();
     await expect(page.getByRole('heading', { name: 'Přihlášení' })).toBeVisible();

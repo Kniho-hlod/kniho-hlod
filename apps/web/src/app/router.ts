@@ -20,6 +20,26 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       { path: '', name: 'home', component: () => import('@/pages/HomePage.vue') },
+      {
+        // One parent for the whole section, so a link to `books` stays active on its sub-pages.
+        path: 'books',
+        children: [
+          { path: '', name: 'books', component: () => import('@/pages/BooksPage.vue') },
+          { path: 'new', name: 'book-new', component: () => import('@/pages/BookFormPage.vue') },
+          {
+            path: ':id',
+            name: 'book',
+            component: () => import('@/pages/BookDetailPage.vue'),
+            props: true,
+          },
+          {
+            path: ':id/edit',
+            name: 'book-edit',
+            component: () => import('@/pages/BookFormPage.vue'),
+            props: true,
+          },
+        ],
+      },
       { path: 'account', name: 'account', component: () => import('@/pages/AccountPage.vue') },
     ],
   },

@@ -1,8 +1,13 @@
 import { toStandardSchema } from '@eleansphere/entity-core';
-import type { Fields, ToStandardSchemaOptions, ValidationIssue, ValidationMode } from '@eleansphere/entity-core';
+import type {
+  Fields,
+  ToStandardSchemaOptions,
+  ValidationIssue,
+  ValidationMode,
+} from '@eleansphere/entity-core';
 import type { FormOutput } from '@eleansphere/entity-core';
 import type { FormInputEvents } from '@nuxt/ui';
-import { translate } from './i18n';
+import { i18n, translate } from './i18n';
 
 /**
  * When a `UForm` validates besides on submit: while typing and once a value is committed, but not
@@ -11,9 +16,17 @@ import { translate } from './i18n';
  */
 export const VALIDATE_ON: FormInputEvents[] = ['input', 'change'];
 
+/** `params.format` is a code such as `isbn`; `validation.formats.<code>` names it for the reader. */
+function withReadableFormat(params: ValidationIssue['params']): ValidationIssue['params'] {
+  const format = params?.format;
+  if (typeof format !== 'string') return params;
+  const key = `validation.formats.${format}`;
+  return i18n.global.te(key) ? { ...params, format: translate(key) } : params;
+}
+
 /** `{ path: 'title', code: 'minLength', params: { minLength: 2 } }` → the translated message. */
 export function translateIssue(issue: ValidationIssue): string {
-  return translate(`validation.${issue.code}`, issue.params);
+  return translate(`validation.${issue.code}`, withReadableFormat(issue.params));
 }
 
 /**

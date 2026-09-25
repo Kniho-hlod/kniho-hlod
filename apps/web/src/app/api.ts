@@ -1,4 +1,5 @@
 import { AuthSession, createWebSessionStorage } from '@eleansphere/entity-core';
+import type { FileDto } from '@eleansphere/entity-core';
 import { createServices } from '@kniho-hlod/domain';
 
 const SESSION_STORAGE_KEY = 'kniho-hlod.session';
@@ -30,3 +31,13 @@ export const session = new AuthSession({
 
 /** One client per entity, sharing the session: `services.auth`, `services.systemNotifications`, … */
 export const services = createServices(apiBaseUrl, session);
+
+/**
+ * Where the browser loads an uploaded file from. The API answers with an absolute CDN URL for
+ * public files once a bucket has a public address, and otherwise with its own `/api/files/:id`
+ * path — which lives on the API's origin, not the web app's.
+ */
+export function fileUrl(file: Pick<FileDto, 'url'> | null | undefined): string | undefined {
+  if (!file) return undefined;
+  return file.url.startsWith('/') ? `${apiBaseUrl}${file.url}` : file.url;
+}

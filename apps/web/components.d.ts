@@ -18,6 +18,7 @@ declare module 'vue' {
     UAlert: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Alert.vue')['default']
     UApp: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/App.vue')['default']
     UAvatar: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Avatar.vue')['default']
+    UBadge: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Badge.vue')['default']
     UButton: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Button.vue')['default']
     UCard: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Card.vue')['default']
     UDropdownMenu: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/DropdownMenu.vue')['default']
@@ -27,7 +28,10 @@ declare module 'vue' {
     UInput: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Input.vue')['default']
     UInputNumber: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/InputNumber.vue')['default']
     ULink: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/vue/overrides/vue-router/Link.vue')['default']
+    UModal: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Modal.vue')['default']
     USelect: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Select.vue')['default']
+    USkeleton: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Skeleton.vue')['default']
     USwitch: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Switch.vue')['default']
+    UTextarea: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Textarea.vue')['default']
   }
 }

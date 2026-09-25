@@ -16,15 +16,30 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const NOTIFICATION_SEVERITIES = ['info', 'warning', 'critical'] as const;
 export type NotificationSeverity = (typeof NOTIFICATION_SEVERITIES)[number];
 
+/** Where a book stands for its owner as a reader. */
+export const READING_STATUSES = ['none', 'want', 'reading', 'read'] as const;
+export type ReadingStatus = (typeof READING_STATUSES)[number];
+export const DEFAULT_READING_STATUS: ReadingStatus = 'none';
+
+/** Public books will be visible to other readers once community lending arrives. */
+export const BOOK_VISIBILITIES = ['private', 'public'] as const;
+export type BookVisibility = (typeof BOOK_VISIBILITIES)[number];
+export const DEFAULT_BOOK_VISIBILITY: BookVisibility = 'private';
+
+export const RATING_MIN = 1;
+export const RATING_MAX = 5;
+
 /** What an uploaded file is attached to (be-core file service `refType`). */
 export const FILE_REF_TYPES = {
   user: 'user',
+  book: 'book',
 } as const;
 
 /** The file's slot on that row (be-core file service `role`). */
 export const FILE_ROLES = {
   avatar: 'avatar',
+  cover: 'cover',
 } as const;
 
 /** Roles holding a single file: uploading a new one replaces the previous. */
-export const SINGLE_FILE_ROLES = [FILE_ROLES.avatar];
+export const SINGLE_FILE_ROLES = [FILE_ROLES.avatar, FILE_ROLES.cover];

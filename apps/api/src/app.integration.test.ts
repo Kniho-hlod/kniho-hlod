@@ -1,78 +1,43 @@
-import crypto from 'node:crypto';
-import request from 'supertest';
 import bcrypt from 'bcrypt';
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import {
-  createCore,
-  createSequelize,
-  MemoryEmailTransport,
-  MemoryStorageAdapter,
-} from '@eleansphere/be-core';
-import type { CoreInstance } from '@eleansphere/be-core';
-import { buildAppConfig } from './app-config';
-import type { Environment } from './env';
+  APP_BASE_URL,
+  bearer,
+  PASSWORD,
+  PNG_SIGNATURE,
+  startTestApp,
+} from './test-support/test-app';
+import type { TestApp } from './test-support/test-app';
 
-const TEST_DATABASE_URL =
-  process.env.TEST_DATABASE_URL ?? 'postgres://kniho:kniho@localhost:5434/kniho';
-const APP_BASE_URL = 'https://app.test';
-const PASSWORD = 'correct-horse-battery';
-const PNG_SIGNATURE = Buffer.from('89504e470d0a1a0a', 'hex');
 const DAY_MS = 24 * 60 * 60 * 1000;
 const BCRYPT_TEST_ROUNDS = 4;
 
-const environment: Environment = {
-  isProduction: false,
-  port: 0,
-  databaseUrl: TEST_DATABASE_URL,
-  databaseSsl: false,
-  jwtSecret: 'integration-test-secret-of-sufficient-length',
-  appBaseUrl: APP_BASE_URL,
-  corsOrigins: [APP_BASE_URL],
-  trustProxy: undefined,
-  emailFrom: 'Kniho-hlod <noreply@test.cz>',
-  email: { kind: 'log' },
-  storage: { kind: 'memory' },
-};
-
 describe('Kniho-hlod API', () => {
-  const schema = `test_${crypto.randomBytes(6).toString('hex')}`;
-  const database = createSequelize({ databaseUrl: TEST_DATABASE_URL, ssl: false });
-  const outbox = new MemoryEmailTransport();
-  let core: CoreInstance;
+  let app: TestApp;
 
-  const api = () => request(core.app);
-  const register = (email: string) =>
-    api().post('/api/auth/register').send({ email, password: PASSWORD, displayName: 'Reader' });
-  const bearer = (token: string) => `Bearer ${token}`;
+  const api = () => app.api();
+  const register = (email: string) => app.register(email);
 
   async function signInAsAdmin(): Promise<string> {
-    await core.models.user.create({
+    await app.core.models.user.create({
       id: 'u_admin',
       email: 'admin@test.cz',
       displayName: 'Admin',
       password: await bcrypt.hash(PASSWORD, BCRYPT_TEST_ROUNDS),
       role: 'admin',
     });
-    const res = await api().post('/api/auth/login').send({ email: 'admin@test.cz', password: PASSWORD });
+    const res = await api()
+      .post('/api/auth/login')
+      .send({ email: 'admin@test.cz', password: PASSWORD });
     return res.body.token;
   }
 
   beforeAll(async () => {
-    await database.query(`CREATE SCHEMA "${schema}"`);
-    core = await createCore(
-      buildAppConfig(environment, {
-        schema,
-        emailTransport: outbox,
-        storageAdapter: new MemoryStorageAdapter(),
-        rateLimit: 'off',
-      })
-    );
+    app = await startTestApp();
   });
 
   afterAll(async () => {
-    await core?.close();
-    await database.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
-    await database.close();
+    await app?.close();
   });
 
   it('registers a reader with the default profile', async () => {
@@ -104,12 +69,12 @@ describe('Kniho-hlod API', () => {
 
   it('emails a password reset link into the web app', async () => {
     await register('forgot@test.cz');
-    outbox.clear();
+    app.outbox.clear();
 
     await api().post('/api/auth/forgot-password').send({ email: 'forgot@test.cz' });
 
-    await vi.waitFor(() => expect(outbox.sent).toHaveLength(1));
-    expect(outbox.sent[0].text).toContain(`${APP_BASE_URL}/reset-password?token=`);
+    await vi.waitFor(() => expect(app.outbox.sent).toHaveLength(1));
+    expect(app.outbox.sent[0].text).toContain(`${APP_BASE_URL}/reset-password?token=`);
   });
 
   it('lets only administrators manage announcements, and shows active ones to everyone', async () => {
@@ -132,7 +97,11 @@ describe('Kniho-hlod API', () => {
     const invertedRange = await api()
       .post('/api/system-notifications')
       .set('Authorization', bearer(adminToken))
-      .send({ ...announcement, activeTo: announcement.activeFrom, activeFrom: announcement.activeTo });
+      .send({
+        ...announcement,
+        activeTo: announcement.activeFrom,
+        activeFrom: announcement.activeTo,
+      });
     expect(invertedRange.status).toBe(400);
     expect(invertedRange.body.issues).toEqual([
       { path: 'activeTo', code: 'min', params: { after: 'activeFrom' } },

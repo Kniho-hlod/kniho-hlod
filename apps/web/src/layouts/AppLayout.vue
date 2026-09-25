@@ -10,10 +10,46 @@ const { t } = useI18n();
 const router = useRouter();
 const session = useSessionStore();
 
-/** Books and loans join this list in the next phases. */
+/**
+ * When an item is highlighted: `exact` only on its own page — every signed-in page sits under
+ * home's `/`, so a looser match would light it up everywhere; `section` on its page and the pages
+ * below it (a book's detail belongs to Books).
+ */
+type NavigationMatch = 'exact' | 'section';
+
+const ACTIVE_CLASS = 'text-primary';
+
+/**
+ * `RouterLink` keys its classes by name — `{ [activeClass]: isActive, [exactActiveClass]:
+ * isExactActive }` — so the same class for both states lets the exact one overwrite the other.
+ * Each item therefore highlights through exactly one of them.
+ */
+function highlightClasses(match: NavigationMatch) {
+  return match === 'exact'
+    ? { activeClass: '', exactActiveClass: ACTIVE_CLASS }
+    : { activeClass: ACTIVE_CLASS, exactActiveClass: '' };
+}
+
+/** Loans join this list in the next phase. */
 const navigation = computed(() => [
-  { label: t('nav.home'), icon: 'i-lucide-house', to: { name: 'home' } },
-  { label: t('nav.account'), icon: 'i-lucide-user-round', to: { name: 'account' } },
+  {
+    label: t('nav.home'),
+    icon: 'i-lucide-house',
+    to: { name: 'home' },
+    match: 'exact' as NavigationMatch,
+  },
+  {
+    label: t('nav.books'),
+    icon: 'i-lucide-library',
+    to: { name: 'books' },
+    match: 'section' as NavigationMatch,
+  },
+  {
+    label: t('nav.account'),
+    icon: 'i-lucide-user-round',
+    to: { name: 'account' },
+    match: 'section' as NavigationMatch,
+  },
 ]);
 
 async function signOut(): Promise<void> {
@@ -27,7 +63,10 @@ async function signOut(): Promise<void> {
     <header
       class="sticky top-0 z-10 border-b border-default bg-default/80 backdrop-blur px-4 h-16 flex items-center justify-between gap-4"
     >
-      <RouterLink :to="{ name: 'home' }" class="flex items-center gap-2 font-semibold text-highlighted">
+      <RouterLink
+        :to="{ name: 'home' }"
+        class="flex items-center gap-2 font-semibold text-highlighted"
+      >
         <UIcon name="i-lucide-library-big" class="size-6 text-primary" />
         <span>{{ t('app.name') }}</span>
       </RouterLink>
@@ -39,8 +78,11 @@ async function signOut(): Promise<void> {
           :to="item.to"
           :icon="item.icon"
           :label="item.label"
+          :exact="item.match === 'exact'"
           color="neutral"
           variant="ghost"
+          active-color="primary"
+          active-variant="soft"
         />
       </nav>
 
@@ -69,7 +111,7 @@ async function signOut(): Promise<void> {
           <RouterLink
             :to="item.to"
             class="flex flex-col items-center gap-1 py-3 text-xs text-muted"
-            active-class="text-primary"
+            v-bind="highlightClasses(item.match)"
           >
             <UIcon :name="item.icon" class="size-5" />
             {{ item.label }}

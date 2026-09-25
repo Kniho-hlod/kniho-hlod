@@ -22,7 +22,6 @@ function retryQuery(failureCount: number, error: Error): boolean {
 const app = createApp(App);
 
 app.use(createPinia());
-app.use(router);
 app.use(i18n);
 app.use(ui);
 app.use(VueQueryPlugin, {
@@ -37,5 +36,10 @@ onSessionExpired(() => {
   void router.push({ name: 'sign-in' });
 });
 
-// Mount once we know whether anyone is signed in, so the first render is already the right one.
-void session.restore().finally(() => app.mount('#app'));
+// The router starts its first navigation the moment it is installed, and its guard asks who is
+// signed in. So it is installed — and the app mounted — only once the stored session has been
+// restored: a reload of a signed-in page must not bounce to sign-in.
+void session.restore().finally(() => {
+  app.use(router);
+  app.mount('#app');
+});

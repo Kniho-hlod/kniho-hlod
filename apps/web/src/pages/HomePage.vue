@@ -15,7 +15,12 @@ const session = useSessionStore();
     <UCard>
       <div class="flex items-start gap-3">
         <UIcon name="i-lucide-book-open" class="size-6 text-primary shrink-0" />
-        <p class="text-muted">{{ t('home.empty') }}</p>
+        <div class="flex flex-col items-start gap-3">
+          <p class="text-muted">{{ t('home.empty') }}</p>
+          <UButton :to="{ name: 'books' }" icon="i-lucide-library" variant="subtle">
+            {{ t('home.toBooks') }}
+          </UButton>
+        </div>
       </div>
     </UCard>
   </section>

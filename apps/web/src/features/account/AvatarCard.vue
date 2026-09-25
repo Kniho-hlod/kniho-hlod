@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { FILE_ROLES } from '@kniho-hlod/domain';
-import { services } from '@/app/api';
+import { fileUrl, services } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { useSessionStore } from '@/features/auth/session-store';
 
@@ -25,7 +25,7 @@ const { data: avatars } = useQuery({
   enabled: computed(() => userId.value !== ''),
 });
 
-const avatarUrl = computed(() => avatars.value?.[0]?.url);
+const avatarUrl = computed(() => fileUrl(avatars.value?.[0]));
 
 const { mutateAsync: uploadAvatar, isPending } = useMutation({
   mutationFn: (file: File) => avatarSlot.upload(userId.value, file),
@@ -65,7 +65,13 @@ async function selectAvatar(event: Event): Promise<void> {
             :disabled="isPending"
             @change="selectAvatar"
           />
-          <UButton as="span" icon="i-lucide-upload" color="neutral" variant="subtle" :loading="isPending">
+          <UButton
+            as="span"
+            icon="i-lucide-upload"
+            color="neutral"
+            variant="subtle"
+            :loading="isPending"
+          >
             {{ t('account.avatar') }}
           </UButton>
         </label>
@@ -73,6 +79,12 @@ async function selectAvatar(event: Event): Promise<void> {
       </div>
     </div>
 
-    <UAlert v-if="errorMessage" class="mt-4" color="error" variant="subtle" :description="errorMessage" />
+    <UAlert
+      v-if="errorMessage"
+      class="mt-4"
+      color="error"
+      variant="subtle"
+      :description="errorMessage"
+    />
   </UCard>
 </template>

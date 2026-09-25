@@ -65,7 +65,65 @@
   },
   "home": {
     "welcome": "Welcome, {name}!",
-    "empty": "Books and loans arrive in the next phase."
+    "empty": "Your library lives under Books. Loans arrive in the next phase.",
+    "toBooks": "Open my books"
+  },
+  "books": {
+    "title": "Books",
+    "add": "Add a book",
+    "edit": "Edit book",
+    "delete": "Delete book",
+    "deleteConfirm": "Really delete “{title}”? This cannot be undone.",
+    "deleted": "The book has been deleted.",
+    "saved": "The book has been saved.",
+    "savedWithoutCover": "The book has been saved, but its cover could not be uploaded.",
+    "notFound": "We couldn't find this book.",
+    "empty": "No books here yet. Add your first one — its ISBN is enough.",
+    "emptyFiltered": "No book matches the search and filters.",
+    "total": "Total: {count}",
+    "search": "Search by title, author or ISBN",
+    "loadMore": "Load more",
+    "anyStatus": "Any status",
+    "anyRating": "Any rating",
+    "ratingAtLeast": "At least {rating} ★",
+    "ratingOutOf": "{rating} out of {max}",
+    "rateAs": "Rate {rating} out of {max}",
+    "noRating": "Not rated",
+    "isbnLookup": "Look up by ISBN",
+    "isbnLookupHint": "We fill in the title, author and cover from Open Library or Google Books.",
+    "isbnSearch": "Look up",
+    "isbnFilled": "We filled in the details from the catalogue. Check them and save.",
+    "isbnNotFound": "The catalogues don't know this ISBN. Please fill in the book yourself.",
+    "isbnUnavailable": "The book catalogues can't be reached right now. Try again later, or fill in the book yourself.",
+    "isbnInvalid": "This is not a valid ISBN.",
+    "details": "About the book",
+    "cover": "Cover",
+    "coverOf": "Cover of {title}",
+    "addCover": "Upload a cover",
+    "changeCover": "Change cover",
+    "removeCover": "Remove cover",
+    "coverHint": "JPG, PNG or WebP. We scale it down to at most 1000 px.",
+    "coverTooLarge": "That image is too large, please pick one under 20 MB.",
+    "coverFromCatalogue": "Cover from the catalogue — saved together with the book.",
+    "untitled": "Untitled",
+    "fields": {
+      "title": "Title",
+      "author": "Author",
+      "isbn": "ISBN",
+      "publisher": "Publisher",
+      "publishedYear": "Year published",
+      "pageCount": "Pages",
+      "language": "Language",
+      "description": "Description",
+      "readingStatus": "Reading status",
+      "rating": "Rating"
+    },
+    "readingStatus": {
+      "none": "No status",
+      "want": "Want to read",
+      "reading": "Reading",
+      "read": "Read"
+    }
   },
   "validation": {
     "required": "This field is required.",
@@ -77,6 +135,10 @@
     "max": "Must be at most {max}.",
     "format": "Enter a valid {format}.",
     "unique": "This value is already taken.",
-    "reference": "The selected item does not exist."
+    "reference": "The selected item does not exist.",
+    "formats": {
+      "email": "email address",
+      "isbn": "ISBN"
+    }
   }
 }
