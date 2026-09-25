@@ -5,7 +5,8 @@ import type { TestApp } from './test-support/test-app';
 const KNOWN_ISBN = '9780306406157';
 const UNKNOWN_ISBN = '9780804429573';
 const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
-const OPEN_LIBRARY = 'https://openlibrary.org/api/books';
+const OPEN_LIBRARY_ISBN = 'https://openlibrary.org/isbn/';
+const OPEN_LIBRARY_AUTHOR = 'https://openlibrary.org/authors/OL1A.json';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
 
 /** Open Library knows one book; Google Books knows none. Set `down` to make both unreachable. */
@@ -14,19 +15,12 @@ function createFakeCatalogues() {
   const fetch = async (input: string | URL | Request): Promise<Response> => {
     const url = typeof input === 'string' ? input : input.toString();
     if (state.down) throw new Error('connect ECONNREFUSED');
-    if (url.startsWith(OPEN_LIBRARY)) {
-      return Response.json(
-        url.includes(KNOWN_ISBN)
-          ? {
-              [`ISBN:${KNOWN_ISBN}`]: {
-                title: 'Hobit',
-                authors: [{ name: 'J. R. R. Tolkien' }],
-                cover: { large: COVER_URL },
-              },
-            }
-          : {}
-      );
+    if (url.startsWith(OPEN_LIBRARY_ISBN)) {
+      return url.includes(KNOWN_ISBN)
+        ? Response.json({ title: 'Hobit', authors: [{ key: '/authors/OL1A' }], covers: [42] })
+        : new Response('Not found', { status: 404 });
     }
+    if (url === OPEN_LIBRARY_AUTHOR) return Response.json({ name: 'J. R. R. Tolkien' });
     if (url.startsWith(GOOGLE_BOOKS)) return Response.json({ totalItems: 0 });
     if (url === COVER_URL) {
       return new Response(PNG_SIGNATURE, { headers: { 'content-type': 'image/png' } });

@@ -37,11 +37,18 @@ export interface IsbnCatalogueOptions {
   fetch?: typeof fetch;
   /** Clock for the cache, for tests. */
   now?: () => number;
+  /**
+   * Google Books API key. Without one, requests share Google's anonymous daily quota, which is
+   * regularly used up (429) — the lookup then rests on Open Library alone.
+   */
+  googleBooksApiKey?: string;
 }
 
-type FetchJson = <T>(url: string) => Promise<T>;
+/** The parsed JSON, or `null` when the catalogue answers 404: it doesn't know the ISBN. */
+type FetchJson = <T>(url: string) => Promise<T | null>;
 type CatalogueProvider = (isbn: string, fetchJson: FetchJson) => Promise<CatalogueEntry | null>;
 
+const NOT_FOUND = 404;
 const REQUEST_TIMEOUT_MS = 8_000;
 /** Open Library asks API clients to identify themselves. */
 const USER_AGENT = 'Kniho-hlod/1.0 (+https://github.com/Kniho-hlod/kniho-hlod)';
@@ -54,7 +61,36 @@ const COVER_HOSTS = ['covers.openlibrary.org', 'books.google.com', 'books.google
 const YEAR_PATTERN = /\b(\d{4})\b/;
 const AUTHOR_SEPARATOR = ', ';
 
-const OPEN_LIBRARY_BOOKS_URL = 'https://openlibrary.org/api/books';
+const OPEN_LIBRARY_URL = 'https://openlibrary.org';
+const OPEN_LIBRARY_COVER_URL = 'https://covers.openlibrary.org/b/id';
+/** Authors are separate records, fetched one by one; the first few names fill the form. */
+const MAX_OPEN_LIBRARY_AUTHORS = 3;
+/**
+ * Open Library names languages by MARC code (`/languages/cze`); the book form keeps ISO 639-1.
+ * A language not listed is left for the reader to fill in.
+ */
+const MARC_TO_ISO_639_1: Readonly<Record<string, string>> = {
+  chi: 'zh',
+  cze: 'cs',
+  dan: 'da',
+  dut: 'nl',
+  eng: 'en',
+  fin: 'fi',
+  fre: 'fr',
+  ger: 'de',
+  hun: 'hu',
+  ita: 'it',
+  jpn: 'ja',
+  nor: 'no',
+  pol: 'pl',
+  por: 'pt',
+  rus: 'ru',
+  slo: 'sk',
+  spa: 'es',
+  swe: 'sv',
+  tur: 'tr',
+  ukr: 'uk',
+};
 const GOOGLE_BOOKS_VOLUMES_URL = 'https://www.googleapis.com/books/v1/volumes';
 
 interface LengthLimited {
@@ -102,34 +138,73 @@ function trustedCoverUrl(url: string | undefined): string | null {
   }
 }
 
-interface OpenLibraryBook {
+interface OpenLibraryRef {
+  key?: string;
+}
+
+/** An edition record, as `/isbn/{isbn}.json` redirects to it. */
+interface OpenLibraryEdition {
   title?: string;
-  authors?: { name?: string }[];
-  publishers?: { name?: string }[];
+  authors?: OpenLibraryRef[];
+  publishers?: string[];
   publish_date?: string;
   number_of_pages?: number;
-  cover?: { small?: string; medium?: string; large?: string };
+  /** Cover ids; `-1` marks a removed cover. */
+  covers?: number[];
+  languages?: OpenLibraryRef[];
+  description?: string | { value?: string };
+}
+
+function openLibraryCoverUrl(covers: number[] | undefined): string | undefined {
+  const id = covers?.find((cover) => cover > 0);
+  return id === undefined ? undefined : `${OPEN_LIBRARY_COVER_URL}/${id}-L.jpg`;
+}
+
+function openLibraryLanguage(languages: OpenLibraryRef[] | undefined): string | null {
+  const code = languages?.[0]?.key?.split('/').pop();
+  return code ? (MARC_TO_ISO_639_1[code] ?? null) : null;
+}
+
+function openLibraryDescription(description: OpenLibraryEdition['description']): string | null {
+  const text = typeof description === 'string' ? description : description?.value;
+  return fitText(bookFields.description, text);
+}
+
+/** The names behind keys such as `/authors/OL23919A`; a name that won't load is left out. */
+function openLibraryAuthorNames(
+  authors: OpenLibraryRef[] | undefined,
+  fetchJson: FetchJson
+): Promise<(string | undefined)[]> {
+  const keys = (authors ?? [])
+    .map((author) => author.key)
+    .filter((key): key is string => Boolean(key))
+    .slice(0, MAX_OPEN_LIBRARY_AUTHORS);
+  return Promise.all(
+    keys.map(async (key) => {
+      try {
+        return (await fetchJson<{ name?: string }>(`${OPEN_LIBRARY_URL}${key}.json`))?.name;
+      } catch {
+        return undefined;
+      }
+    })
+  );
 }
 
 const findInOpenLibrary: CatalogueProvider = async (isbn, fetchJson) => {
-  const key = `ISBN:${isbn}`;
-  const books = await fetchJson<Record<string, OpenLibraryBook>>(
-    `${OPEN_LIBRARY_BOOKS_URL}?bibkeys=${key}&format=json&jscmd=data`
-  );
-  const book = books[key];
-  const title = fitText(bookFields.title, book?.title);
-  if (!book || !title) return null;
+  const edition = await fetchJson<OpenLibraryEdition>(`${OPEN_LIBRARY_URL}/isbn/${isbn}.json`);
+  const title = fitText(bookFields.title, edition?.title);
+  if (!edition || !title) return null;
   return {
     details: {
       title,
-      author: joinNames(book.authors?.map((author) => author.name)),
-      publisher: fitText(bookFields.publisher, book.publishers?.[0]?.name),
-      publishedYear: parseYear(book.publish_date),
-      pageCount: fitInteger(bookFields.pageCount, book.number_of_pages),
-      language: null,
-      description: null,
+      author: joinNames(await openLibraryAuthorNames(edition.authors, fetchJson)),
+      publisher: fitText(bookFields.publisher, edition.publishers?.[0]),
+      publishedYear: parseYear(edition.publish_date),
+      pageCount: fitInteger(bookFields.pageCount, edition.number_of_pages),
+      language: openLibraryLanguage(edition.languages),
+      description: openLibraryDescription(edition.description),
     },
-    coverUrl: trustedCoverUrl(book.cover?.large ?? book.cover?.medium),
+    coverUrl: trustedCoverUrl(openLibraryCoverUrl(edition.covers)),
   };
 };
 
@@ -144,29 +219,35 @@ interface GoogleBooksVolumeInfo {
   imageLinks?: { smallThumbnail?: string; thumbnail?: string };
 }
 
-const findInGoogleBooks: CatalogueProvider = async (isbn, fetchJson) => {
-  const result = await fetchJson<{ items?: { volumeInfo?: GoogleBooksVolumeInfo }[] }>(
-    `${GOOGLE_BOOKS_VOLUMES_URL}?q=isbn:${isbn}`
-  );
-  const volume = result.items?.[0]?.volumeInfo;
-  const title = fitText(bookFields.title, volume?.title);
-  if (!volume || !title) return null;
-  return {
-    details: {
-      title,
-      author: joinNames(volume.authors),
-      publisher: fitText(bookFields.publisher, volume.publisher),
-      publishedYear: parseYear(volume.publishedDate),
-      pageCount: fitInteger(bookFields.pageCount, volume.pageCount),
-      language: fitText(bookFields.language, volume.language),
-      description: fitText(bookFields.description, volume.description),
-    },
-    coverUrl: trustedCoverUrl(volume.imageLinks?.thumbnail),
-  };
-};
+function googleBooksUrl(isbn: string, apiKey: string | undefined): string {
+  const url = new URL(GOOGLE_BOOKS_VOLUMES_URL);
+  url.searchParams.set('q', `isbn:${isbn}`);
+  if (apiKey) url.searchParams.set('key', apiKey);
+  return url.toString();
+}
 
-/** Asked in order; the first that knows the ISBN answers. */
-const PROVIDERS: readonly CatalogueProvider[] = [findInOpenLibrary, findInGoogleBooks];
+const findInGoogleBooks =
+  (apiKey: string | undefined): CatalogueProvider =>
+  async (isbn, fetchJson) => {
+    const result = await fetchJson<{ items?: { volumeInfo?: GoogleBooksVolumeInfo }[] }>(
+      googleBooksUrl(isbn, apiKey)
+    );
+    const volume = result?.items?.[0]?.volumeInfo;
+    const title = fitText(bookFields.title, volume?.title);
+    if (!volume || !title) return null;
+    return {
+      details: {
+        title,
+        author: joinNames(volume.authors),
+        publisher: fitText(bookFields.publisher, volume.publisher),
+        publishedYear: parseYear(volume.publishedDate),
+        pageCount: fitInteger(bookFields.pageCount, volume.pageCount),
+        language: fitText(bookFields.language, volume.language),
+        description: fitText(bookFields.description, volume.description),
+      },
+      coverUrl: trustedCoverUrl(volume.imageLinks?.thumbnail),
+    };
+  };
 
 function describeFailure(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
@@ -180,7 +261,13 @@ function describeFailure(err: unknown): string {
 export function createIsbnCatalogue({
   fetch: fetchImpl = fetch,
   now,
+  googleBooksApiKey,
 }: IsbnCatalogueOptions = {}): IsbnCatalogue {
+  /** Asked in order; the first that knows the ISBN answers. */
+  const providers: readonly CatalogueProvider[] = [
+    findInOpenLibrary,
+    findInGoogleBooks(googleBooksApiKey),
+  ];
   const cache = new TtlCache<string, CatalogueEntry | null>({
     maxEntries: CACHE_MAX_ENTRIES,
     ttlMs: CACHE_TTL_MS,
@@ -195,6 +282,8 @@ export function createIsbnCatalogue({
 
   const fetchJson: FetchJson = async <T>(url: string) => {
     const response = await request(url, 'application/json');
+    if (response.status === NOT_FOUND) return null;
+    // The hostname only: the URL may carry an API key.
     if (!response.ok) throw new Error(`${new URL(url).hostname} answered ${response.status}`);
     return (await response.json()) as T;
   };
@@ -204,7 +293,7 @@ export function createIsbnCatalogue({
     if (cached !== undefined) return cached;
 
     let failures = 0;
-    for (const provider of PROVIDERS) {
+    for (const provider of providers) {
       try {
         const entry = await provider(isbn, fetchJson);
         if (entry) {
@@ -216,7 +305,7 @@ export function createIsbnCatalogue({
         console.warn(`ISBN lookup of ${isbn} failed: ${describeFailure(err)}`);
       }
     }
-    if (failures === PROVIDERS.length) throw new CatalogueUnavailableError();
+    if (failures === providers.length) throw new CatalogueUnavailableError();
     // "Unknown" is only remembered when every catalogue actually answered.
     if (failures === 0) cache.set(isbn, null);
     return null;

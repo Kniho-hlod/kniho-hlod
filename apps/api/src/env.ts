@@ -16,6 +16,8 @@ export interface Environment {
   emailFrom: string;
   email: EmailTransportConfig;
   storage: StorageSettings;
+  /** Gives the ISBN lookup its own Google Books quota; optional, see `createIsbnCatalogue`. */
+  googleBooksApiKey?: string;
 }
 
 type Variables = NodeJS.ProcessEnv;
@@ -135,6 +137,7 @@ export function readEnvironment(variables: Variables = process.env): Environment
     emailFrom: variables.EMAIL_FROM ?? DEFAULT_EMAIL_FROM,
     email: readEmailTransport(variables),
     storage: readStorage(variables),
+    googleBooksApiKey: variables.GOOGLE_BOOKS_API_KEY || undefined,
   };
   assertProductionReady(environment, variables);
   return environment;

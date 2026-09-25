@@ -129,7 +129,10 @@ export function buildAppConfig(
   const loanDetails = createLoanDetails(models, bookCovers);
   const readerToday = createReaderToday(models, overrides.now);
   const isbnPlugin = createIsbnPlugin({
-    catalogue: createIsbnCatalogue({ fetch: overrides.fetch }),
+    catalogue: createIsbnCatalogue({
+      fetch: overrides.fetch,
+      googleBooksApiKey: environment.googleBooksApiKey,
+    }),
     jwtSecret: environment.jwtSecret,
     rateLimit: overrides.rateLimit === 'off' ? 'off' : ISBN_RATE_LIMIT,
   });
