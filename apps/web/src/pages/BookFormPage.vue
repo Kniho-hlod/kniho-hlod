@@ -116,6 +116,7 @@ function rejectLargeCover(): void {
 }
 
 const lookupIsbn = computed(() => (state.isbn ? toIsbn13(state.isbn) : null));
+const hasIsbnText = computed(() => Boolean(state.isbn?.trim()));
 const { mutateAsync: lookUp, isPending: isLookingUp } = useIsbnLookup();
 
 async function importCatalogueCover(isbn: string): Promise<void> {
@@ -128,7 +129,11 @@ async function importCatalogueCover(isbn: string): Promise<void> {
 
 async function fillFromCatalogue(): Promise<void> {
   const isbn = lookupIsbn.value;
-  if (!isbn) return;
+  // Say why nothing is looked up, instead of a button that silently stays grey.
+  if (!isbn) {
+    lookupNotice.value = { color: 'warning', text: t('books.isbnInvalid') };
+    return;
+  }
   lookupNotice.value = undefined;
   try {
     const found = await lookUp(isbn);
@@ -208,7 +213,7 @@ function cancel(): void {
               <UButton
                 icon="i-lucide-search"
                 :loading="isLookingUp"
-                :disabled="!lookupIsbn"
+                :disabled="!hasIsbnText"
                 @click="fillFromCatalogue"
               >
                 {{ t('books.isbnSearch') }}

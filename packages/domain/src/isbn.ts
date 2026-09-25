@@ -1,14 +1,23 @@
 import type { ValidationIssue } from '@eleansphere/schema';
 
-/** The longest ISBN as people type it: 13 digits and 4 hyphens. */
-export const ISBN_INPUT_MAX_LENGTH = 17;
+/**
+ * The longest ISBN as people type or paste it: 13 digits, separators, and a label such as
+ * `ISBN-13:`. It is stored as ISBN-13 either way.
+ */
+export const ISBN_INPUT_MAX_LENGTH = 32;
 
 /** `format` of the validation issue an invalid ISBN produces. */
 export const ISBN_FORMAT = 'isbn';
 
 const ISBN_10_PATTERN = /^\d{9}[\dX]$/;
 const ISBN_13_PATTERN = /^97[89]\d{10}$/;
-const SEPARATORS = /[\s-]/g;
+/** A label copied along with the number: `ISBN`, `ISBN:`, `ISBN-13:`, `isbn-10` … */
+const ISBN_LABEL = /^\s*ISBN(?:-1[03])?\s*:?/i;
+/**
+ * Spaces, dots and every dash people or websites put between the groups: the hyphen-minus, the
+ * Unicode hyphens and dashes (U+2010–U+2015) and the minus sign.
+ */
+const SEPARATORS = /[-\s.\u2010-\u2015\u2212]/g;
 
 const ISBN_10_LENGTH = 10;
 const ISBN_10_MODULUS = 11;
@@ -23,9 +32,12 @@ const ISBN_13_ODD_POSITION_WEIGHT = 3;
 /** The Bookland prefix every ISBN-10 gets when converted. */
 const ISBN_10_TO_13_PREFIX = '978';
 
-/** Separators removed and a final `x` upper-cased: `978-80-257 1234-5` → `9788025712345`. */
+/**
+ * The bare ISBN: label and separators removed, a final `x` upper-cased —
+ * `ISBN: 978–80–257 1234–5` → `9788025712345`.
+ */
 export function stripIsbn(input: string): string {
-  return input.replace(SEPARATORS, '').toUpperCase();
+  return input.replace(ISBN_LABEL, '').replace(SEPARATORS, '').toUpperCase();
 }
 
 function isbn10DigitValue(character: string): number {

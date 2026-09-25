@@ -106,7 +106,7 @@
     "isbnFilled": "We filled in the details from the catalogue. Check them and save.",
     "isbnNotFound": "The catalogues don't know this ISBN. Please fill in the book yourself.",
     "isbnUnavailable": "The book catalogues can't be reached right now. Try again later, or fill in the book yourself.",
-    "isbnInvalid": "This is not a valid ISBN.",
+    "isbnInvalid": "This is not a valid ISBN. Check it for a typo.",
     "details": "About the book",
     "cover": "Cover",
     "coverOf": "Cover of {title}",

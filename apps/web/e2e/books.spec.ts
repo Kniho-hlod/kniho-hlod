@@ -48,7 +48,13 @@ test('a reader adds a book by its ISBN, edits it and deletes it', async ({ page 
     await page.getByRole('link', { name: 'Přidat knihu' }).first().click();
     await expect(page.getByRole('heading', { name: 'Přidat knihu' })).toBeVisible();
 
-    await page.getByLabel('ISBN').fill('978-0-306-40615-7');
+    // A typo gets an explanation, not a silently disabled button.
+    await page.getByLabel('ISBN').fill('978-0-306-40615-8');
+    await page.getByRole('button', { name: 'Vyhledat' }).click();
+    await expect(page.getByText(/Tohle není platné ISBN/)).toBeVisible();
+
+    // Copied from a website: a label and en dashes instead of hyphens.
+    await page.getByLabel('ISBN').fill('ISBN: 978\u20130\u2013306\u201340615\u20137');
     await page.getByRole('button', { name: 'Vyhledat' }).click();
     await expect(page.getByLabel('Název')).toHaveValue('Hobit');
     await expect(page.getByLabel('Autor')).toHaveValue('J. R. R. Tolkien');

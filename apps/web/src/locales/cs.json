@@ -106,7 +106,7 @@
     "isbnFilled": "Údaje jsme doplnili z katalogu. Zkontrolujte je a uložte.",
     "isbnNotFound": "Knihu s tímto ISBN katalogy neznají. Vyplňte ji prosím ručně.",
     "isbnUnavailable": "Katalogy knih teď nejsou dostupné. Zkuste to později, nebo knihu vyplňte ručně.",
-    "isbnInvalid": "Tohle není platné ISBN.",
+    "isbnInvalid": "Tohle není platné ISBN. Zkontrolujte, jestli v něm není překlep.",
     "details": "Údaje o knize",
     "cover": "Obálka",
     "coverOf": "Obálka knihy {title}",

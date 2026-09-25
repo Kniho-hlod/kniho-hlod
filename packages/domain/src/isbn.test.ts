@@ -6,6 +6,20 @@ describe('ISBN', () => {
     expect(stripIsbn(' 0-8044-2957-x ')).toBe('080442957X');
   });
 
+  it('accepts what gets copied from a website: a label, dashes other than the hyphen', () => {
+    for (const copied of [
+      'ISBN 978-0-306-40615-7',
+      'ISBN: 978-0-306-40615-7',
+      'isbn-13: 978-0-306-40615-7',
+      '978\u20130\u2013306\u201340615\u20137',
+      '978\u20110\u2011306\u201140615\u20117',
+      '978.0.306.40615.7',
+    ]) {
+      expect(toIsbn13(copied), copied).toBe('9780306406157');
+    }
+    expect(toIsbn13('ISBN-10: 0-306-40615-2')).toBe('9780306406157');
+  });
+
   it('checks ISBN-10 check digits, including X for ten', () => {
     expect(isValidIsbn10('0306406152')).toBe(true);
     expect(isValidIsbn10('080442957X')).toBe(true);
