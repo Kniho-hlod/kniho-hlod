@@ -19,7 +19,7 @@ test('a reader lends a book, sees it overdue, gets it back and tidies up', async
     await page.goto('/register');
     await page.getByLabel('Jméno').fill('Lender');
     await page.getByLabel('E-mail').fill(uniqueEmail());
-    await page.getByLabel('Heslo').fill(PASSWORD);
+    await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 

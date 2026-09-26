@@ -145,8 +145,11 @@ export const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 });
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const session = useSessionStore();
+  // Where a page may go depends on who is signed in: the first navigation waits for the stored
+  // session, so a reload of a signed-in page does not bounce to sign-in. Later ones find it loaded.
+  await session.restore();
   if (to.meta.requiresAuth && !session.isSignedIn) {
     return { name: 'sign-in', query: { redirect: to.fullPath } };
   }

@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.08" fill="#4f46e5"/><g color="#ffffff" transform="translate(9.600000000000001 9.600000000000001) scale(1.8666666666666665)"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="18" x="3" y="3" rx="1"/><path d="M7 3v18m13.4-2.1c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><svg x="0" y="0" width="64" height="64" viewBox="16 14 33 33"><mask id="bookworm-face">
+    <rect x="16" y="14" width="33" height="33" fill="#fff"/>
+    <g fill="none" stroke="#000" stroke-linecap="round">
+      <path d="M33.2 26.6C33.8 29 37.4 29 38 26.5" stroke-width="1.5"/>
+      <path d="M21.6 32.8C24.6 36.3 28 39 31.5 39.2S35.6 38.9 37.2 38" stroke-width="1.2"/>
+    </g>
+    <circle cx="32.1" cy="22.8" r="1.5"/>
+    <circle cx="38.7" cy="22.8" r="1.5"/>
+  </mask>
+  <path mask="url(#bookworm-face)" fill="#9ac06e" d="M34.2 15.2C39 15.2 42.9 19 42.9 23.5C42.9 27 41 29.5 38.2 31.8C36.6 33.4 35.3 35.3 35.2 37.5C35 38.5 34.5 39.5 34.3 40.5C33.8 42.8 30.2 45.8 27.3 45.8C24.3 45.8 21 43.5 21 40L21 37.5C21 36.2 21.5 35.2 22.3 34.6L24.3 33.5C24.8 32.2 26.3 30.5 26.3 28.5L26.3 22C26.3 18 29.8 15.2 34.2 15.2Z"/></svg></svg>

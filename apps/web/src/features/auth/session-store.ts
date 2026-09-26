@@ -2,7 +2,12 @@ import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { ApiError } from '@eleansphere/entity-core';
 import type { LoginResponse } from '@eleansphere/entity-core';
-import { ADMIN_ROLE, type ProfileChanges, type RegisterRequest, type User } from '@kniho-hlod/domain';
+import {
+  ADMIN_ROLE,
+  type ProfileChanges,
+  type RegisterRequest,
+  type User,
+} from '@kniho-hlod/domain';
 import { services, session, sessionStorage } from '@/app/api';
 import { setLocale } from '@/app/i18n';
 
@@ -30,8 +35,20 @@ export const useSessionStore = defineStore('session', () => {
     user.value = null;
   }
 
-  /** Loads the signed-in user on startup; a rejected session simply means "not signed in". */
-  async function restore(): Promise<void> {
+  let restoration: Promise<void> | null = null;
+
+  /**
+   * Loads the signed-in user on startup, once; every later call waits for that same load. It never
+   * fails: when the server cannot say who is signed in, the error is reported and the app starts
+   * signed out.
+   */
+  function restore(): Promise<void> {
+    restoration ??= loadStoredUser().catch(reportError);
+    return restoration;
+  }
+
+  /** A rejected session simply means "not signed in". */
+  async function loadStoredUser(): Promise<void> {
     if (!session.isSignedIn) return;
     isRestoring.value = true;
     try {

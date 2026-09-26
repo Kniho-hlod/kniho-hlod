@@ -34,7 +34,7 @@ async function requestReset(): Promise<void> {
 </script>
 
 <template>
-  <UCard>
+  <UCard class="ring-0 shadow-pop">
     <template #header>
       <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.forgotPasswordTitle') }}</h1>
       <p class="text-sm text-muted">{{ t('auth.forgotPasswordHint') }}</p>

@@ -81,4 +81,5 @@ export const uiTheme: UiTheme = {
   drawer: { slots: { content: 'ring-2 ring-line', title: 'font-display text-lg font-bold' } },
   modal: { slots: { title: 'font-display text-lg font-bold' } },
   popover: { slots: { content: `${POP} rounded-xl` } },
+  toast: { slots: { root: `${POP} rounded-xl`, title: 'font-semibold' } },
 };

@@ -2,8 +2,8 @@
 import { useI18n } from 'vue-i18n';
 import AppLogo from '@/components/AppLogo.vue';
 import AppearanceMenu from '@/components/AppearanceMenu.vue';
-import BookSpines from '@/components/BookSpines.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
+import splashImageUrl from '@/assets/splash.webp';
 
 const { t } = useI18n();
 </script>
@@ -28,7 +28,13 @@ const { t } = useI18n();
             {{ t('app.heroTitle') }}
           </p>
           <p class="text-toned lg:max-w-md lg:text-lg">{{ t('app.tagline') }}</p>
-          <BookSpines class="h-24 w-64 lg:mt-4 lg:h-52 lg:w-md" />
+          <!-- The splash screen's picture, stuck on like a photo: on a phone, a strip with the
+               bookworm's head above the headline; beside the form, the whole picture. -->
+          <div
+            aria-hidden="true"
+            class="order-first h-36 w-full rounded-xl bg-ink-900 bg-[length:170%_auto] bg-[position:56%_34%] shadow-pop lg:order-none lg:mt-4 lg:aspect-[7/4] lg:h-auto lg:max-w-lg lg:-rotate-2 lg:bg-cover lg:bg-center"
+            :style="{ backgroundImage: `url(${splashImageUrl})` }"
+          />
         </section>
 
         <div class="flex flex-col gap-4">

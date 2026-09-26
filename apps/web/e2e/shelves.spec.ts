@@ -18,7 +18,7 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await page.goto('/register');
     await page.getByLabel('Jméno').fill('Shelver');
     await page.getByLabel('E-mail').fill(uniqueEmail());
-    await page.getByLabel('Heslo').fill(PASSWORD);
+    await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
@@ -31,14 +31,14 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await page.getByRole('option', { name: 'Čtu' }).click();
     await expect(page.getByLabel('Začátek čtení')).toHaveValue(TODAY);
 
-    await page.getByLabel('Police').click();
+    await page.getByLabel('Poličky').click();
     await page.getByPlaceholder('Hledat nebo napsat novou').fill(SHELF);
-    await page.getByRole('option', { name: `Nová police: ${SHELF}` }).click();
+    await page.getByRole('option', { name: `Nová polička: ${SHELF}` }).click();
     await expect(page.getByRole('option', { name: SHELF, exact: true })).toBeVisible();
     await page.keyboard.press('Escape');
     // Typed while the menu is still closing, text would go to the menu instead of the next field.
     await expect(page.getByRole('listbox')).toBeHidden();
-    await expect(page.getByLabel('Police')).toHaveText(SHELF);
+    await expect(page.getByLabel('Poličky')).toHaveText(SHELF);
 
     await page.getByLabel('Poznámky').fill('Skvělý humor.');
     await page.getByRole('button', { name: 'Uložit' }).click();
@@ -64,7 +64,7 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await page.getByRole('link', { name: 'Knihy', exact: true }).first().click();
     await expect(page.getByRole('link', { name: new RegExp(OTHER_TITLE) })).toBeVisible();
     await page
-      .getByRole('navigation', { name: 'Police' })
+      .getByRole('navigation', { name: 'Poličky' })
       .getByRole('link', { name: SHELF })
       .click();
     await expect(page.getByRole('link', { name: new RegExp(SHELVED_TITLE) })).toBeVisible();
@@ -72,8 +72,8 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
   });
 
   await test.step('rename the shelf, then delete it', async () => {
-    await page.getByRole('link', { name: 'Upravit police' }).click();
-    await expect(page.getByRole('heading', { name: 'Police' })).toBeVisible();
+    await page.getByRole('link', { name: 'Upravit poličky' }).click();
+    await expect(page.getByRole('heading', { name: 'Poličky' })).toBeVisible();
     await expect(page.getByText('1 kniha')).toBeVisible();
 
     await page.getByRole('button', { name: `Upravit „${SHELF}“` }).click();
@@ -83,6 +83,6 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
 
     await page.getByRole('button', { name: `Smazat „${RENAMED_SHELF}“` }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Smazat', exact: true }).click();
-    await expect(page.getByText('Zatím nemáte žádnou polici.')).toBeVisible();
+    await expect(page.getByText('Zatím nemáte žádnou poličku.')).toBeVisible();
   });
 });

@@ -42,7 +42,7 @@ async function register(page: Page, name: string): Promise<void> {
   await page.goto('/register');
   await page.getByLabel('Jméno').fill(name);
   await page.getByLabel('E-mail').fill(uniqueEmail());
-  await page.getByLabel('Heslo').fill(PASSWORD);
+  await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Založit účet' }).click();
   await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 }

@@ -1,0 +1,13 @@
+<!-- The app's mark: the bookworm from the first Kniho-hlod's favicon, redrawn as a vector. Favicon and icons: `pnpm icons`. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16 14 33 33">
+  <mask id="bookworm-face">
+    <rect x="16" y="14" width="33" height="33" fill="#fff"/>
+    <g fill="none" stroke="#000" stroke-linecap="round">
+      <path d="M33.2 26.6C33.8 29 37.4 29 38 26.5" stroke-width="1.5"/>
+      <path d="M21.6 32.8C24.6 36.3 28 39 31.5 39.2S35.6 38.9 37.2 38" stroke-width="1.2"/>
+    </g>
+    <circle cx="32.1" cy="22.8" r="1.5"/>
+    <circle cx="38.7" cy="22.8" r="1.5"/>
+  </mask>
+  <path mask="url(#bookworm-face)" fill="#9ac06e" d="M34.2 15.2C39 15.2 42.9 19 42.9 23.5C42.9 27 41 29.5 38.2 31.8C36.6 33.4 35.3 35.3 35.2 37.5C35 38.5 34.5 39.5 34.3 40.5C33.8 42.8 30.2 45.8 27.3 45.8C24.3 45.8 21 43.5 21 40L21 37.5C21 36.2 21.5 35.2 22.3 34.6L24.3 33.5C24.8 32.2 26.3 30.5 26.3 28.5L26.3 22C26.3 18 29.8 15.2 34.2 15.2Z"/>
+</svg>

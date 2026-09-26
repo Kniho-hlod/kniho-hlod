@@ -56,7 +56,9 @@
     "emailTaken": "An account with this email already exists.",
     "tooManyAttempts": "Too many attempts. Please try again shortly.",
     "sessionExpired": "Your session expired, please sign in again.",
-    "send": "Send"
+    "send": "Send",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "account": {
     "title": "Account",
@@ -414,5 +416,20 @@
     "delete": "Delete announcement",
     "deleteConfirm": "Delete the announcement “{title}”?",
     "deleted": "The announcement is deleted."
+  },
+  "splash": {
+    "loading": "Kniho-hlod is loading…",
+    "lines": [
+      "Nibbling through your books…",
+      "Chasing down stubborn titles…",
+      "Burrowing into your loans…",
+      "Dusting the shelves…",
+      "Counting who owes me what…",
+      "Sorting spines by colour…",
+      "One more chapter, I promise…",
+      "Looking for my bookmark…",
+      "Ironing out the dog-ears…",
+      "Reminding the neighbour they still have that book…"
+    ]
   }
 }

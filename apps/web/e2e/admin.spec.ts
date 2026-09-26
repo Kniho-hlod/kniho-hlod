@@ -21,7 +21,7 @@ function promoteToAdmin(email: string): void {
 async function signIn(page: Page, email: string): Promise<void> {
   await page.goto('/login');
   await page.getByLabel('E-mail').fill(email);
-  await page.getByLabel('Heslo').fill(PASSWORD);
+  await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Přihlásit se' }).click();
   await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 }

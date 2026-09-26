@@ -56,7 +56,9 @@
     "emailTaken": "Účet s tímto e-mailem už existuje.",
     "tooManyAttempts": "Příliš mnoho pokusů. Zkuste to za chvíli.",
     "sessionExpired": "Přihlášení vypršelo, přihlaste se prosím znovu.",
-    "send": "Odeslat"
+    "send": "Odeslat",
+    "showPassword": "Zobrazit heslo",
+    "hidePassword": "Skrýt heslo"
   },
   "account": {
     "title": "Účet",
@@ -164,7 +166,7 @@
     },
     "reading": "Čtení",
     "notesPlaceholder": "Co se vám líbilo, citát, komu knihu doporučit…",
-    "savedWithoutShelves": "Kniha je uložená, ale police se nepodařilo změnit.",
+    "savedWithoutShelves": "Kniha je uložená, ale poličky se nepodařilo změnit.",
     "duplicate": "Tuhle knihu už v knihovně máte: „{title}“.",
     "openDuplicate": "Otevřít",
     "readFromTo": "Čteno {from} – {to}",
@@ -284,30 +286,30 @@
     }
   },
   "shelves": {
-    "title": "Police",
-    "hint": "Seskupte si knihy podle sebe — oblíbené, na rozdání, dětský pokoj. Kniha může být na více policích.",
+    "title": "Poličky",
+    "hint": "Seskupte si knihy podle sebe — oblíbené, na rozdání, dětský pokoj. Kniha může být na více poličkách.",
     "allBooks": "Všechny knihy",
-    "manage": "Upravit police",
-    "createFirst": "Vytvořit police",
+    "manage": "Upravit poličky",
+    "createFirst": "Vytvořit poličky",
     "add": "Přidat",
     "namePlaceholder": "Například Oblíbené",
-    "created": "Police „{name}“ je vytvořená.",
-    "saved": "Police je uložená.",
-    "deleted": "Police je smazaná.",
-    "empty": "Zatím nemáte žádnou polici.",
-    "emptyShelf": "Na téhle polici zatím nic není. Knihu na polici dáte v jejím formuláři.",
+    "created": "Polička „{name}“ je vytvořená.",
+    "saved": "Polička je uložená.",
+    "deleted": "Polička je smazaná.",
+    "empty": "Zatím nemáte žádnou poličku.",
+    "emptyShelf": "Na téhle poličce zatím nic není. Knihu na poličku dáte v jejím formuláři.",
     "bookCount": "žádná kniha | {count} kniha | {count} knihy | {count} knih",
     "moveUp": "Posunout „{name}“ nahoru",
     "moveDown": "Posunout „{name}“ dolů",
     "edit": "Upravit „{name}“",
-    "editTitle": "Upravit polici",
+    "editTitle": "Upravit poličku",
     "delete": "Smazat „{name}“",
-    "deleteTitle": "Smazat polici",
-    "deleteConfirm": "Smazat polici „{name}“? Knihy v knihovně zůstanou, jen z police zmizí.",
-    "pick": "Vyberte police",
-    "pickHint": "Novou polici stačí napsat.",
+    "deleteTitle": "Smazat poličku",
+    "deleteConfirm": "Smazat poličku „{name}“? Knihy v knihovně zůstanou, jen z poličky zmizí.",
+    "pick": "Vyberte poličky",
+    "pickHint": "Novou poličku stačí napsat.",
     "searchOrCreate": "Hledat nebo napsat novou",
-    "create": "Nová police: {name}",
+    "create": "Nová polička: {name}",
     "fields": {
       "name": "Název",
       "color": "Barva"
@@ -414,5 +416,20 @@
     "delete": "Smazat oznámení",
     "deleteConfirm": "Smazat oznámení „{title}“?",
     "deleted": "Oznámení je smazané."
+  },
+  "splash": {
+    "loading": "Kniho-hlod se načítá…",
+    "lines": [
+      "Hlodám vaše knížky…",
+      "Naháním nepoddajné tituly…",
+      "Vrtám se ve výpůjčkách…",
+      "Oprašuji poličky…",
+      "Počítám, kdo mi co dluží…",
+      "Rovnám hřbety podle barev…",
+      "Ještě jednu kapitolu, slibuju…",
+      "Hledám, kam jsem dal záložku…",
+      "Žehlím oslí uši…",
+      "Připomínám sousedovi, že má pořád tu knihu…"
+    ]
   }
 }

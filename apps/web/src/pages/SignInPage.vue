@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { toStandardSchema } from '@eleansphere/entity-core';
 import type { Fields } from '@eleansphere/entity-core';
 import { VALIDATE_ON, translateIssue } from '@/app/validation';
 import { describeError } from '@/app/errors';
+import PasswordInput from '@/components/PasswordInput.vue';
+import PeekingBookworm, { type BookwormMood } from '@/features/auth/PeekingBookworm.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 
 /** Sign-in only checks that something plausible was typed; the server decides the rest. */
@@ -23,6 +25,12 @@ const schema = toStandardSchema(credentialFields, 'create', { formatMessage: tra
 const state = reactive({ email: '', password: '' });
 const errorMessage = ref('');
 const isSubmitting = ref(false);
+const isTypingPassword = ref(false);
+
+const bookwormMood = computed<BookwormMood>(() => {
+  if (isTypingPassword.value) return 'shy';
+  return errorMessage.value ? 'sad' : 'watching';
+});
 
 async function signIn(): Promise<void> {
   errorMessage.value = '';
@@ -40,44 +48,59 @@ async function signIn(): Promise<void> {
 </script>
 
 <template>
-  <UCard>
-    <template #header>
-      <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.signInTitle') }}</h1>
-    </template>
+  <!-- Room above the card for the bookworm's head; the card hides the rest of it. -->
+  <div class="relative mt-12">
+    <PeekingBookworm
+      :mood="bookwormMood"
+      class="pointer-events-none absolute -top-12 right-8 size-24"
+    />
+    <UCard class="relative ring-0 shadow-pop">
+      <template #header>
+        <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.signInTitle') }}</h1>
+      </template>
 
-    <UForm
-      :schema="schema"
-      :state="state"
-      :validate-on="VALIDATE_ON"
-      class="flex flex-col gap-4"
-      @submit="signIn"
-    >
-      <UAlert v-if="errorMessage" color="error" variant="subtle" :description="errorMessage" />
+      <UForm
+        :schema="schema"
+        :state="state"
+        :validate-on="VALIDATE_ON"
+        class="flex flex-col gap-4"
+        @submit="signIn"
+      >
+        <UAlert v-if="errorMessage" color="error" variant="subtle" :description="errorMessage" />
 
-      <UFormField :label="t('auth.email')" name="email" required>
-        <UInput v-model="state.email" type="email" autocomplete="email" autofocus class="w-full" />
-      </UFormField>
+        <UFormField :label="t('auth.email')" name="email" required>
+          <UInput
+            v-model="state.email"
+            type="email"
+            autocomplete="email"
+            autofocus
+            class="w-full"
+          />
+        </UFormField>
 
-      <UFormField :label="t('auth.password')" name="password" required>
-        <UInput
-          v-model="state.password"
-          type="password"
-          autocomplete="current-password"
-          class="w-full"
-        />
-      </UFormField>
+        <UFormField :label="t('auth.password')" name="password" required>
+          <template #hint>
+            <ULink :to="{ name: 'forgot-password' }">{{ t('auth.forgotPassword') }}</ULink>
+          </template>
+          <PasswordInput
+            v-model="state.password"
+            autocomplete="current-password"
+            @focus="isTypingPassword = true"
+            @blur="isTypingPassword = false"
+          />
+        </UFormField>
 
-      <UButton type="submit" :loading="isSubmitting" block>{{ t('auth.signIn') }}</UButton>
-    </UForm>
+        <UButton type="submit" :loading="isSubmitting" block>{{ t('auth.signIn') }}</UButton>
+      </UForm>
 
-    <template #footer>
-      <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
-        <ULink :to="{ name: 'forgot-password' }">{{ t('auth.forgotPassword') }}</ULink>
-        <span class="text-muted">
-          {{ t('auth.noAccount') }}
-          <ULink :to="{ name: 'sign-up' }">{{ t('auth.signUp') }}</ULink>
-        </span>
-      </div>
-    </template>
-  </UCard>
+      <template #footer>
+        <div class="flex flex-col gap-2">
+          <p class="text-center text-sm text-muted">{{ t('auth.noAccount') }}</p>
+          <UButton :to="{ name: 'sign-up' }" color="neutral" variant="outline" block>
+            {{ t('auth.signUp') }}
+          </UButton>
+        </div>
+      </template>
+    </UCard>
+  </div>
 </template>

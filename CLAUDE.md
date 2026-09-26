@@ -124,8 +124,11 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   container. Everything else imports `services` from here. Show uploaded files through
   `fileUrl(file)`: without a CDN the API answers with its own `/api/files/:id` path, which lives
   on the API's origin, not the app's.
-- `main.ts` installs the router only after the stored session is restored — the router navigates
-  the moment it is installed, and its guard must already know who is signed in.
+- Startup: `main.ts` mounts at once and `App.vue` shows `SplashScreen` (the bookworm picture,
+  `src/assets/splash.webp`, preloaded and precached, with jokes from `splash.lines`). The router
+  guard awaits `session.restore()` — loaded once, never rejecting — so a reload of a signed-in
+  page doesn't bounce to sign-in; `useStartup` lifts the splash once the first page is ready and
+  `MIN_SPLASH_MS` has passed. E2E clicks wait for it on every `page.goto`.
 - Books live in `src/features/books/` (vue-query composables in `api.ts`, form state in
   `book-form.ts`); covers are scaled to WebP in the browser (`src/shared/resize-image.ts`).
   An ISBN lookup asks knihovny.cz and the API at once (`isbn-lookup.ts`): for Czech and Slovak
@@ -146,8 +149,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   The e2e test films a generated barcode through Chromium's fake camera (`e2e/barcode-video.ts`).
 - PWA: `UpdatePrompt` registers the service worker and offers a reload once a new version waits;
   `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)
-  and tells iOS readers to use the Share menu. The web's `icons` script draws the icons into
-  `public/`. Czech plurals use `czechPluralForm` (`žádná | 1 | 2–4 | 5+`).
+  and tells iOS readers to use the Share menu. The app's mark is the bookworm from the first
+  Kniho-hlod's favicon, redrawn in `src/assets/bookworm.svg`: `AppLogo` shows it, and the web's
+  `icons` script draws the favicon and the PWA icons from it into `public/`. Czech plurals use
+  `czechPluralForm` (`žádná | 1 | 2–4 | 5+`); shelves are „poličky“ in Czech.
 - Administration under `/admin` (`meta.requiresRole: 'admin'`, a nav item only administrators
   see): the overview with `GET /api/admin/stats`, accounts (`src/features/admin/`) and
   announcements (`src/features/announcements/`: the form edits times as `datetime-local` in the
@@ -167,7 +172,14 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   is ("za 3 dny", "5 dní po termínu") through `loanDue` and `LoanDueChip`.
 - Shared pieces in `src/components/`: `EmptyState` (`page` or `section` size), `FormActions` (a
   form's save bar, stuck above the phone's tab bar), `NavLink` (`data-active` for Tailwind),
-  `AccountMenu` (theme, language and signing out live under the avatar — e2e signs out there).
+  `AccountMenu` (theme, language and signing out live under the avatar — e2e signs out there),
+  `PasswordInput` (an eye button shows the password — so e2e finds the field with
+  `getByLabel('Heslo', { exact: true })`).
+- Guest pages: `GuestLayout` shows the splash picture beside the form (a strip above it on a
+  phone); the sign-in card has `PeekingBookworm` on its top edge, whose `mood` watches the form,
+  shuts its eyes while the password field has focus and sulks after a failed sign-in.
+- Toasts (`TOASTER` in `App.vue`) appear at the top and go after 2 s; one that needs an answer
+  sets `duration: 0` (`UpdatePrompt`).
   Destructive actions wait behind a "…" menu (`common.moreActions`), not beside Edit.
 - `pnpm --filter @kniho-hlod/web seed:demo` registers a demo account on the local API with
   books, covers, shelves, contacts and loans in every state, for checking how things look.
@@ -215,5 +227,5 @@ pnpm --filter @kniho-hlod/api job loan-reminders
 Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
 (contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
-visual redesign) are in place. The plan
+visual redesign, the splash screen and the bookworm mark) are in place. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

@@ -8,6 +8,7 @@ import { pickFields } from '@/app/fields';
 import { VALIDATE_ON, formSchema } from '@/app/validation';
 import { describeError } from '@/app/errors';
 import { services } from '@/app/api';
+import PasswordInput from '@/components/PasswordInput.vue';
 
 const BAD_REQUEST = 400;
 
@@ -37,7 +38,7 @@ async function resetPassword(): Promise<void> {
 </script>
 
 <template>
-  <UCard>
+  <UCard class="ring-0 shadow-pop">
     <template #header>
       <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.resetPasswordTitle') }}</h1>
     </template>
@@ -68,13 +69,7 @@ async function resetPassword(): Promise<void> {
       <UAlert v-if="errorMessage" color="error" variant="subtle" :description="errorMessage" />
 
       <UFormField :label="t('auth.newPassword')" name="password" required>
-        <UInput
-          v-model="state.password"
-          type="password"
-          autocomplete="new-password"
-          autofocus
-          class="w-full"
-        />
+        <PasswordInput v-model="state.password" autocomplete="new-password" autofocus />
       </UFormField>
 
       <UButton type="submit" :loading="isSubmitting" block>{{ t('common.save') }}</UButton>

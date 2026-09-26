@@ -23,8 +23,12 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'prompt',
-      // The API is never cached: reads must reflect what the server has.
-      workbox: { navigateFallbackDenylist: [/^\/api\//] },
+      workbox: {
+        // The splash screen's picture is precached too, so it is there the moment the app opens.
+        globPatterns: ['**/*.{js,wasm,css,html,webp}'],
+        // The API is never cached: reads must reflect what the server has.
+        navigateFallbackDenylist: [/^\/api\//],
+      },
       // The icons come from `pnpm icons` (scripts/generate-icons.mjs).
       manifest: {
         id: '/',

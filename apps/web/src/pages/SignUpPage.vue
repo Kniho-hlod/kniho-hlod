@@ -6,6 +6,7 @@ import { userFields } from '@kniho-hlod/domain';
 import { pickFields } from '@/app/fields';
 import { VALIDATE_ON, formSchema } from '@/app/validation';
 import { describeError } from '@/app/errors';
+import PasswordInput from '@/components/PasswordInput.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 
 const { t, locale } = useI18n();
@@ -32,7 +33,7 @@ async function signUp(): Promise<void> {
 </script>
 
 <template>
-  <UCard>
+  <UCard class="ring-0 shadow-pop">
     <template #header>
       <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.signUpTitle') }}</h1>
     </template>
@@ -55,22 +56,19 @@ async function signUp(): Promise<void> {
       </UFormField>
 
       <UFormField :label="t('auth.password')" name="password" required>
-        <UInput
-          v-model="state.password"
-          type="password"
-          autocomplete="new-password"
-          class="w-full"
-        />
+        <PasswordInput v-model="state.password" autocomplete="new-password" />
       </UFormField>
 
       <UButton type="submit" :loading="isSubmitting" block>{{ t('auth.signUp') }}</UButton>
     </UForm>
 
     <template #footer>
-      <p class="text-sm text-muted">
-        {{ t('auth.haveAccount') }}
-        <ULink :to="{ name: 'sign-in' }">{{ t('auth.signIn') }}</ULink>
-      </p>
+      <div class="flex flex-col gap-2">
+        <p class="text-center text-sm text-muted">{{ t('auth.haveAccount') }}</p>
+        <UButton :to="{ name: 'sign-in' }" color="neutral" variant="outline" block>
+          {{ t('auth.signIn') }}
+        </UButton>
+      </div>
     </template>
   </UCard>
 </template>

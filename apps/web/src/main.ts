@@ -47,10 +47,7 @@ onSessionExpired(() => {
   void router.push({ name: 'sign-in' });
 });
 
-// The router starts its first navigation the moment it is installed, and its guard asks who is
-// signed in. So it is installed — and the app mounted — only once the stored session has been
-// restored: a reload of a signed-in page must not bounce to sign-in.
-void session.restore().finally(() => {
-  app.use(router);
-  app.mount('#app');
-});
+// The app shows its splash screen straight away; the router's first navigation waits for the
+// stored session (see its guard), and the splash screen for that first page.
+app.use(router);
+app.mount('#app');

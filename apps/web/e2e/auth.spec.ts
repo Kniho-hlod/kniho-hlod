@@ -16,7 +16,7 @@ test('a reader registers, signs out, resets their password and signs back in', a
     await page.goto('/register');
     await page.getByLabel('Jméno').fill('E2E Reader');
     await page.getByLabel('E-mail').fill(email);
-    await page.getByLabel('Heslo').fill(PASSWORD);
+    await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
     await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
   });
@@ -44,7 +44,7 @@ test('a reader registers, signs out, resets their password and signs back in', a
   await test.step('set a new password from the emailed link', async () => {
     const resetLink = findLink(await waitForEmail(email));
     await page.goto(resetLink);
-    await page.getByLabel('Nové heslo').fill(NEW_PASSWORD);
+    await page.getByLabel('Nové heslo', { exact: true }).fill(NEW_PASSWORD);
     await page.getByRole('button', { name: 'Uložit' }).click();
     await expect(page.getByText('Heslo je změněné, můžete se přihlásit.')).toBeVisible();
   });
@@ -52,11 +52,11 @@ test('a reader registers, signs out, resets their password and signs back in', a
   await test.step('the old password no longer works, the new one does', async () => {
     await page.goto('/login');
     await page.getByLabel('E-mail').fill(email);
-    await page.getByLabel('Heslo').fill(PASSWORD);
+    await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Přihlásit se' }).click();
     await expect(page.getByText('Nesprávný e-mail nebo heslo.')).toBeVisible();
 
-    await page.getByLabel('Heslo').fill(NEW_PASSWORD);
+    await page.getByLabel('Heslo', { exact: true }).fill(NEW_PASSWORD);
     await page.getByRole('button', { name: 'Přihlásit se' }).click();
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
