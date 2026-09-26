@@ -40,7 +40,7 @@ useOnVisible(listEnd, loadMore);
     </UButton>
 
     <header class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-2xl font-semibold text-highlighted">{{ t('contacts.title') }}</h1>
+      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('contacts.title') }}</h1>
       <UButton :to="{ name: 'contact-new' }" icon="i-lucide-user-plus">
         {{ t('contacts.add') }}
       </UButton>

@@ -31,7 +31,7 @@ async function deleteAccount(): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h2 class="font-semibold text-error">{{ t('account.dangerZone') }}</h2>
+      <h2 class="text-lg font-bold text-error">{{ t('account.dangerZone') }}</h2>
     </template>
 
     <p class="text-sm text-muted">{{ t('account.deleteAccountHint') }}</p>

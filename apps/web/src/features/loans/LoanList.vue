@@ -2,6 +2,7 @@
 import { computed, ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { describeError } from '@/app/errors';
+import EmptyState from '@/components/EmptyState.vue';
 import { useOnVisible } from '@/shared/use-on-visible';
 import { useLoanList } from './api';
 import type { LoanListFilters } from './api';
@@ -40,7 +41,12 @@ useOnVisible(listEnd, loadMore);
     </li>
   </ul>
 
-  <p v-else-if="loans.length === 0" class="text-muted">{{ emptyText }}</p>
+  <EmptyState
+    v-else-if="loans.length === 0"
+    icon="i-lucide-hand-helping"
+    :title="emptyText"
+    size="section"
+  />
 
   <div v-else class="flex flex-col gap-3">
     <ul class="flex flex-col gap-3">

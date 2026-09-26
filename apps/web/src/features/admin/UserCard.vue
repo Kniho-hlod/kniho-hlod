@@ -5,6 +5,7 @@ import type { DropdownMenuItem } from '@nuxt/ui';
 import { ADMIN_ROLE, DEFAULT_USER_ROLE } from '@kniho-hlod/domain';
 import type { UserOverview, UserRole } from '@kniho-hlod/domain';
 import { formatDay } from '@/app/dates';
+import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 
 const props = defineProps<{ user: UserOverview }>();
@@ -39,11 +40,11 @@ const actions = computed<DropdownMenuItem[]>(() => [
 </script>
 
 <template>
-  <div class="flex items-center gap-3 rounded-md p-3 ring ring-default">
-    <UAvatar :alt="user.displayName" size="md" />
+  <div class="flex items-center gap-3 rounded-xl bg-default p-3 ring-2 ring-line">
+    <PersonAvatar :name="user.displayName" size="md" />
     <div class="flex min-w-0 flex-1 flex-col">
       <p class="flex items-center gap-2">
-        <span class="truncate font-medium text-highlighted">{{ user.displayName }}</span>
+        <span class="truncate font-display font-bold text-highlighted">{{ user.displayName }}</span>
         <UBadge v-if="isAdmin" color="primary" variant="subtle" size="sm">
           {{ t('admin.users.admin') }}
         </UBadge>

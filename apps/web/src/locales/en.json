@@ -4,7 +4,8 @@
     "tagline": "Your library, and who has borrowed what.",
     "updateReady": "A new version of Kniho-hlod is ready.",
     "updateHint": "It loads once you reload the page.",
-    "reload": "Reload"
+    "reload": "Reload",
+    "heroTitle": "Know who has your book?"
   },
   "nav": {
     "home": "Overview",
@@ -12,7 +13,9 @@
     "loans": "Loans",
     "account": "Account",
     "admin": "Admin",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "main": "Main navigation",
+    "accountMenu": "Account and settings"
   },
   "common": {
     "save": "Save",
@@ -26,7 +29,9 @@
     "somethingWentWrong": "Something went wrong. Please try again.",
     "edit": "Edit",
     "loadMore": "Load more",
-    "conflict": "This clashed with another change. Reload the page and try again."
+    "conflict": "This clashed with another change. Reload the page and try again.",
+    "moreActions": "More actions",
+    "pageNotFound": "This page is missing from the shelf. Maybe someone borrowed it."
   },
   "auth": {
     "email": "Email",
@@ -71,7 +76,7 @@
     "remindersHint": "We'll e-mail you when a lent book is nearly due back, then once a week while it's overdue."
   },
   "home": {
-    "welcome": "Welcome, {name}!",
+    "welcome": "Hi, {name}!",
     "empty": "Your library is empty so far. Add your first book — its ISBN is enough.",
     "stats": {
       "books": "Books",
@@ -82,7 +87,9 @@
     "dueBack": "Due back",
     "nothingDue": "Nothing is overdue and nothing is due back in the next few days.",
     "allLoans": "All loans",
-    "readingNow": "Reading now"
+    "readingNow": "Reading now",
+    "welcomeHint": "Here's what's going on in your library.",
+    "emptyTitle": "Start with your first book"
   },
   "books": {
     "title": "Books",
@@ -170,6 +177,11 @@
     "readingStatusChanged": {
       "reading": "Happy reading!",
       "read": "Finished. Remember to rate it."
+    },
+    "filters": {
+      "title": "Filters",
+      "done": "Done",
+      "clear": "Clear filters"
     }
   },
   "validation": {
@@ -240,7 +252,12 @@
     "searchContacts": "Search or type a name",
     "newContact": "New contact: {name}",
     "contactHint": "Just type a new name — the contact is created with the loan.",
-    "noHistory": "No returned loans yet."
+    "noHistory": "No returned loans yet.",
+    "due": {
+      "in": "Due today | Due tomorrow | Due in {count} days",
+      "overdue": "Overdue | {count} day overdue | {count} days overdue",
+      "none": "No due date"
+    }
   },
   "contacts": {
     "title": "Contacts",

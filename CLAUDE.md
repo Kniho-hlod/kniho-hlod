@@ -154,6 +154,23 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   device's zone and sends ISO; `SEVERITY_STYLES` is shared with the banner). A role change shows
   in the other account's app after its next sign-in. The admin e2e test makes its administrator
   with `seed:admin`, as production does.
+- The look ("playful and bold": indigo and orange on warm paper, ink outlines, stuck-on shadows)
+  lives in two places: `ui.config.ts` themes Nuxt UI's components (colours, 2px rings on cards
+  and fields, solid buttons that press flat) and `src/assets/main.css` holds the tokens — the
+  `ink` neutral palette, `paper` and `line` colours, `shadow-pop`/`shadow-pop-sm`, `bg-dots`.
+  Headings use Bricolage Grotesque (`font-display`), text Inter; both are bundled through
+  `@fontsource-variable`, no font CDN. Colours picked at runtime come from maps of literal class
+  strings (`TILE_COLORS`, `STATUS_STYLES`, `CHIP_STYLES`, `COVER_PALETTES`), never built names.
+- A book without an image gets a drawn cover (`features/books/generated-cover.ts`,
+  `GeneratedCover.vue`): colours and a motif picked from a hash of the title, so it stays the
+  same; `PersonAvatar` gives people the same palette by name. Loans say how far off the due date
+  is ("za 3 dny", "5 dní po termínu") through `loanDue` and `LoanDueChip`.
+- Shared pieces in `src/components/`: `EmptyState` (`page` or `section` size), `FormActions` (a
+  form's save bar, stuck above the phone's tab bar), `NavLink` (`data-active` for Tailwind),
+  `AccountMenu` (theme, language and signing out live under the avatar — e2e signs out there).
+  Destructive actions wait behind a "…" menu (`common.moreActions`), not beside Edit.
+- `pnpm --filter @kniho-hlod/web seed:demo` registers a demo account on the local API with
+  books, covers, shelves, contacts and loans in every state, for checking how things look.
 - `describeError(err, { conflict })` — a 409 means something different per action (e-mail taken,
   book lent out, …), so the caller names it. The query cache is cleared whenever the signed-in user
   changes (`main.ts`).
@@ -197,5 +214,6 @@ pnpm --filter @kniho-hlod/api job loan-reminders
 
 Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
 (contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
-installable PWA) and phase 5 (loan reminders, administration, migrations) are in place. The plan
+installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
+visual redesign) are in place. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

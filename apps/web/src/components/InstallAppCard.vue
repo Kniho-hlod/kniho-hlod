@@ -10,10 +10,14 @@ const { option, install } = useInstallPrompt();
 <template>
   <UCard v-if="option !== 'none'">
     <div class="flex items-start gap-3">
-      <UIcon name="i-lucide-smartphone" class="mt-0.5 size-6 shrink-0 text-primary" />
+      <span
+        class="grid size-10 shrink-0 place-items-center rounded-lg bg-yellow-300 text-ink-900 -rotate-6"
+      >
+        <UIcon name="i-lucide-smartphone" class="size-5" />
+      </span>
       <div class="flex min-w-0 flex-1 flex-col gap-3">
         <div class="flex flex-col gap-1">
-          <h2 class="font-semibold text-highlighted">{{ t('install.title') }}</h2>
+          <h2 class="text-lg font-bold text-highlighted">{{ t('install.title') }}</h2>
           <p class="text-sm text-muted">{{ t('install.description') }}</p>
           <p v-if="option === 'share-menu'" class="text-sm text-default">
             {{ t('install.shareMenuSteps') }}

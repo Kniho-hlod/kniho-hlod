@@ -35,6 +35,7 @@ registry tokens in the project's `.npmrc`:
 
 ```bash
 pnpm --filter @kniho-hlod/api seed:admin   # the first administrator, from ADMIN_* in apps/api/.env
+pnpm --filter @kniho-hlod/web seed:demo    # a demo account with a filled library, on the local API
 ```
 
 ## Checks

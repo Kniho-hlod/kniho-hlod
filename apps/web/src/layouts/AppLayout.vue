@@ -1,38 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 import type { RouteLocationRaw } from 'vue-router';
 import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
 import { useLibraryStats } from '@/features/loans/api';
-import AppearanceMenu from '@/components/AppearanceMenu.vue';
+import AccountMenu from '@/components/AccountMenu.vue';
+import AppLogo from '@/components/AppLogo.vue';
+import NavLink, { type NavigationMatch } from '@/components/NavLink.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
 
 const { t } = useI18n();
-const router = useRouter();
 const session = useSessionStore();
 const { data: stats } = useLibraryStats();
-
-/**
- * When an item is highlighted: `exact` only on its own page — every signed-in page sits under
- * home's `/`, so a looser match would light it up everywhere; `section` on its page and the pages
- * below it (a book's detail belongs to Books).
- */
-type NavigationMatch = 'exact' | 'section';
-
-const ACTIVE_CLASS = 'text-primary';
-
-/**
- * `RouterLink` keys its classes by name — `{ [activeClass]: isActive, [exactActiveClass]:
- * isExactActive }` — so the same class for both states lets the exact one overwrite the other.
- * Each item therefore highlights through exactly one of them.
- */
-function highlightClasses(match: NavigationMatch) {
-  return match === 'exact'
-    ? { activeClass: '', exactActiveClass: ACTIVE_CLASS }
-    : { activeClass: ACTIVE_CLASS, exactActiveClass: '' };
-}
 
 interface NavigationItem {
   label: string;
@@ -81,83 +61,68 @@ function administrationItem(): NavigationItem {
     match: 'section',
   };
 }
-
-async function signOut(): Promise<void> {
-  await session.signOut();
-  await router.push({ name: 'sign-in' });
-}
 </script>
 
 <template>
-  <div class="min-h-dvh bg-default">
+  <div class="min-h-dvh bg-paper">
     <header
-      class="sticky top-0 z-10 border-b border-default bg-default/80 backdrop-blur px-4 h-16 flex items-center justify-between gap-4"
+      class="sticky top-0 z-10 border-b-2 border-line/10 bg-paper/85 backdrop-blur px-4 h-16 flex items-center justify-between gap-4"
     >
-      <RouterLink
-        :to="{ name: 'home' }"
-        class="flex items-center gap-2 font-semibold text-highlighted"
-      >
-        <UIcon name="i-lucide-library-big" class="size-6 text-primary" />
-        <span>{{ t('app.name') }}</span>
+      <RouterLink :to="{ name: 'home' }" class="rounded-lg">
+        <AppLogo />
       </RouterLink>
 
-      <nav class="hidden lg:flex items-center gap-1">
-        <UButton
+      <nav class="hidden lg:flex items-center gap-1.5" :aria-label="t('nav.main')">
+        <NavLink
           v-for="item in navigation"
           :key="item.label"
           :to="item.to"
-          :icon="item.icon"
-          :label="item.label"
-          :exact="item.match === 'exact'"
-          color="neutral"
-          variant="ghost"
-          active-color="primary"
-          active-variant="soft"
+          :match="item.match"
+          class="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold text-toned transition-colors not-data-active:hover:bg-elevated not-data-active:hover:text-highlighted data-active:bg-yellow-300 data-active:text-ink-900 data-active:ring-2 data-active:ring-line"
         >
-          <template v-if="item.alertCount" #trailing>
-            <UBadge color="error" size="sm" :label="String(item.alertCount)" />
-          </template>
-        </UButton>
+          <UIcon :name="item.icon" class="size-4" />
+          {{ item.label }}
+          <span
+            v-if="item.alertCount"
+            class="min-w-5 rounded-full bg-error px-1.5 text-center text-xs leading-5 font-bold text-white"
+          >
+            {{ item.alertCount }}
+          </span>
+        </NavLink>
       </nav>
 
-      <div class="flex items-center gap-1">
-        <AppearanceMenu />
-        <UButton
-          icon="i-lucide-log-out"
-          :aria-label="t('nav.signOut')"
-          color="neutral"
-          variant="ghost"
-          @click="signOut"
-        />
-      </div>
+      <AccountMenu />
     </header>
 
-    <main class="app-content mx-auto w-full max-w-4xl px-4 py-6 flex flex-col gap-4">
+    <main class="app-content mx-auto w-full max-w-5xl px-4 py-6 flex flex-col gap-5">
       <SystemNotificationBanner />
       <RouterView />
     </main>
 
     <nav
-      class="lg:hidden fixed bottom-0 inset-x-0 border-t border-default bg-default/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+      class="lg:hidden fixed bottom-0 inset-x-0 z-10 border-t-2 border-line/10 bg-paper/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+      :aria-label="t('nav.main')"
     >
       <ul class="flex">
         <li v-for="item in navigation" :key="item.label" class="flex-1">
-          <RouterLink
+          <NavLink
             :to="item.to"
-            class="flex flex-col items-center gap-1 py-3 text-xs text-muted"
-            v-bind="highlightClasses(item.match)"
+            :match="item.match"
+            class="group flex flex-col items-center gap-1 pt-2 pb-2.5 text-xs font-medium text-muted data-active:font-bold data-active:text-highlighted"
           >
-            <span class="relative">
+            <span
+              class="relative grid h-8 w-14 place-items-center rounded-full transition-colors group-data-active:bg-yellow-300 group-data-active:text-ink-900 group-data-active:ring-2 group-data-active:ring-line"
+            >
               <UIcon :name="item.icon" class="size-5" />
               <span
                 v-if="item.alertCount"
-                class="absolute -top-1.5 -right-2.5 min-w-4 rounded-full bg-error px-1 text-center text-[0.625rem] leading-4 font-semibold text-inverted"
+                class="absolute -top-1 right-1.5 min-w-4 rounded-full bg-error px-1 text-center text-[0.625rem] leading-4 font-bold text-white ring-2 ring-paper"
               >
                 {{ item.alertCount }}
               </span>
             </span>
             {{ item.label }}
-          </RouterLink>
+          </NavLink>
         </li>
       </ul>
     </nav>

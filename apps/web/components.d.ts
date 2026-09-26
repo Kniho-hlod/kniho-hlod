@@ -11,8 +11,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccountMenu: typeof import('./src/components/AccountMenu.vue')['default']
     AppearanceMenu: typeof import('./src/components/AppearanceMenu.vue')['default']
+    AppLogo: typeof import('./src/components/AppLogo.vue')['default']
+    BookSpines: typeof import('./src/components/BookSpines.vue')['default']
+    EmptyState: typeof import('./src/components/EmptyState.vue')['default']
+    FormActions: typeof import('./src/components/FormActions.vue')['default']
     InstallAppCard: typeof import('./src/components/InstallAppCard.vue')['default']
+    NavLink: typeof import('./src/components/NavLink.vue')['default']
+    PersonAvatar: typeof import('./src/components/PersonAvatar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SystemNotificationBanner: typeof import('./src/components/SystemNotificationBanner.vue')['default']
@@ -22,6 +29,7 @@ declare module 'vue' {
     UBadge: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Badge.vue')['default']
     UButton: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Button.vue')['default']
     UCard: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Card.vue')['default']
+    UDrawer: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Drawer.vue')['default']
     UDropdownMenu: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/DropdownMenu.vue')['default']
     UForm: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Form.vue')['default']
     UFormField: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/FormField.vue')['default']

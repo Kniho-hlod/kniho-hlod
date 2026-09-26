@@ -36,7 +36,7 @@ const { data: stats, error, isPending } = useAdminStats();
 
 <template>
   <section class="flex flex-col gap-6">
-    <h1 class="text-2xl font-semibold text-highlighted">{{ t('admin.title') }}</h1>
+    <h1 class="text-3xl font-extrabold text-highlighted">{{ t('admin.title') }}</h1>
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
@@ -44,14 +44,14 @@ const { data: stats, error, isPending } = useAdminStats();
       <li
         v-for="tile in STAT_TILES"
         :key="tile.key"
-        class="flex flex-col gap-1 rounded-lg p-4 ring ring-default"
+        class="flex flex-col justify-between gap-3 rounded-xl bg-default p-4 ring-2 ring-line"
       >
-        <span class="flex items-center gap-2 text-sm text-muted">
-          <UIcon :name="tile.icon" class="size-4" />
+        <span class="flex items-start justify-between gap-2 text-sm font-semibold text-toned">
           {{ t(`admin.stats.${tile.key}`) }}
+          <UIcon :name="tile.icon" class="size-5 shrink-0" />
         </span>
-        <USkeleton v-if="isPending" class="h-8 w-12" />
-        <span v-else class="text-2xl font-semibold text-highlighted">
+        <USkeleton v-if="isPending" class="h-9 w-12" />
+        <span v-else class="font-display text-4xl leading-none font-extrabold text-highlighted">
           {{ stats?.[tile.key] ?? 0 }}
         </span>
       </li>
@@ -61,11 +61,15 @@ const { data: stats, error, isPending } = useAdminStats();
       <li v-for="section in SECTIONS" :key="section.key">
         <RouterLink
           :to="section.to"
-          class="group flex items-center gap-3 rounded-lg p-4 ring ring-default hover:bg-elevated/50 focus-visible:outline-2 focus-visible:outline-primary"
+          class="group flex items-center gap-3 rounded-xl bg-default p-4 ring-2 ring-line transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-pop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <UIcon :name="section.icon" class="size-6 text-primary" />
+          <span
+            class="grid size-10 shrink-0 place-items-center rounded-lg bg-yellow-300 text-ink-900"
+          >
+            <UIcon :name="section.icon" class="size-5" />
+          </span>
           <span class="flex min-w-0 flex-1 flex-col">
-            <span class="font-medium text-highlighted group-hover:text-primary">
+            <span class="font-display font-bold text-highlighted group-hover:text-primary">
               {{ t(`admin.sections.${section.key}.title`) }}
             </span>
             <span class="text-sm text-muted">

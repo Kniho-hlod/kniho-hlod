@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import { describeError } from '@/app/errors';
+import EmptyState from '@/components/EmptyState.vue';
 import { NO_BOOK_FILTERS, useBookList } from '@/features/books/api';
 import type { BookListFilters } from '@/features/books/api';
 import BookCard from '@/features/books/BookCard.vue';
@@ -51,7 +52,7 @@ useOnVisible(listEnd, loadMore);
 <template>
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-2xl font-semibold text-highlighted">{{ t('books.title') }}</h1>
+      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
       <div class="flex gap-2">
         <UButton
           v-if="canScan"
@@ -72,26 +73,29 @@ useOnVisible(listEnd, loadMore);
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
-    <ul v-else-if="isPending" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <ul
+      v-else-if="isPending"
+      class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5"
+    >
       <li v-for="index in SKELETON_COUNT" :key="index" class="flex flex-col gap-2">
-        <USkeleton class="aspect-[2/3] w-full" />
+        <USkeleton class="aspect-[2/3] w-full rounded-lg" />
         <USkeleton class="h-4 w-3/4" />
       </li>
     </ul>
 
-    <UCard v-else-if="books.length === 0">
-      <div class="flex flex-col items-start gap-3">
-        <UIcon name="i-lucide-library" class="size-8 text-primary" />
-        <p class="text-muted">{{ emptyText }}</p>
-        <UButton v-if="!isFiltered" :to="{ name: 'book-new' }" icon="i-lucide-plus">
-          {{ t('books.add') }}
-        </UButton>
-      </div>
-    </UCard>
+    <EmptyState
+      v-else-if="books.length === 0"
+      :icon="isFiltered ? 'i-lucide-search-x' : 'i-lucide-library'"
+      :title="emptyText"
+    >
+      <UButton v-if="!isFiltered" :to="{ name: 'book-new' }" icon="i-lucide-plus">
+        {{ t('books.add') }}
+      </UButton>
+    </EmptyState>
 
     <template v-else>
       <p class="text-sm text-muted">{{ t('books.total', { count: total }) }}</p>
-      <ul class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <ul class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
         <li v-for="book in books" :key="book.id">
           <BookCard :book="book" />
         </li>

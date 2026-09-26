@@ -10,6 +10,7 @@ import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
 import { goBackOr } from '@/app/navigation';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
+import FormActions from '@/components/FormActions.vue';
 import { useBook } from '@/features/books/api';
 import BookThumbnail from '@/features/books/BookThumbnail.vue';
 import { useDeleteLoan, useLoan, useSaveLoan } from '@/features/loans/api';
@@ -106,7 +107,7 @@ async function confirmDelete(): Promise<void> {
 
 <template>
   <section class="flex flex-col gap-4">
-    <h1 class="text-2xl font-semibold text-highlighted">
+    <h1 class="text-3xl font-extrabold text-highlighted">
       {{ isEditing ? t('loans.edit') : t('loans.lend') }}
     </h1>
 
@@ -184,7 +185,7 @@ async function confirmDelete(): Promise<void> {
         </div>
       </UCard>
 
-      <div class="flex flex-wrap justify-between gap-2">
+      <FormActions>
         <UButton
           v-if="isEditing"
           icon="i-lucide-trash-2"
@@ -202,7 +203,7 @@ async function confirmDelete(): Promise<void> {
             {{ isEditing ? t('common.save') : t('books.lend') }}
           </UButton>
         </div>
-      </div>
+      </FormActions>
     </UForm>
 
     <UModal

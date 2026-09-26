@@ -11,9 +11,9 @@ const { t } = useI18n();
 const { data: shelves } = useShelves();
 
 const TAB_CLASSES =
-  'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium ring focus-visible:outline-2 focus-visible:outline-primary';
-const ACTIVE_TAB_CLASSES = 'bg-primary text-inverted ring-primary';
-const IDLE_TAB_CLASSES = 'bg-default text-default ring-default hover:bg-elevated';
+  'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-sm font-semibold ring-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const ACTIVE_TAB_CLASSES = 'bg-yellow-300 text-ink-900 ring-line';
+const IDLE_TAB_CLASSES = 'bg-default text-default ring-line/15 hover:ring-line';
 
 function shelfLink(shelfId: string | null): RouteLocationRaw {
   return shelfId ? { name: 'books', query: { shelf: shelfId } } : { name: 'books' };
@@ -23,7 +23,7 @@ function shelfLink(shelfId: string | null): RouteLocationRaw {
 <template>
   <!-- The page's side padding is bled into, so the row scrolls edge to edge on a phone. -->
   <nav :aria-label="t('shelves.title')" class="-mx-4 overflow-x-auto px-4">
-    <ul class="flex w-max items-center gap-2 py-1">
+    <ul class="flex w-max items-center gap-2 py-1.5">
       <li>
         <!-- `aria-current` set here wins over RouterLink's own, which ignores the query. -->
         <RouterLink

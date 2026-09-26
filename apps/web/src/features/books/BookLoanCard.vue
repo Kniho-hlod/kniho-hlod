@@ -2,12 +2,12 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from '@nuxt/ui/composables';
-import { loanStatus } from '@kniho-hlod/domain';
 import type { BookWithDetails } from '@kniho-hlod/domain';
 import { formatDate } from '@/app/dates';
 import { describeError } from '@/app/errors';
 import { useReturnLoan } from '@/features/loans/api';
-import LoanStatusBadge from '@/features/loans/LoanStatusBadge.vue';
+import { loanDue } from '@/features/loans/loan-due';
+import LoanDueChip from '@/features/loans/LoanDueChip.vue';
 import { useToday } from '@/features/loans/use-today';
 
 /** On a book's page: who has the book and until when, or that it is at home. */
@@ -18,7 +18,7 @@ const toast = useToast();
 const today = useToday();
 
 const loan = computed(() => props.book.activeLoan);
-const status = computed(() => (loan.value ? loanStatus(loan.value, today.value) : undefined));
+const due = computed(() => (loan.value ? loanDue(loan.value, today.value) : undefined));
 
 const { mutateAsync: returnLoan, isPending: isReturning } = useReturnLoan();
 
@@ -38,23 +38,30 @@ async function markReturned(): Promise<void> {
 
 <template>
   <UCard :ui="{ body: 'flex flex-col gap-2 p-4 sm:p-4' }">
-    <template v-if="loan && status">
+    <template v-if="loan && due">
       <div class="flex flex-wrap items-center gap-2">
         <UIcon name="i-lucide-hand-helping" class="size-5 text-primary" />
         <RouterLink
           :to="{ name: 'contact', params: { id: loan.contact.id } }"
-          class="font-medium text-highlighted hover:text-primary"
+          class="font-display font-bold text-highlighted hover:text-primary"
         >
           {{ t('loans.lentTo', { name: loan.contact.name }) }}
         </RouterLink>
-        <LoanStatusBadge :status="status" />
+        <LoanDueChip :due="due" />
       </div>
       <p class="text-sm text-muted">
         {{ t('loans.lentOn', { date: formatDate(loan.lentAt) }) }} ·
         {{ loan.dueAt ? t('loans.dueOn', { date: formatDate(loan.dueAt) }) : t('loans.noDueDate') }}
       </p>
       <div class="flex flex-wrap gap-2">
-        <UButton size="sm" icon="i-lucide-undo-2" :loading="isReturning" @click="markReturned">
+        <UButton
+          size="sm"
+          color="neutral"
+          variant="outline"
+          icon="i-lucide-undo-2"
+          :loading="isReturning"
+          @click="markReturned"
+        >
           {{ t('loans.markReturned') }}
         </UButton>
         <UButton

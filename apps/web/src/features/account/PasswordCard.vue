@@ -42,7 +42,7 @@ async function changePassword(): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h2 class="font-semibold text-highlighted">{{ t('account.changePassword') }}</h2>
+      <h2 class="text-lg font-bold text-highlighted">{{ t('account.changePassword') }}</h2>
     </template>
 
     <UForm

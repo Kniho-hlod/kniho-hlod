@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LOCALES, type Locale } from '@kniho-hlod/domain';
-import { setLocale } from '@/app/i18n';
+import { LOCALES } from '@kniho-hlod/domain';
+import { LOCALE_LABELS, setLocale } from '@/app/i18n';
 import { useColorMode } from '@/composables/use-color-mode';
-
-const LOCALE_LABELS: Record<Locale, string> = { cs: 'Čeština', en: 'English' };
 
 const { t, locale } = useI18n();
 const { isDark, toggle } = useColorMode();

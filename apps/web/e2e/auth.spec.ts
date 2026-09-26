@@ -18,16 +18,17 @@ test('a reader registers, signs out, resets their password and signs back in', a
     await page.getByLabel('E-mail').fill(email);
     await page.getByLabel('Heslo').fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
-    await expect(page.getByRole('heading', { name: /Vítejte, E2E Reader/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
   });
 
   await test.step('stay signed in across a reload', async () => {
     await page.reload();
-    await expect(page.getByRole('heading', { name: /Vítejte, E2E Reader/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
   });
 
   await test.step('sign out', async () => {
-    await page.getByRole('button', { name: 'Odhlásit se' }).click();
+    await page.getByRole('button', { name: 'Účet a nastavení' }).click();
+    await page.getByRole('menuitem', { name: 'Odhlásit se' }).click();
     await expect(page.getByRole('heading', { name: 'Přihlášení' })).toBeVisible();
   });
 
@@ -57,6 +58,6 @@ test('a reader registers, signs out, resets their password and signs back in', a
 
     await page.getByLabel('Heslo').fill(NEW_PASSWORD);
     await page.getByRole('button', { name: 'Přihlásit se' }).click();
-    await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
 });

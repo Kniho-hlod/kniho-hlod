@@ -44,7 +44,7 @@ async function register(page: Page, name: string): Promise<void> {
   await page.getByLabel('E-mail').fill(uniqueEmail());
   await page.getByLabel('Heslo').fill(PASSWORD);
   await page.getByRole('button', { name: 'Založit účet' }).click();
-  await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 }
 
 test('a reader adds a book by its ISBN, edits it and deletes it', async ({ page }) => {
@@ -104,7 +104,8 @@ test('a reader adds a book by its ISBN, edits it and deletes it', async ({ page 
 
   await test.step('delete it', async () => {
     await page.getByRole('link', { name: new RegExp(NEW_TITLE) }).click();
-    await page.getByRole('button', { name: 'Smazat knihu' }).click();
+    await page.getByRole('button', { name: 'Další akce' }).click();
+    await page.getByRole('menuitem', { name: 'Smazat knihu' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Smazat', exact: true }).click();
     await expect(page.getByText(/Zatím tu nemáte žádnou knihu/)).toBeVisible();
   });

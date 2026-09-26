@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 
 /** Keep in step with `THEME_COLOR` in `vite.config.ts`. */
-const THEME_COLOR = '#0f766e';
+const THEME_COLOR = '#4f46e5';
 const GLYPH_COLOR = '#ffffff';
 const GLYPH_NAME = 'library-big';
 const LUCIDE_VIEWBOX_SIZE = 24;

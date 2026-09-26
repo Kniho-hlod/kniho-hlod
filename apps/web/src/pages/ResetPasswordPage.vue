@@ -39,7 +39,7 @@ async function resetPassword(): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h1 class="text-xl font-semibold text-highlighted">{{ t('auth.resetPasswordTitle') }}</h1>
+      <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.resetPasswordTitle') }}</h1>
     </template>
 
     <UAlert

@@ -12,6 +12,7 @@ import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
 import { goBackOr } from '@/app/navigation';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
+import FormActions from '@/components/FormActions.vue';
 import {
   ANNOUNCEMENT_FORM_FIELDS,
   announcementFormFrom,
@@ -103,7 +104,7 @@ async function confirmDelete(): Promise<void> {
 
 <template>
   <section class="flex flex-col gap-4">
-    <h1 class="text-2xl font-semibold text-highlighted">
+    <h1 class="text-3xl font-extrabold text-highlighted">
       {{ isEditing ? t('announcements.edit') : t('announcements.add') }}
     </h1>
 
@@ -176,7 +177,7 @@ async function confirmDelete(): Promise<void> {
         />
       </section>
 
-      <div class="flex flex-wrap items-center justify-between gap-2">
+      <FormActions>
         <UButton
           v-if="isEditing"
           color="error"
@@ -194,7 +195,7 @@ async function confirmDelete(): Promise<void> {
             {{ t('common.save') }}
           </UButton>
         </div>
-      </div>
+      </FormActions>
     </UForm>
 
     <UModal

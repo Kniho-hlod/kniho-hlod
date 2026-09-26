@@ -3,13 +3,18 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import ui from '@nuxt/ui/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { uiTheme } from './ui.config';
 
-const THEME_COLOR = '#0f766e';
+/** Indigo 600, the primary colour; keep in step with `index.html` and `scripts/generate-icons.mjs`. */
+const THEME_COLOR = '#4f46e5';
+/** The paper behind the app (`--app-paper` in `src/assets/main.css`), shown while it starts. */
+const BACKGROUND_COLOR = '#fff7ec';
 
 export default defineConfig({
   plugins: [
     vue(),
     ui({
+      ui: uiTheme,
       // Bundle every icon the sources name instead of fetching it from the Iconify API at
       // runtime: no third-party requests, no icons popping in late, and icons work offline.
       icon: {
@@ -29,7 +34,7 @@ export default defineConfig({
         lang: 'cs',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
+        background_color: BACKGROUND_COLOR,
         theme_color: THEME_COLOR,
         icons: [
           { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },

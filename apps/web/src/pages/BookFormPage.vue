@@ -16,6 +16,7 @@ import { fileUrl } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
+import FormActions from '@/components/FormActions.vue';
 import {
   describeIsbnLookupError,
   fetchCatalogueCover,
@@ -237,7 +238,7 @@ function cancel(): void {
 
 <template>
   <section class="flex flex-col gap-4">
-    <h1 class="text-2xl font-semibold text-highlighted">
+    <h1 class="text-3xl font-extrabold text-highlighted">
       {{ isEditing ? t('books.edit') : t('books.add') }}
     </h1>
 
@@ -262,7 +263,7 @@ function cancel(): void {
 
       <UCard>
         <template #header>
-          <h2 class="font-semibold text-highlighted">{{ t('books.isbnLookup') }}</h2>
+          <h2 class="text-lg font-bold text-highlighted">{{ t('books.isbnLookup') }}</h2>
           <p class="text-sm text-muted">{{ t('books.isbnLookupHint') }}</p>
         </template>
 
@@ -323,7 +324,7 @@ function cancel(): void {
 
       <UCard>
         <template #header>
-          <h2 class="font-semibold text-highlighted">{{ t('books.details') }}</h2>
+          <h2 class="text-lg font-bold text-highlighted">{{ t('books.details') }}</h2>
         </template>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -379,7 +380,7 @@ function cancel(): void {
 
       <UCard>
         <template #header>
-          <h2 class="font-semibold text-highlighted">{{ t('books.reading') }}</h2>
+          <h2 class="text-lg font-bold text-highlighted">{{ t('books.reading') }}</h2>
         </template>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -428,7 +429,7 @@ function cancel(): void {
 
       <UCard>
         <template #header>
-          <h2 class="font-semibold text-highlighted">{{ t('books.cover') }}</h2>
+          <h2 class="text-lg font-bold text-highlighted">{{ t('books.cover') }}</h2>
         </template>
         <CoverPicker
           :preview-url="coverPreviewUrl"
@@ -440,12 +441,12 @@ function cancel(): void {
         />
       </UCard>
 
-      <div class="flex justify-end gap-2">
+      <FormActions>
         <UButton color="neutral" variant="ghost" @click="cancel">{{ t('common.cancel') }}</UButton>
         <UButton type="submit" icon="i-lucide-check" :loading="isSaving">
           {{ t('common.save') }}
         </UButton>
-      </div>
+      </FormActions>
     </UForm>
 
     <IsbnScanner v-if="canScan" v-model:open="isScanning" @detected="fillFromScannedIsbn" />

@@ -8,6 +8,7 @@ import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
 import { goBackOr } from '@/app/navigation';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
+import FormActions from '@/components/FormActions.vue';
 import { contactFormFrom, useContact, useSaveContact } from '@/features/contacts/api';
 
 const CONTACT_FORM_FIELDS = ['name', 'email', 'phone', 'note'] as const;
@@ -62,7 +63,7 @@ function cancel(): void {
 
 <template>
   <section class="flex flex-col gap-4">
-    <h1 class="text-2xl font-semibold text-highlighted">
+    <h1 class="text-3xl font-extrabold text-highlighted">
       {{ isEditing ? t('contacts.edit') : t('contacts.add') }}
     </h1>
 
@@ -108,12 +109,12 @@ function cancel(): void {
         </div>
       </UCard>
 
-      <div class="flex justify-end gap-2">
+      <FormActions>
         <UButton color="neutral" variant="ghost" @click="cancel">{{ t('common.cancel') }}</UButton>
         <UButton type="submit" icon="i-lucide-check" :loading="isSaving">
           {{ t('common.save') }}
         </UButton>
-      </div>
+      </FormActions>
     </UForm>
   </section>
 </template>

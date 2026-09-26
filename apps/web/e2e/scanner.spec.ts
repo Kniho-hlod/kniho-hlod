@@ -52,7 +52,7 @@ test("a reader adds a book by scanning its barcode, and is warned when it's ther
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo').fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
-    await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
 
   await test.step('scan the barcode from the book list', async () => {

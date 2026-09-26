@@ -6,6 +6,7 @@ import { addDays } from '@eleansphere/schema';
 import { DUE_SOON_DAYS } from '@kniho-hlod/domain';
 import type { LibraryStats } from '@kniho-hlod/domain';
 import { describeError } from '@/app/errors';
+import EmptyState from '@/components/EmptyState.vue';
 import InstallAppCard from '@/components/InstallAppCard.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 import ReadingNow from '@/features/books/ReadingNow.vue';
@@ -21,6 +22,15 @@ interface StatTile {
   to: RouteLocationRaw;
 }
 
+/** Literal Tailwind classes: each count has its own colour, in both modes. */
+const TILE_COLORS: Record<StatKey, string> = {
+  books: 'bg-indigo-200 text-indigo-950 dark:bg-indigo-400/25 dark:text-indigo-50',
+  reading: 'bg-orange-200 text-orange-950 dark:bg-orange-400/25 dark:text-orange-50',
+  lent: 'bg-sky-200 text-sky-950 dark:bg-sky-400/25 dark:text-sky-50',
+  overdue: 'bg-emerald-200 text-emerald-950 dark:bg-emerald-400/25 dark:text-emerald-50',
+};
+const ALARM_COLORS = 'bg-rose-500 text-white';
+
 const STAT_TILES: StatTile[] = [
   { key: 'books', icon: 'i-lucide-library', to: { name: 'books' } },
   { key: 'reading', icon: 'i-lucide-book-open', to: { name: 'books' } },
@@ -31,6 +41,9 @@ const STAT_TILES: StatTile[] = [
 const { t } = useI18n();
 const session = useSessionStore();
 const today = useToday();
+
+/** The greeting is friendly: the first name, not the whole of it. */
+const firstName = computed(() => session.user?.displayName.trim().split(/\s+/)[0] ?? '');
 
 const { data: stats, error, isPending } = useLibraryStats();
 const hasBooks = computed(() => (stats.value?.books ?? 0) > 0);
@@ -70,47 +83,47 @@ function dismissInstallOffer(): void {
 </script>
 
 <template>
-  <section class="flex flex-col gap-6">
-    <h1 class="text-2xl font-semibold text-highlighted">
-      {{ t('home.welcome', { name: session.user?.displayName ?? '' }) }}
-    </h1>
+  <section class="flex flex-col gap-8">
+    <header class="flex flex-col gap-1">
+      <h1 class="text-3xl font-extrabold text-highlighted lg:text-4xl">
+        {{ t('home.welcome', { name: firstName }) }}
+      </h1>
+      <p class="text-toned">{{ t('home.welcomeHint') }}</p>
+    </header>
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
-    <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
       <li v-for="tile in STAT_TILES" :key="tile.key">
         <RouterLink
           :to="tile.to"
-          class="flex flex-col gap-1 rounded-lg p-4 ring hover:bg-elevated/50 focus-visible:outline-2 focus-visible:outline-primary"
-          :class="isAlarming(tile) ? 'bg-error/5 ring-error/50' : 'ring-default'"
+          class="flex min-h-28 flex-col justify-between gap-3 rounded-xl p-4 ring-2 ring-line transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-pop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          :class="isAlarming(tile) ? ALARM_COLORS : TILE_COLORS[tile.key]"
         >
-          <span class="flex items-center gap-2 text-sm text-muted">
-            <UIcon :name="tile.icon" class="size-4" :class="{ 'text-error': isAlarming(tile) }" />
+          <span class="flex items-start justify-between gap-2 text-sm font-semibold">
             {{ t(`home.stats.${tile.key}`) }}
+            <UIcon :name="tile.icon" class="size-5 shrink-0" />
           </span>
-          <USkeleton v-if="isPending" class="h-8 w-12" />
-          <span
-            v-else
-            class="text-2xl font-semibold"
-            :class="isAlarming(tile) ? 'text-error' : 'text-highlighted'"
-          >
+          <USkeleton v-if="isPending" class="h-9 w-12 bg-white/50" />
+          <span v-else class="font-display text-4xl leading-none font-extrabold">
             {{ stats?.[tile.key] ?? 0 }}
           </span>
         </RouterLink>
       </li>
     </ul>
 
-    <UCard v-if="stats && !hasBooks">
-      <div class="flex flex-col items-start gap-3">
-        <UIcon name="i-lucide-book-open" class="size-8 text-primary" />
-        <p class="text-muted">{{ t('home.empty') }}</p>
-        <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus">{{ t('books.add') }}</UButton>
-      </div>
-    </UCard>
+    <EmptyState
+      v-if="stats && !hasBooks"
+      icon="i-lucide-book-plus"
+      :title="t('home.emptyTitle')"
+      :description="t('home.empty')"
+    >
+      <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus">{{ t('books.add') }}</UButton>
+    </EmptyState>
 
     <section v-else-if="stats" class="flex flex-col gap-3">
       <header class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-lg font-semibold text-highlighted">
+        <h2 class="text-xl font-bold text-highlighted">
           {{ t('home.dueBack') }}
         </h2>
         <div class="flex gap-2">
@@ -123,7 +136,13 @@ function dismissInstallOffer(): void {
         </div>
       </header>
       <LoanList v-if="hasLoansDue" :filters="dueFilters" :empty-text="t('home.nothingDue')" />
-      <p v-else class="text-muted">{{ t('home.nothingDue') }}</p>
+      <p
+        v-else
+        class="flex items-center gap-3 rounded-xl bg-default p-4 text-toned ring-2 ring-line/15"
+      >
+        <UIcon name="i-lucide-party-popper" class="size-5 shrink-0 text-secondary" />
+        {{ t('home.nothingDue') }}
+      </p>
     </section>
 
     <ReadingNow v-if="hasBooks" />

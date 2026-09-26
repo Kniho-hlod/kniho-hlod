@@ -29,7 +29,7 @@ const tabs = computed(() => [
 <template>
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-2xl font-semibold text-highlighted">{{ t('loans.title') }}</h1>
+      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('loans.title') }}</h1>
       <div class="flex gap-2">
         <UButton :to="{ name: 'contacts' }" icon="i-lucide-users" color="neutral" variant="subtle">
           {{ t('loans.contacts') }}

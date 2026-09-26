@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LOCALES, PROFILE_FIELDS, userFields, type Locale } from '@kniho-hlod/domain';
+import { LOCALES, PROFILE_FIELDS, userFields } from '@kniho-hlod/domain';
 import { pickFields } from '@/app/fields';
 import { VALIDATE_ON, formSchema } from '@/app/validation';
 import { describeError } from '@/app/errors';
+import { LOCALE_LABELS } from '@/app/i18n';
 import { useSessionStore } from '@/features/auth/session-store';
-
-const LOCALE_LABELS: Record<Locale, string> = { cs: 'Čeština', en: 'English' };
 
 const { t } = useI18n();
 const session = useSessionStore();
@@ -43,7 +42,7 @@ async function saveProfile(): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h2 class="font-semibold text-highlighted">{{ t('account.profile') }}</h2>
+      <h2 class="text-lg font-bold text-highlighted">{{ t('account.profile') }}</h2>
     </template>
 
     <UForm
@@ -83,7 +82,7 @@ async function saveProfile(): Promise<void> {
       </UFormField>
 
       <UFormField :label="t('account.reminderDaysBefore')" name="reminderDaysBefore">
-        <UInputNumber v-model="state.reminderDaysBefore" :min="0" :max="30" class="w-full" />
+        <UInputNumber v-model="state.reminderDaysBefore" :min="0" :max="30" class="w-36" />
       </UFormField>
 
       <div>

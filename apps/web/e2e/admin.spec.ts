@@ -23,7 +23,7 @@ async function signIn(page: Page, email: string): Promise<void> {
   await page.getByLabel('E-mail').fill(email);
   await page.getByLabel('Heslo').fill(PASSWORD);
   await page.getByRole('button', { name: 'Přihlásit se' }).click();
-  await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 }
 
 test('an administrator manages accounts and announcements', async ({ page, request }) => {
@@ -44,8 +44,9 @@ test('an administrator manages accounts and announcements', async ({ page, reque
     await signIn(page, adminEmail);
     await expect(page.getByRole('link', { name: 'Správa' })).toHaveCount(0);
     await page.goto('/admin');
-    await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
-    await page.getByRole('button', { name: 'Odhlásit se' }).click();
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Účet a nastavení' }).click();
+    await page.getByRole('menuitem', { name: 'Odhlásit se' }).click();
   });
 
   await test.step('an administrator gets it with the next sign-in', async () => {

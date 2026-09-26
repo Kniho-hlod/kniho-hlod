@@ -11,7 +11,7 @@ const { t } = useI18n();
 
 <template>
   <section class="flex flex-col gap-4">
-    <h1 class="text-2xl font-semibold text-highlighted">{{ t('account.title') }}</h1>
+    <h1 class="text-3xl font-extrabold text-highlighted">{{ t('account.title') }}</h1>
 
     <AvatarCard />
     <ProfileCard />

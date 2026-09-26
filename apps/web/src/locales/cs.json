@@ -4,7 +4,8 @@
     "tagline": "Vaše knihovna a přehled o tom, komu jste co půjčili.",
     "updateReady": "Je tu nová verze Kniho-hlodu.",
     "updateHint": "Načte se, až stránku obnovíte.",
-    "reload": "Obnovit"
+    "reload": "Obnovit",
+    "heroTitle": "Víte, kdo má vaši knihu?"
   },
   "nav": {
     "home": "Přehled",
@@ -12,7 +13,9 @@
     "loans": "Výpůjčky",
     "account": "Účet",
     "admin": "Správa",
-    "signOut": "Odhlásit se"
+    "signOut": "Odhlásit se",
+    "main": "Hlavní navigace",
+    "accountMenu": "Účet a nastavení"
   },
   "common": {
     "save": "Uložit",
@@ -26,7 +29,9 @@
     "somethingWentWrong": "Něco se nepovedlo. Zkuste to prosím znovu.",
     "edit": "Upravit",
     "loadMore": "Načíst další",
-    "conflict": "Tohle se střetlo s jinou změnou. Obnovte stránku a zkuste to znovu."
+    "conflict": "Tohle se střetlo s jinou změnou. Obnovte stránku a zkuste to znovu.",
+    "moreActions": "Další akce",
+    "pageNotFound": "Tahle stránka v knihovně chybí. Možná ji má někdo půjčenou."
   },
   "auth": {
     "email": "E-mail",
@@ -71,7 +76,7 @@
     "remindersHint": "Pošleme vám e-mail, když se blíží termín vrácení půjčené knihy, a pak jednou týdně, dokud je po termínu."
   },
   "home": {
-    "welcome": "Vítejte, {name}!",
+    "welcome": "Ahoj, {name}!",
     "empty": "Vaše knihovna je zatím prázdná. Přidejte první knihu — stačí její ISBN.",
     "stats": {
       "books": "Knihy",
@@ -82,7 +87,9 @@
     "dueBack": "K vrácení",
     "nothingDue": "Nic není po termínu a nic se v příštích dnech nevrací.",
     "allLoans": "Všechny výpůjčky",
-    "readingNow": "Právě čtu"
+    "readingNow": "Právě čtu",
+    "welcomeHint": "Tady je, co se děje ve vaší knihovně.",
+    "emptyTitle": "Začněte první knihou"
   },
   "books": {
     "title": "Knihy",
@@ -170,6 +177,11 @@
     "readingStatusChanged": {
       "reading": "Hezké čtení!",
       "read": "Dočteno. Nezapomeňte knihu ohodnotit."
+    },
+    "filters": {
+      "title": "Filtry",
+      "done": "Hotovo",
+      "clear": "Zrušit filtry"
     }
   },
   "validation": {
@@ -240,7 +252,12 @@
     "searchContacts": "Hledat nebo napsat jméno",
     "newContact": "Nový kontakt: {name}",
     "contactHint": "Nového člověka stačí napsat — kontakt se založí s výpůjčkou.",
-    "noHistory": "Zatím žádná vrácená výpůjčka."
+    "noHistory": "Zatím žádná vrácená výpůjčka.",
+    "due": {
+      "in": "Vrátit dnes | Vrátit zítra | Vrátit za {count} dny | Vrátit za {count} dní",
+      "overdue": "Po termínu | {count} den po termínu | {count} dny po termínu | {count} dní po termínu",
+      "none": "Bez termínu"
+    }
   },
   "contacts": {
     "title": "Kontakty",

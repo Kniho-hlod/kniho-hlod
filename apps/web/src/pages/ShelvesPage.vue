@@ -105,7 +105,7 @@ async function confirmDelete(): Promise<void> {
     </UButton>
 
     <header class="flex flex-col gap-1">
-      <h1 class="text-2xl font-semibold text-highlighted">{{ t('shelves.title') }}</h1>
+      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('shelves.title') }}</h1>
       <p class="text-muted">{{ t('shelves.hint') }}</p>
     </header>
 
@@ -145,7 +145,10 @@ async function confirmDelete(): Promise<void> {
 
     <p v-else-if="shelfList.length === 0" class="text-muted">{{ t('shelves.empty') }}</p>
 
-    <ul v-else class="flex flex-col divide-y divide-default rounded-lg ring ring-default">
+    <ul
+      v-else
+      class="flex flex-col divide-y-2 divide-line/10 rounded-xl bg-default ring-2 ring-line"
+    >
       <li
         v-for="(shelf, index) in shelfList"
         :key="shelf.id"

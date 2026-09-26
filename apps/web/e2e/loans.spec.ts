@@ -21,7 +21,7 @@ test('a reader lends a book, sees it overdue, gets it back and tidies up', async
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo').fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
-    await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 
     await page.goto('/books/new');
     await page.getByLabel('Název').fill(BOOK_TITLE);
@@ -47,7 +47,8 @@ test('a reader lends a book, sees it overdue, gets it back and tidies up', async
   });
 
   await test.step('a lent book cannot be deleted', async () => {
-    await page.getByRole('button', { name: 'Smazat knihu' }).click();
+    await page.getByRole('button', { name: 'Další akce' }).click();
+    await page.getByRole('menuitem', { name: 'Smazat knihu' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Smazat', exact: true }).click();
     await expect(page.getByText(BLOCKED_DELETE, { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: BOOK_TITLE })).toBeVisible();
@@ -77,7 +78,8 @@ test('a reader lends a book, sees it overdue, gets it back and tidies up', async
     await expect(page.getByText('Teď nemá nic půjčeného.')).toBeVisible();
     await expect(page.getByRole('link', { name: BOOK_TITLE })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Smazat kontakt' }).click();
+    await page.getByRole('button', { name: 'Další akce' }).click();
+    await page.getByRole('menuitem', { name: 'Smazat kontakt' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Smazat', exact: true }).click();
     await expect(page.getByText(/Zatím nemáte žádné kontakty/)).toBeVisible();
   });

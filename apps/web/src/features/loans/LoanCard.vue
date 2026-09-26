@@ -2,14 +2,14 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from '@nuxt/ui/composables';
-import { loanStatus } from '@kniho-hlod/domain';
 import type { LoanWithDetails } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import { formatDate } from '@/app/dates';
 import { describeError } from '@/app/errors';
 import BookThumbnail from '@/features/books/BookThumbnail.vue';
 import { useReturnLoan } from './api';
-import LoanStatusBadge from './LoanStatusBadge.vue';
+import { loanDue } from './loan-due';
+import LoanDueChip from './LoanDueChip.vue';
 import { useToday } from './use-today';
 
 const props = defineProps<{
@@ -25,8 +25,8 @@ const { t } = useI18n();
 const toast = useToast();
 const today = useToday();
 
-const status = computed(() => loanStatus(props.loan, today.value));
-const isOut = computed(() => status.value !== 'returned');
+const due = computed(() => loanDue(props.loan, today.value));
+const isOut = computed(() => due.value.status !== 'returned');
 
 const dates = computed(() => {
   const { lentAt, dueAt, returnedAt } = props.loan;
@@ -54,49 +54,55 @@ async function markReturned(): Promise<void> {
 </script>
 
 <template>
-  <article class="flex gap-3 rounded-md p-3 ring ring-default">
+  <article class="flex gap-3 rounded-xl bg-default p-3 ring-2 ring-line">
     <RouterLink
       v-if="seenFrom !== 'book'"
       :to="{ name: 'book', params: { id: loan.book.id } }"
       tabindex="-1"
       aria-hidden="true"
+      class="self-start"
     >
       <BookThumbnail :url="fileUrl(loan.book.cover)" :title="loan.book.title" />
     </RouterLink>
 
-    <div class="flex min-w-0 flex-1 flex-col gap-1">
-      <div class="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+    <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+      <RouterLink
+        v-if="seenFrom !== 'book'"
+        :to="{ name: 'book', params: { id: loan.book.id } }"
+        class="line-clamp-2 font-display leading-tight font-bold text-highlighted hover:text-primary"
+      >
+        {{ loan.book.title }}
+      </RouterLink>
+      <RouterLink
+        v-else
+        :to="{ name: 'contact', params: { id: loan.contact.id } }"
+        class="font-display font-bold text-highlighted hover:text-primary"
+      >
+        {{ loan.contact.name }}
+      </RouterLink>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <LoanDueChip :due="due" />
         <RouterLink
-          v-if="seenFrom !== 'book'"
-          :to="{ name: 'book', params: { id: loan.book.id } }"
-          class="line-clamp-2 font-medium text-highlighted hover:text-primary"
-        >
-          {{ loan.book.title }}
-        </RouterLink>
-        <RouterLink
-          v-else
+          v-if="seenFrom === undefined"
           :to="{ name: 'contact', params: { id: loan.contact.id } }"
-          class="font-medium text-highlighted hover:text-primary"
+          class="inline-flex min-w-0 items-center gap-1 text-sm font-medium text-default hover:text-primary"
+          :aria-label="t('loans.lentTo', { name: loan.contact.name })"
         >
-          {{ loan.contact.name }}
+          <UIcon name="i-lucide-user-round" class="size-4 shrink-0 text-muted" />
+          <span class="truncate">{{ loan.contact.name }}</span>
         </RouterLink>
-        <LoanStatusBadge :status="status" />
       </div>
 
-      <RouterLink
-        v-if="seenFrom === undefined"
-        :to="{ name: 'contact', params: { id: loan.contact.id } }"
-        class="w-fit text-sm text-default hover:text-primary"
-      >
-        {{ t('loans.lentTo', { name: loan.contact.name }) }}
-      </RouterLink>
-      <p class="text-sm text-muted">{{ dates }}</p>
+      <p class="text-xs text-muted">{{ dates }}</p>
       <p v-if="loan.note" class="line-clamp-2 text-sm text-muted">{{ loan.note }}</p>
 
-      <div class="mt-1 flex flex-wrap gap-2">
+      <div class="mt-1 flex flex-wrap items-center gap-2">
         <UButton
           v-if="isOut"
           size="sm"
+          color="neutral"
+          variant="outline"
           icon="i-lucide-undo-2"
           :loading="isReturning"
           :aria-label="t('loans.markReturnedLabel', { title: loan.book.title })"

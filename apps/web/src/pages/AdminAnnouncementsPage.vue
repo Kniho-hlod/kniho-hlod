@@ -25,7 +25,7 @@ const now = new Date();
     </UButton>
 
     <header class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-2xl font-semibold text-highlighted">{{ t('announcements.title') }}</h1>
+      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('announcements.title') }}</h1>
       <UButton :to="{ name: 'announcement-new' }" icon="i-lucide-plus">
         {{ t('announcements.add') }}
       </UButton>

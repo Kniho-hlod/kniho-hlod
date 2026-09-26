@@ -5,6 +5,9 @@ import en from '@/locales/en.json';
 
 const LOCALE_STORAGE_KEY = 'kniho-hlod.locale';
 
+/** Each language named in itself, as a language picker lists it. */
+export const LOCALE_LABELS: Record<Locale, string> = { cs: 'Čeština', en: 'English' };
+
 function isLocale(value: string | null): value is Locale {
   return value !== null && (LOCALES as readonly string[]).includes(value);
 }

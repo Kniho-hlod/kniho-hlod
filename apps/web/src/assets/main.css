@@ -2,32 +2,89 @@
 @import '@nuxt/ui';
 
 @theme static {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Headings, numbers and generated covers: the app's voice. */
+  --font-display:
+    'Bricolage Grotesque Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 
-  --color-primary-50: #f0fdfa;
-  --color-primary-100: #ccfbf1;
-  --color-primary-200: #99f6e4;
-  --color-primary-300: #5eead4;
-  --color-primary-400: #2dd4bf;
-  --color-primary-500: #14b8a6;
-  --color-primary-600: #0d9488;
-  --color-primary-700: #0f766e;
-  --color-primary-800: #115e59;
-  --color-primary-900: #134e4a;
-  --color-primary-950: #042f2e;
+  /*
+   * Ink — the app's neutral (`ui.colors.neutral` in vite.config.ts): a grey tinted towards
+   * indigo, whose darkest shade draws the outlines around cards, covers and buttons.
+   */
+  --color-ink-50: oklch(98.4% 0.006 285);
+  --color-ink-100: oklch(95.8% 0.012 285);
+  --color-ink-200: oklch(91% 0.02 285);
+  --color-ink-300: oklch(84% 0.03 285);
+  --color-ink-400: oklch(68% 0.045 285);
+  --color-ink-500: oklch(54% 0.055 285);
+  --color-ink-600: oklch(44% 0.06 285);
+  --color-ink-700: oklch(36% 0.065 285);
+  --color-ink-800: oklch(28% 0.062 285);
+  --color-ink-900: oklch(22.5% 0.058 285);
+  --color-ink-950: oklch(16% 0.045 285);
+}
+
+@theme inline {
+  /* The page behind the cards: warm paper by day, deep ink by night. */
+  --color-paper: var(--app-paper);
+  /* Outlines and the hard offset shadows that make things look cut out and stuck on. */
+  --color-line: var(--app-line);
+  --shadow-pop-sm: 0 0 0 2px var(--app-line), 3px 3px 0 2px var(--app-line);
+  --shadow-pop: 0 0 0 2px var(--app-line), 5px 5px 0 2px var(--app-line);
 }
 
 :root {
-  --ui-primary: var(--color-primary-600);
+  --ui-radius: 0.375rem;
+  --app-paper: oklch(98.3% 0.017 78);
+  --app-line: var(--ui-color-neutral-900);
+
+  /* Text in these colours sits on white: the default 500 shades are too light to read. */
+  --ui-primary: var(--ui-color-primary-600);
+  --ui-success: var(--ui-color-success-600);
+  --ui-info: var(--ui-color-info-600);
+  --ui-warning: var(--ui-color-warning-600);
+  --ui-error: var(--ui-color-error-600);
+}
+
+.dark {
+  --app-paper: var(--ui-color-neutral-950);
+  --app-line: var(--ui-color-neutral-600);
+  --ui-primary: var(--ui-color-primary-400);
+  --ui-success: var(--ui-color-success-400);
+  --ui-info: var(--ui-color-info-400);
+  --ui-warning: var(--ui-color-warning-400);
+  --ui-error: var(--ui-color-error-400);
+}
+
+/* A dotted backdrop in the outline colour, e.g. the stage behind a book's cover. */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--app-line) 22%, transparent) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 14px 14px;
+}
+
+@layer base {
+  body {
+    background-color: var(--app-paper);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
 }
 
 /* Room for the mobile bottom navigation and the phone's home indicator. */
 .app-content {
-  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 1024px) {
   .app-content {
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
   }
 }

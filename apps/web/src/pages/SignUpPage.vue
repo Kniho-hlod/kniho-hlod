@@ -34,7 +34,7 @@ async function signUp(): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h1 class="text-xl font-semibold text-highlighted">{{ t('auth.signUpTitle') }}</h1>
+      <h1 class="text-2xl font-extrabold text-highlighted">{{ t('auth.signUpTitle') }}</h1>
     </template>
 
     <UForm

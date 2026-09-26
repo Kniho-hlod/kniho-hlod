@@ -79,7 +79,7 @@ async function confirmDelete(): Promise<void> {
       {{ t('admin.title') }}
     </UButton>
 
-    <h1 class="text-2xl font-semibold text-highlighted">{{ t('admin.users.title') }}</h1>
+    <h1 class="text-3xl font-extrabold text-highlighted">{{ t('admin.users.title') }}</h1>
 
     <UInput
       v-model="search"

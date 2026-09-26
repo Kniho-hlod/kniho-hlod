@@ -1,36 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
-import { FILE_ROLES } from '@kniho-hlod/domain';
-import { fileUrl, services } from '@/app/api';
 import { describeError } from '@/app/errors';
+import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useSessionStore } from '@/features/auth/session-store';
+import { useAvatar } from './use-avatar';
 
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = 'image/jpeg,image/png,image/webp';
 
 const { t } = useI18n();
 const session = useSessionStore();
-const queryClient = useQueryClient();
+const { avatarUrl, uploadAvatar, isUploading } = useAvatar();
 
 const errorMessage = ref('');
-const avatarSlot = services.users.files(FILE_ROLES.avatar);
-const userId = computed(() => session.user?.id ?? '');
-const avatarQueryKey = computed(() => ['avatar', userId.value]);
-
-const { data: avatars } = useQuery({
-  queryKey: avatarQueryKey,
-  queryFn: () => avatarSlot.list(userId.value),
-  enabled: computed(() => userId.value !== ''),
-});
-
-const avatarUrl = computed(() => fileUrl(avatars.value?.[0]));
-
-const { mutateAsync: uploadAvatar, isPending } = useMutation({
-  mutationFn: (file: File) => avatarSlot.upload(userId.value, file),
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: avatarQueryKey.value }),
-});
 
 async function selectAvatar(event: Event): Promise<void> {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -51,18 +34,18 @@ async function selectAvatar(event: Event): Promise<void> {
 <template>
   <UCard>
     <template #header>
-      <h2 class="font-semibold text-highlighted">{{ t('account.avatar') }}</h2>
+      <h2 class="text-lg font-bold text-highlighted">{{ t('account.avatar') }}</h2>
     </template>
 
     <div class="flex items-center gap-4">
-      <UAvatar :src="avatarUrl" :alt="session.user?.displayName" size="3xl" />
+      <PersonAvatar :name="session.user?.displayName ?? ''" :src="avatarUrl" size="3xl" />
       <div class="flex flex-col gap-2">
         <label>
           <input
             type="file"
             class="sr-only"
             :accept="ACCEPTED_TYPES"
-            :disabled="isPending"
+            :disabled="isUploading"
             @change="selectAvatar"
           />
           <UButton
@@ -70,7 +53,7 @@ async function selectAvatar(event: Event): Promise<void> {
             icon="i-lucide-upload"
             color="neutral"
             variant="subtle"
-            :loading="isPending"
+            :loading="isUploading"
           >
             {{ t('account.avatar') }}
           </UButton>

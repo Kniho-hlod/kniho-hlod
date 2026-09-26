@@ -19,6 +19,8 @@ const filters = defineModel<BookListFilters>({ required: true });
 const { t } = useI18n();
 
 const search = ref(filters.value.q);
+/** On phones and tablets the filters wait in a drawer; the search stays in view. */
+const isDrawerOpen = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
 watch(search, (text) => {
@@ -74,6 +76,18 @@ const availability = computed({
   },
 });
 
+/** How many of the filters beside the search narrow the list — shown on the drawer's button. */
+const activeFilterCount = computed(
+  () =>
+    [filters.value.readingStatus, filters.value.minRating, filters.value.availability].filter(
+      (value) => value !== null
+    ).length
+);
+
+function clearFilters(): void {
+  filters.value = { ...filters.value, readingStatus: null, minRating: null, availability: null };
+}
+
 const minRating = computed({
   get: () => (filters.value.minRating === null ? ANY : String(filters.value.minRating)),
   set: (value: string) => {
@@ -83,32 +97,77 @@ const minRating = computed({
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+  <div class="flex gap-2">
     <UInput
       v-model="search"
       type="search"
       icon="i-lucide-search"
       :placeholder="t('books.search')"
       :aria-label="t('books.search')"
-      class="sm:basis-full lg:flex-1 lg:basis-0"
+      class="min-w-0 flex-1"
     />
-    <USelect
-      v-model="readingStatus"
-      :items="statusItems"
-      :aria-label="t('books.fields.readingStatus')"
-      class="sm:flex-1 lg:w-44 lg:flex-none"
-    />
-    <USelect
-      v-model="minRating"
-      :items="ratingItems"
-      :aria-label="t('books.fields.rating')"
-      class="sm:flex-1 lg:w-44 lg:flex-none"
-    />
-    <USelect
-      v-model="availability"
-      :items="availabilityItems"
-      :aria-label="t('books.availability.label')"
-      class="sm:flex-1 lg:w-44 lg:flex-none"
-    />
+
+    <UDrawer v-model:open="isDrawerOpen" :title="t('books.filters.title')">
+      <UButton
+        icon="i-lucide-sliders-horizontal"
+        color="neutral"
+        variant="outline"
+        class="lg:hidden"
+        :aria-label="t('books.filters.title')"
+      >
+        <span class="hidden sm:inline">{{ t('books.filters.title') }}</span>
+        <UBadge v-if="activeFilterCount" color="primary" size="sm" variant="solid">
+          {{ activeFilterCount }}
+        </UBadge>
+      </UButton>
+
+      <template #body>
+        <div class="flex flex-col gap-4 pb-2">
+          <UFormField :label="t('books.fields.readingStatus')">
+            <USelect v-model="readingStatus" :items="statusItems" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('books.fields.rating')">
+            <USelect v-model="minRating" :items="ratingItems" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('books.availability.label')">
+            <USelect v-model="availability" :items="availabilityItems" class="w-full" />
+          </UFormField>
+        </div>
+      </template>
+
+      <template #footer>
+        <UButton block @click="isDrawerOpen = false">{{ t('books.filters.done') }}</UButton>
+        <UButton
+          v-if="activeFilterCount"
+          block
+          color="neutral"
+          variant="ghost"
+          @click="clearFilters"
+        >
+          {{ t('books.filters.clear') }}
+        </UButton>
+      </template>
+    </UDrawer>
+
+    <div class="hidden gap-2 lg:flex">
+      <USelect
+        v-model="readingStatus"
+        :items="statusItems"
+        :aria-label="t('books.fields.readingStatus')"
+        class="w-44"
+      />
+      <USelect
+        v-model="minRating"
+        :items="ratingItems"
+        :aria-label="t('books.fields.rating')"
+        class="w-44"
+      />
+      <USelect
+        v-model="availability"
+        :items="availabilityItems"
+        :aria-label="t('books.availability.label')"
+        class="w-44"
+      />
+    </div>
   </div>
 </template>

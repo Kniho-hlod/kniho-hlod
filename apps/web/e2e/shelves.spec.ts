@@ -20,7 +20,7 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo').fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
-    await expect(page.getByRole('heading', { name: /Vítejte/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
 
   await test.step('add a book on a new shelf, started today', async () => {
