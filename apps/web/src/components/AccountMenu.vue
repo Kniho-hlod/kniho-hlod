@@ -12,6 +12,8 @@ import { useSessionStore } from '@/features/auth/session-store';
 import FeedbackModal from '@/features/feedback/FeedbackModal.vue';
 import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 import { useOnboardingTour } from '@/features/onboarding/use-onboarding-tour';
+import { BUILD, CURRENT_RELEASE } from '@/features/releases/releases';
+import { useReleaseNotes } from '@/features/releases/use-release-notes';
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -20,6 +22,7 @@ const { avatarUrl } = useAvatar();
 const { isDark, toggle } = useColorMode();
 const isReporting = ref(false);
 const tour = useOnboardingTour();
+const releaseNotes = useReleaseNotes();
 
 async function signOut(): Promise<void> {
   await session.signOut();
@@ -28,7 +31,7 @@ async function signOut(): Promise<void> {
 
 /**
  * Everything about the reader rather than their library: who they are, the look, the tour again,
- * a word to the administrators, signing out.
+ * what's new, a word to the administrators, signing out — and which version this is.
  */
 const items = computed<DropdownMenuItem[][]>(() => [
   [
@@ -71,6 +74,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
       onSelect: () => tour.welcome(),
     },
     {
+      label: t('releases.whatsNew'),
+      icon: 'i-lucide-sparkles',
+      onSelect: () => releaseNotes.showHistory(),
+    },
+    {
       label: t('nav.feedback'),
       icon: 'i-lucide-message-square-warning',
       onSelect: () => {
@@ -84,6 +92,13 @@ const items = computed<DropdownMenuItem[][]>(() => [
       icon: 'i-lucide-log-out',
       color: 'error',
       onSelect: signOut,
+    },
+  ],
+  [
+    {
+      type: 'label',
+      label: t('releases.versionWithBuild', { version: CURRENT_RELEASE.version, build: BUILD }),
+      class: 'text-xs font-normal text-muted',
     },
   ],
 ]);

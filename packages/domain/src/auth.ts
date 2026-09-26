@@ -17,6 +17,7 @@ export const PROFILE_FIELDS = [
   'emailReminders',
   'reminderDaysBefore',
   'onboardedAt',
+  'lastSeenRelease',
 ] as const satisfies readonly (keyof User)[];
 
 export interface RegisterRequest extends CredentialsRequest {

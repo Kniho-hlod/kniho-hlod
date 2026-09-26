@@ -15,6 +15,7 @@ const DISPLAY_NAME_MAX_LENGTH = 60;
 const TIMEZONE_MAX_LENGTH = 64;
 const DEFAULT_REMINDER_DAYS_BEFORE = 2;
 const MAX_REMINDER_DAYS_BEFORE = 30;
+const RELEASE_VERSION_MAX_LENGTH = 20;
 
 export const userFields = {
   email: {
@@ -53,4 +54,9 @@ export const userFields = {
    * them on the home page. Set by the app through `PATCH /api/auth/me`.
    */
   onboardedAt: { type: 'DATE' },
+  /**
+   * The newest release whose notes the reader has seen (`1.4`); the app shows "what's new" for
+   * anything newer. Empty for a reader the app hasn't recorded yet. Set through `PATCH /api/auth/me`.
+   */
+  lastSeenRelease: { type: 'STRING', maxLength: RELEASE_VERSION_MAX_LENGTH },
 } as const satisfies Fields;

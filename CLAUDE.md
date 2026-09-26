@@ -71,6 +71,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   returned) in one transaction, 409 into a library that isn't empty; `DELETE` removes them with
   the loans of sample books and contacts. The rows carry `isSample` (`SAMPLE_FLAG_FIELD`,
   `readOnly`); the reminder job and the administrators' numbers leave them out.
+- Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
+  reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
+  `1.3`, the release before the notes. The releases themselves live in the web app.
 - Schema: `syncMode: 'migrate'` — the API applies pending `src/migrations/` on startup. The first,
   `2026-09-26-baseline`, is the DDL `sync()` generated until then, frozen, `IF NOT EXISTS`
   throughout (a no-op on production, which `sync()` built). A model change needs a new migration:
@@ -177,9 +180,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   with `seed:admin`, as production does (helpers in `e2e/accounts.ts`).
 - Feedback (`src/features/feedback/`): "Nahlásit chybu nebo nápad" in the account menu opens
   `FeedbackModal` (kind, message, optional screenshot shrunk to WebP); the report carries the
-  route, the window size and the build (`import.meta.env.VITE_APP_VERSION`, from Vercel's
-  `VERCEL_GIT_COMMIT_SHA` in `vite.config.ts`, else `dev`). Administrators resolve reports at
-  `/admin/feedback`; the overview's section shows how many are new.
+  route, the window size and the release with the build (`1.4 · 2ee4ac0`). Administrators
+  resolve reports at `/admin/feedback`; the overview's section shows how many are new.
 - The onboarding tour (`src/features/onboarding/`, mounted in `AppLayout`): `OnboardingTour`
   greets a reader without `onboardedAt` on the home page once the splash screen is gone
   (`TourWelcome`: the bookworm, an offer of the sample library while the library is empty,
@@ -190,6 +192,17 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   sample books wear an "Ukázka" badge. A new element the tour points at needs a `data-tour` mark.
   E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
   registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
+- Versions and release notes (`src/features/releases/`): `RELEASES` in `releases.ts` is the one
+  source — newest first, each with a version (`1.4`), a date, a title and notes in every language
+  (content, so it lives there rather than in the locale files; the types demand both languages).
+  `CURRENT_RELEASE` is the first; `BUILD` is the commit (`VITE_APP_VERSION`, from Vercel's
+  `VERCEL_GIT_COMMIT_SHA` in `vite.config.ts`, else `dev`). The account menu and the foot of the
+  account page (`AppVersion`) show both and open the history. `WhatsNew` (in `AppLayout`) shows
+  the releases newer than `lastSeenRelease` once, after the splash screen and never over the
+  tour, and records the current release when closed; a reader without one is recorded quietly.
+  **A change readers notice adds a release on top of `RELEASES`** — the next number, today's
+  date, notes written for readers in Czech and English; `releases.test.ts` checks the order and
+  the languages. A fix readers wouldn't notice deploys without one.
 - The look ("playful and bold": indigo and orange on warm paper, ink outlines, stuck-on shadows)
   lives in two places: `ui.config.ts` themes Nuxt UI's components (colours, 2px rings on cards
   and fields, solid buttons that press flat) and `src/assets/main.css` holds the tokens — the
@@ -233,7 +246,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `useToast` from `@nuxt/ui/composables`). Icons are bundled at build time from literal names in
   `src/**/*.{vue,ts}` (`vite.config.ts`); a name only known at runtime would be fetched from the
   Iconify API. All texts go through vue-i18n (`src/locales/{cs,en}.json`) — including validation
-  messages, keyed by issue code, with `validation.formats.*` naming formats such as `isbn`.
+  messages, keyed by issue code, with `validation.formats.*` naming formats such as `isbn`. The
+  release notes and the sample library are content, kept per language in their own files.
 - Every `UForm` binds `:validate-on="VALIDATE_ON"` (`src/app/validation.ts`). Nuxt UI's default
   also validates on blur, so leaving an untouched field shows an error and shifts the layout under
   the pointer — the link or button being clicked moves away and the click is lost.
@@ -257,12 +271,13 @@ pnpm --filter @kniho-hlod/api job loan-reminders
 - Prettier: 100 columns, single quotes, semicolons. ESLint flat config at the root.
 - Czech is the default language; keys live in both locale files.
 - Don't commit unless asked — implement, verify, then stop.
+- A change readers notice comes with a release in `apps/web/src/features/releases/releases.ts`.
 
 ## Status
 
 Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
 (contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
-visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports and
-the onboarding tour with its sample library since. The plan
+visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports,
+the onboarding tour with its sample library and versioned release notes since. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

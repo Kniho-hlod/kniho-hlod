@@ -10,12 +10,15 @@ export function uniqueEmail(kind: string): string {
   return `e2e-${kind}-${Date.now()}-${Math.round(Math.random() * 1000)}@kniho-hlod.test`;
 }
 
-/** Registers an account straight through the API, as a reader who has had the tour. */
+/**
+ * Registers an account straight through the API, as a reader who has had the tour. Answers the
+ * account's access token.
+ */
 export async function register(
   request: APIRequestContext,
   email: string,
   displayName: string
-): Promise<void> {
+): Promise<string> {
   const registered = await request.post(`${API_URL}/api/auth/register`, {
     data: { email, password: PASSWORD, displayName },
   });
@@ -26,6 +29,7 @@ export async function register(
     data: { onboardedAt: new Date().toISOString() },
   });
   expect(onboarded.ok()).toBe(true);
+  return token;
 }
 
 /** A new reader is greeted with the tour on the home page; tests about other things skip it. */

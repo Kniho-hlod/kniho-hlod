@@ -10,6 +10,7 @@ import AppLogo from '@/components/AppLogo.vue';
 import NavLink, { type NavigationMatch } from '@/components/NavLink.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
 import OnboardingTour from '@/features/onboarding/OnboardingTour.vue';
+import WhatsNew from '@/features/releases/WhatsNew.vue';
 
 const { t } = useI18n();
 const session = useSessionStore();
@@ -129,5 +130,6 @@ function administrationItem(): NavigationItem {
     </nav>
 
     <OnboardingTour />
+    <WhatsNew />
   </div>
 </template>

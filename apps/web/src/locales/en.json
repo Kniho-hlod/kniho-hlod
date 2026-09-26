@@ -541,5 +541,14 @@
     "confirm": "Remove the samples? Loans of sample books and contacts go too.",
     "removed": "The samples are gone. The library is all yours!",
     "conflict": "Samples only go into an empty library."
+  },
+  "releases": {
+    "whatsNew": "What's new",
+    "newsTitle": "What's new in {version}",
+    "intro": "I've learned a few new things since last time:",
+    "history": "Full history",
+    "thanks": "Thanks!",
+    "current": "Current",
+    "versionWithBuild": "version {version} · build {build}"
   }
 }

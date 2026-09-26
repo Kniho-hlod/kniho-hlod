@@ -5,6 +5,7 @@ import { FILE_ROLES } from '@kniho-hlod/domain';
 import type { FeedbackKind, FeedbackStatus, FeedbackWithDetails } from '@kniho-hlod/domain';
 import { services } from '@/app/api';
 import { nextPageNumber } from '@/app/pagination';
+import { BUILD, CURRENT_RELEASE } from '@/features/releases/releases';
 import { resizeImage } from '@/shared/resize-image';
 import { describeFeedbackContext } from './feedback-context';
 
@@ -35,7 +36,7 @@ export function useSendFeedback() {
     mutationFn: async (draft: FeedbackDraft): Promise<SentFeedback> => {
       const context = describeFeedbackContext(
         draft.pagePath,
-        import.meta.env.VITE_APP_VERSION,
+        `${CURRENT_RELEASE.version} · ${BUILD}`,
         window
       );
       const report = await services.feedback.report({

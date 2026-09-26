@@ -6,6 +6,7 @@ import type { TestApp } from './test-support/test-app';
 const OK = 200;
 const CREATED = 201;
 const NO_CONTENT = 204;
+const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
 const CONFLICT = 409;
 
@@ -65,6 +66,18 @@ describe('Onboarding and the sample library', () => {
       .post('/api/auth/login')
       .send({ email: reader.email, password: PASSWORD });
     expect(new Date(signedIn.body.user.onboardedAt)).toEqual(NOW);
+  });
+
+  it('remembers the newest release notes a reader has seen', async () => {
+    const reader = await signUp();
+    expect((await as(reader).get('/api/auth/me')).body.lastSeenRelease).toBeNull();
+
+    const seen = await as(reader).patch('/api/auth/me', { lastSeenRelease: '1.4' });
+    const tooLong = await as(reader).patch('/api/auth/me', { lastSeenRelease: '1'.repeat(21) });
+
+    expect(seen.body.lastSeenRelease).toBe('1.4');
+    expect(tooLong.status).toBe(BAD_REQUEST);
+    expect((await as(reader).get('/api/auth/me')).body.lastSeenRelease).toBe('1.4');
   });
 
   it('asks for a signed-in reader', async () => {

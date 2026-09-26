@@ -6,6 +6,7 @@ import ProfileCard from '@/features/account/ProfileCard.vue';
 import PasswordCard from '@/features/account/PasswordCard.vue';
 import DeleteAccountCard from '@/features/account/DeleteAccountCard.vue';
 import SampleLibraryCard from '@/features/onboarding/SampleLibraryCard.vue';
+import AppVersion from '@/features/releases/AppVersion.vue';
 
 const { t } = useI18n();
 </script>
@@ -20,5 +21,6 @@ const { t } = useI18n();
     <InstallAppCard />
     <PasswordCard />
     <DeleteAccountCard />
+    <AppVersion class="pt-2" />
   </section>
 </template>

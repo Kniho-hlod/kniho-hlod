@@ -541,5 +541,14 @@
     "confirm": "Opravdu smazat ukázky? Zmizí i výpůjčky ukázkových knih a kontaktů.",
     "removed": "Ukázky jsou pryč. Knihovna je celá vaše!",
     "conflict": "Ukázky jdou jen do prázdné knihovny."
+  },
+  "releases": {
+    "whatsNew": "Co je nového",
+    "newsTitle": "Novinky ve verzi {version}",
+    "intro": "Od minula jsem se naučil pár nových věcí:",
+    "history": "Celá historie",
+    "thanks": "Díky!",
+    "current": "Aktuální",
+    "versionWithBuild": "verze {version} · sestavení {build}"
   }
 }
