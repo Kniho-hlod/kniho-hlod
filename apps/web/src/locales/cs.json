@@ -105,7 +105,7 @@
     "rateAs": "Ohodnotit {rating} z {max}",
     "noRating": "Bez hodnocení",
     "isbnLookup": "Vyhledat podle ISBN",
-    "isbnLookupHint": "Název, autora a obálku doplníme z Open Library nebo Google Books.",
+    "isbnLookupHint": "Název, autora a obálku doplníme z katalogu českých knihoven, Open Library nebo Google Books.",
     "isbnSearch": "Vyhledat",
     "isbnFilled": "Údaje jsme doplnili z katalogu. Zkontrolujte je a uložte.",
     "isbnNotFound": "Knihu s tímto ISBN katalogy neznají. Vyplňte ji prosím ručně.",

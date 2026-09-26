@@ -105,7 +105,7 @@
     "rateAs": "Rate {rating} out of {max}",
     "noRating": "Not rated",
     "isbnLookup": "Look up by ISBN",
-    "isbnLookupHint": "We fill in the title, author and cover from Open Library or Google Books.",
+    "isbnLookupHint": "We fill in the title, author and cover from the Czech libraries’ catalogue, Open Library or Google Books.",
     "isbnSearch": "Look up",
     "isbnFilled": "We filled in the details from the catalogue. Check them and save.",
     "isbnNotFound": "The catalogues don't know this ISBN. Please fill in the book yourself.",
