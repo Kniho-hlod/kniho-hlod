@@ -105,14 +105,18 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `beforeDelete`, the file authorizer) get models from `src/models-registry.ts`.
 - Tests are integration tests (`*.integration.test.ts` / `app.integration.test.ts`) against the
   Postgres container, each in its own schema.
-- Deploy: Railway builds `apps/api/Dockerfile` (root `railway.json`) on every push to `main` that
-  touches the API. `NODE_AUTH_TOKEN` arrives as a build arg; never name it in a `RUN` line —
-  BuildKit prints RUN lines with args expanded, which once leaked the token into the build log.
+- Deploy: Railway builds `apps/api/Dockerfile` on every push to `main` that touches the API. Both
+  Railway services (`kniho-hlod-backend`, cron `kniho-hlod-reminders`) are configured in their
+  service settings — Dockerfile path, watch paths, healthcheck, start command, schedule — not in
+  `railway.json`, which Railway stops reading on 2026-12-01; change them there (or with the
+  Railway MCP's `update-service`). `NODE_AUTH_TOKEN` arrives as a build arg; never name it in a
+  `RUN` line — BuildKit prints RUN lines with args expanded, which once leaked the token into the
+  build log.
   It reaches pnpm through the `${NODE_AUTH_TOKEN}` placeholder in `tooling/user.npmrc`, which
-  the Vercel build (`apps/web/vercel.json`) copies the same way. The reminders run as a Railway
-  cron service on the same Dockerfile (start `node dist/jobs.cjs loan-reminders`, `0 5 * * *`
-  UTC), configured in its settings: Railway retires Config as Code (`railway.json`) on 2026-12-01
-  and new services can't use it.
+  the Vercel build (`apps/web/vercel.json`) copies the same way. The reminders run as the cron
+  service on the same Dockerfile (start `node dist/jobs.cjs loan-reminders`, `0 5 * * *` UTC, no
+  restart), with the API's variables as references (`${{kniho-hlod-backend.…}}`,
+  `${{shared.NODE_AUTH_TOKEN}}`).
 
 ## Frontend
 

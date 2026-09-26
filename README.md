@@ -68,7 +68,7 @@ soon or overdue, once a day at most. It uses the API's image and variables and n
 
 | Part | Where | Notes |
 |---|---|---|
-| API | Railway | [`railway.json`](railway.json) builds [`apps/api/Dockerfile`](apps/api/Dockerfile) from the repository root; every push to `main` that touches the API deploys |
+| API | Railway | Builds [`apps/api/Dockerfile`](apps/api/Dockerfile) from the repository root, healthcheck `/`; every push to `main` that touches the API deploys |
 | Reminders | Railway cron service | The API's Dockerfile, start command `node dist/jobs.cjs loan-reminders`, schedule `0 5 * * *` (UTC), the API's variables |
 | Database | Railway Postgres | `DATABASE_URL` |
 | Web | Vercel | [`apps/web/vercel.json`](apps/web/vercel.json); root directory `apps/web` |
@@ -80,8 +80,9 @@ user-level npm config, as above (CI gets that from `actions/setup-node`'s `regis
 Dockerfile and the Vercel install copy [`tooling/user.npmrc`](tooling/user.npmrc)). The web's API
 address comes from [`apps/web/.env.production`](apps/web/.env.production).
 
-`railway.json` is Railway's "Config as Code", which Railway retires on 2026-12-01; the cron
-service is configured in its settings instead.
+Both Railway services are configured in their settings, not in a file in the repository (Railway
+stops reading `railway.json` on 2026-12-01). They build on pushes that touch `apps/api/**`,
+`packages/**`, `tooling/**`, `package.json`, `pnpm-lock.yaml` or `pnpm-workspace.yaml`.
 
 ## Environment variables
 
