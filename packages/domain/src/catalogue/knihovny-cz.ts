@@ -1,6 +1,7 @@
-import { bookFields, toIsbn13 } from '@kniho-hlod/domain';
-import { fitInteger, fitText, joinNames, parseYear, trustedCoverUrl } from './catalogue-entry';
-import type { CatalogueProvider } from './catalogue-entry';
+import { bookFields } from '../entities/book/fields';
+import { toIsbn13 } from '../isbn';
+import { fitInteger, fitText, joinNames, parseYear } from './book-details';
+import type { BookDetails, FetchJson } from './book-details';
 import { marcLanguage } from './marc-record';
 
 const HOST = 'www.knihovny.cz';
@@ -22,8 +23,6 @@ const RECORD_FIELDS = [
 ];
 const SEARCH_OK = 'OK';
 const MAX_AUTHORS = 3;
-const COVER_URL = `https://${HOST}/Cover/Show`;
-const COVER_SIZE = 'large';
 
 /** Library headings name authors with their life dates: `J. R. R. Tolkien, 1892-1973`. */
 const LIFE_DATES = /,\s*\d{3,4}-(?:\d{3,4})?\s*$/;
@@ -50,12 +49,16 @@ interface SearchResult {
 }
 
 function searchUrl(isbn: string): string {
-  const url = new URL(SEARCH_URL);
-  url.searchParams.set('lookfor', isbn);
-  url.searchParams.set('type', ISBN_SEARCH_TYPE);
-  url.searchParams.set('limit', String(MAX_RECORDS));
-  for (const field of RECORD_FIELDS) url.searchParams.append('field[]', field);
-  return url.toString();
+  const parameters: [string, string][] = [
+    ['lookfor', isbn],
+    ['type', ISBN_SEARCH_TYPE],
+    ['limit', String(MAX_RECORDS)],
+    ...RECORD_FIELDS.map((field): [string, string] => ['field[]', field]),
+  ];
+  const query = parameters
+    .map(([name, value]) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`)
+    .join('&');
+  return `${SEARCH_URL}?${query}`;
 }
 
 function withoutPunctuation(text: string | undefined): string | undefined {
@@ -91,11 +94,18 @@ function firstKnown<T>(
 }
 
 /**
- * knihovny.cz, the joint catalogue of Czech libraries: nearly every Czech and Slovak edition,
- * with covers from obalkyknih.cz. A book without a cover gets a small placeholder image there,
- * which the cover download recognises by its size.
+ * Looks an ISBN-13 up in knihovny.cz, the joint catalogue of Czech libraries, which knows nearly
+ * every Czech and Slovak edition: its details, `null` when no library has it; throws when the
+ * catalogue can't be reached.
+ *
+ * The app asks from the reader's browser. knihovny.cz lets any web page read its API, but turns
+ * cloud servers such as ours away (418); its covers, on the other hand, no other web page may
+ * read, so they aren't imported.
  */
-export const findInKnihovnyCz: CatalogueProvider = async (isbn, fetchJson) => {
+export async function findInKnihovnyCz(
+  isbn: string,
+  fetchJson: FetchJson
+): Promise<BookDetails | null> {
   const result = await fetchJson<SearchResult>(searchUrl(isbn));
   if (!result) return null;
   if (result.status !== SEARCH_OK) throw new Error(`${HOST} answered ${result.status}`);
@@ -106,19 +116,16 @@ export const findInKnihovnyCz: CatalogueProvider = async (isbn, fetchJson) => {
   );
   if (!title) return null;
   return {
-    details: {
-      title,
-      author: firstKnown(records, authorOf),
-      publisher: firstKnown(records, (record) =>
-        fitText(bookFields.publisher, withoutPunctuation(record.publishers?.[0]))
-      ),
-      publishedYear: firstKnown(records, (record) => parseYear(record.publicationDates?.[0])),
-      pageCount: firstKnown(records, pageCountOf),
-      language: firstKnown(records, (record) => marcLanguage(record.rawData?.fullrecord)),
-      description: firstKnown(records, (record) =>
-        fitText(bookFields.description, record.summary?.[0])
-      ),
-    },
-    coverUrl: trustedCoverUrl(`${COVER_URL}?isbn=${isbn}&size=${COVER_SIZE}`, [HOST]),
+    title,
+    author: firstKnown(records, authorOf),
+    publisher: firstKnown(records, (record) =>
+      fitText(bookFields.publisher, withoutPunctuation(record.publishers?.[0]))
+    ),
+    publishedYear: firstKnown(records, (record) => parseYear(record.publicationDates?.[0])),
+    pageCount: firstKnown(records, pageCountOf),
+    language: firstKnown(records, (record) => marcLanguage(record.rawData?.fullrecord)),
+    description: firstKnown(records, (record) =>
+      fitText(bookFields.description, record.summary?.[0])
+    ),
   };
-};
+}

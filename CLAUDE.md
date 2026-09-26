@@ -52,16 +52,18 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
-- `GET /api/isbn/:isbn` (`src/isbn/`, one file per catalogue) asks, for Czech and Slovak ISBNs
-  (`978-80-…`), knihovny.cz first — the Czech libraries' joint catalogue, search type `ISN`,
-  records merged and stripped of cataloguing punctuation and life dates, the language read from
-  MARC field 008 (`marc-record.ts`) — then Open Library (`/isbn/{isbn}.json`, author names from
-  `/authors/…`) and Google Books; other ISBNs in the order Open Library, Google Books,
-  knihovny.cz. Answers are cached. A 404 means "unknown", not an outage. Google's anonymous quota
-  is shared and usually used up (429): set `GOOGLE_BOOKS_API_KEY` for a quota of our own;
-  `…/cover` hands the catalogue's cover over as base64 JSON, which the app imports like an upload.
-  Covers are only downloaded from the catalogues' own image hosts, and images under 3 kB are
-  "no cover" placeholders (knihovny.cz sends one). Tests pass a fake `fetch`.
+- `GET /api/isbn/:isbn` (`src/isbn/`, one file per catalogue) asks Open Library
+  (`/isbn/{isbn}.json`, author names from `/authors/…`), then Google Books: the details from the
+  first that knows the ISBN, the cover from the first that has one. Answers are cached. A 404
+  means "unknown", not an outage. Google's anonymous quota is shared and usually used up (429):
+  set `GOOGLE_BOOKS_API_KEY` for a quota of our own. `…/cover` hands the cover over as base64
+  JSON, which the app imports like an upload. Covers are only downloaded from the catalogues' own
+  image hosts, and images under 3 kB are "no cover" placeholders. Tests pass a fake `fetch`.
+- knihovny.cz, the Czech libraries' joint catalogue, answers our server (Railway) with 418 but
+  lets any web page read its API, so the **app** asks it, from the reader's browser
+  (`findInKnihovnyCz` in the domain package: search type `ISN`, records merged and stripped of
+  cataloguing punctuation and life dates, the language from MARC field 008). Its covers can't be
+  read by other pages, so they are never imported.
 - Loans (`src/loans/`): a partial unique index allows one open loan per book (a race answers 409).
   Every book carries `activeLoan`, every contact `activeLoans`, every loan its `book` and
   `contact`. `?lent=true|false` on books is a custom list filter (`query.customFilters` in the
@@ -101,6 +103,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   the moment it is installed, and its guard must already know who is signed in.
 - Books live in `src/features/books/` (vue-query composables in `api.ts`, form state in
   `book-form.ts`); covers are scaled to WebP in the browser (`src/shared/resize-image.ts`).
+  An ISBN lookup asks knihovny.cz and the API at once (`isbn-lookup.ts`): for Czech and Slovak
+  ISBNs (`978-80-…`) the libraries' details come first, for others the API's; each fills in
+  what the other lacks, and the cover always comes through the API. E2E tests answer knihovny.cz
+  with `e2e/czech-libraries.ts`.
 - Loans in `src/features/loans/`, contacts in `src/features/contacts/`; their pages sit under
   `/loans` so the Loans tab stays highlighted. Lending to a new name creates the contact first
   (`ContactPicker`). Books, contacts, loans and stats show parts of each other, so every mutation

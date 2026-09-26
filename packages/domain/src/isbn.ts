@@ -31,6 +31,8 @@ const ISBN_13_EVEN_POSITION_WEIGHT = 1;
 const ISBN_13_ODD_POSITION_WEIGHT = 3;
 /** The Bookland prefix every ISBN-10 gets when converted. */
 const ISBN_10_TO_13_PREFIX = '978';
+/** Bookland plus the registration group of Czech and Slovak publishers: 978-80-… */
+const CZECH_AND_SLOVAK_ISBN_13_PREFIX = '97880';
 
 /**
  * The bare ISBN: label and separators removed, a final `x` upper-cased —
@@ -78,6 +80,11 @@ export function toIsbn13(input: string): string | null {
   if (!isValidIsbn10(value)) return null;
   const body = ISBN_10_TO_13_PREFIX + value.slice(0, ISBN_10_BODY_LENGTH);
   return `${body}${isbn13CheckDigit(body)}`;
+}
+
+/** Whether an ISBN-13 is a Czech or Slovak publisher's — the books the Czech libraries know best. */
+export function isCzechOrSlovakIsbn(isbn13: string): boolean {
+  return isbn13.startsWith(CZECH_AND_SLOVAK_ISBN_13_PREFIX);
 }
 
 /** A book's ISBN, when it has one, must be a valid ISBN-10 or ISBN-13. */

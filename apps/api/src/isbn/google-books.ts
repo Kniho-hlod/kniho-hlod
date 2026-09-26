@@ -1,5 +1,5 @@
-import { bookFields } from '@kniho-hlod/domain';
-import { fitInteger, fitText, joinNames, parseYear, trustedCoverUrl } from './catalogue-entry';
+import { bookFields, fitInteger, fitText, joinNames, parseYear } from '@kniho-hlod/domain';
+import { trustedCoverUrl } from './catalogue-entry';
 import type { CatalogueProvider } from './catalogue-entry';
 
 const VOLUMES_URL = 'https://www.googleapis.com/books/v1/volumes';

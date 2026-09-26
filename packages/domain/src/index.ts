@@ -1,3 +1,14 @@
+export {
+  fitInteger,
+  fitText,
+  joinNames,
+  MARC_TO_ISO_639_1,
+  mergeBookDetails,
+  parseYear,
+  type BookDetails,
+  type FetchJson,
+} from './catalogue/book-details';
+export { findInKnihovnyCz } from './catalogue/knihovny-cz';
 export * from './constants';
 export * from './entities';
 export {
@@ -10,6 +21,7 @@ export {
 export { createServices, type Services } from './services';
 export {
   findIsbnIssues,
+  isCzechOrSlovakIsbn,
   ISBN_FORMAT,
   ISBN_INPUT_MAX_LENGTH,
   isValidIsbn10,

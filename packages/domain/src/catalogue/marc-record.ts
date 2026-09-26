@@ -1,4 +1,4 @@
-import { MARC_TO_ISO_639_1 } from './catalogue-entry';
+import { MARC_TO_ISO_639_1 } from './book-details';
 
 /**
  * Reading a library record in MARC 21 exchange format (ISO 2709), as knihovny.cz hands it over in

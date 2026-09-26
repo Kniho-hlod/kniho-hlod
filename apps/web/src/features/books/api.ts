@@ -10,7 +10,7 @@ import {
 import { ApiError } from '@eleansphere/entity-core';
 import type { PaginatedResponse } from '@eleansphere/entity-core';
 import { FILE_ROLES, readingDatesForStatus } from '@kniho-hlod/domain';
-import type { Book, BookWithDetails, ReadingStatus } from '@kniho-hlod/domain';
+import type { Book, BookWithDetails, IsbnLookupResult, ReadingStatus } from '@kniho-hlod/domain';
 import { services } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { translate } from '@/app/i18n';
@@ -19,6 +19,7 @@ import { nextPageNumber } from '@/app/pagination';
 import { base64ToBlob, resizeImage } from '@/shared/resize-image';
 import { toBookPayload } from './book-form';
 import type { BookFormState, CoverChange, ShelvesChange } from './book-form';
+import { combineLookups, findInCzechLibraries, IsbnNotFoundError } from './isbn-lookup';
 
 export const BOOKS_PAGE_SIZE = 24;
 /** Covers are stored at most this many pixels along their longer side. */
@@ -217,8 +218,17 @@ export function useDeleteBook() {
   });
 }
 
+/** Asks the Czech libraries (from the browser) and the API's catalogues at once. */
+async function lookUpIsbn(isbn: string): Promise<IsbnLookupResult> {
+  const [libraries, catalogues] = await Promise.allSettled([
+    findInCzechLibraries(isbn),
+    services.isbn.lookup(isbn),
+  ]);
+  return combineLookups(isbn, libraries, catalogues);
+}
+
 export function useIsbnLookup() {
-  return useMutation({ mutationFn: (isbn: string) => services.isbn.lookup(isbn) });
+  return useMutation({ mutationFn: lookUpIsbn });
 }
 
 /** The catalogue's cover for an ISBN, as an image to import like an uploaded one. */
@@ -229,6 +239,7 @@ export async function fetchCatalogueCover(isbn: string): Promise<Blob> {
 
 /** Why a lookup found nothing, in words: unknown ISBN, catalogues down, or no ISBN at all. */
 export function describeIsbnLookupError(err: unknown): string {
+  if (err instanceof IsbnNotFoundError) return translate('books.isbnNotFound');
   if (err instanceof ApiError) {
     if (err.status === NOT_FOUND) return translate('books.isbnNotFound');
     if (err.status === SERVICE_UNAVAILABLE) return translate('books.isbnUnavailable');

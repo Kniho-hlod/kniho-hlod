@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { IsbnLookupResult } from '@kniho-hlod/domain';
 import { writeBarcodeVideo } from './barcode-video';
+import { answerFromCzechLibraries } from './czech-libraries';
 
 const PASSWORD = 'correct-horse-battery';
 const ISBN = '9780306406157';
@@ -43,6 +44,7 @@ test("a reader adds a book by scanning its barcode, and is warned when it's ther
   page,
 }) => {
   await page.route(`**/api/isbn/${ISBN}`, (route) => route.fulfill({ json: FOUND }));
+  await answerFromCzechLibraries(page);
 
   await test.step('register', async () => {
     await page.goto('/register');

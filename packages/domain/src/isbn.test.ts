@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { findIsbnIssues, isValidIsbn10, isValidIsbn13, stripIsbn, toIsbn13 } from './isbn';
+import {
+  findIsbnIssues,
+  isCzechOrSlovakIsbn,
+  isValidIsbn10,
+  isValidIsbn13,
+  stripIsbn,
+  toIsbn13,
+} from './isbn';
 
 describe('ISBN', () => {
   it('strips separators and upper-cases the check character', () => {
@@ -53,5 +60,10 @@ describe('ISBN', () => {
     expect(findIsbnIssues({ isbn: '0-306-40615-2' })).toEqual([]);
     expect(findIsbnIssues({ isbn: null })).toEqual([]);
     expect(findIsbnIssues({})).toEqual([]);
+  });
+
+  it('tells Czech and Slovak ISBNs (978-80) from the rest', () => {
+    expect(isCzechOrSlovakIsbn('9788072037285')).toBe(true);
+    expect(isCzechOrSlovakIsbn('9780306406157')).toBe(false);
   });
 });

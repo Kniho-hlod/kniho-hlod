@@ -1,13 +1,14 @@
-import { bookFields } from '@kniho-hlod/domain';
 import {
+  bookFields,
   fitInteger,
   fitText,
   joinNames,
   MARC_TO_ISO_639_1,
   parseYear,
-  trustedCoverUrl,
-} from './catalogue-entry';
-import type { CatalogueProvider, FetchJson } from './catalogue-entry';
+} from '@kniho-hlod/domain';
+import type { FetchJson } from '@kniho-hlod/domain';
+import { trustedCoverUrl } from './catalogue-entry';
+import type { CatalogueProvider } from './catalogue-entry';
 
 const OPEN_LIBRARY_URL = 'https://openlibrary.org';
 const COVER_HOST = 'covers.openlibrary.org';

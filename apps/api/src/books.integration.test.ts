@@ -8,13 +8,11 @@ const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
 const OPEN_LIBRARY_ISBN = 'https://openlibrary.org/isbn/';
 const OPEN_LIBRARY_AUTHOR = 'https://openlibrary.org/authors/OL1A.json';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
-const KNIHOVNY_CZ_SEARCH = 'https://www.knihovny.cz/api/v1/search';
 /** Big enough to count as a cover rather than a catalogue's "no image" placeholder. */
 const CATALOGUE_COVER = Buffer.concat([PNG_SIGNATURE, Buffer.alloc(4096)]);
 
 /**
- * Open Library knows one book; Google Books and the Czech libraries know none. Set `down` to make
- * them all unreachable.
+ * Open Library knows one book; Google Books knows none. Set `down` to make them both unreachable.
  */
 function createFakeCatalogues() {
   const state = { down: false };
@@ -28,7 +26,6 @@ function createFakeCatalogues() {
     }
     if (url === OPEN_LIBRARY_AUTHOR) return Response.json({ name: 'J. R. R. Tolkien' });
     if (url.startsWith(GOOGLE_BOOKS)) return Response.json({ totalItems: 0 });
-    if (url.startsWith(KNIHOVNY_CZ_SEARCH)) return Response.json({ status: 'OK', records: [] });
     if (url === COVER_URL) {
       return new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/png' } });
     }
