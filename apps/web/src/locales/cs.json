@@ -15,7 +15,8 @@
     "admin": "Správa",
     "signOut": "Odhlásit se",
     "main": "Hlavní navigace",
-    "accountMenu": "Účet a nastavení"
+    "accountMenu": "Účet a nastavení",
+    "feedback": "Nahlásit chybu nebo nápad"
   },
   "common": {
     "save": "Uložit",
@@ -364,6 +365,10 @@
       "announcements": {
         "title": "Oznámení",
         "hint": "Zprávy pro všechny, třeba o plánované údržbě"
+      },
+      "feedback": {
+        "title": "Hlášení",
+        "hint": "Chyby a nápady od uživatelů"
       }
     },
     "users": {
@@ -385,6 +390,34 @@
       "delete": "Smazat účet",
       "deleteConfirm": "Smazat účet {name} ({email})? Zmizí s ním i všechny knihy, kontakty a výpůjčky toho účtu. Tohle nelze vrátit.",
       "deleted": "Účet {name} je smazaný."
+    },
+    "feedback": {
+      "title": "Hlášení",
+      "hint": "Chyby a nápady, které uživatelé poslali z aplikace. Autorovi odpovíte e-mailem.",
+      "newCount": "žádné nové hlášení | {count} nové hlášení | {count} nová hlášení | {count} nových hlášení",
+      "tabs": {
+        "new": "Nová",
+        "resolved": "Vyřešená"
+      },
+      "empty": {
+        "new": "Žádná nová hlášení. Všechno funguje!",
+        "resolved": "Zatím nic vyřešeného."
+      },
+      "resolve": "Vyřešeno",
+      "reopen": "Znovu otevřít",
+      "resolved": "Hlášení je vyřešené.",
+      "reopened": "Hlášení je znovu otevřené.",
+      "delete": "Smazat hlášení",
+      "deleteConfirm": "Smazat hlášení od {name}? Smaže se i obrázek k němu.",
+      "deleted": "Hlášení je smazané.",
+      "unknownReporter": "Smazaný účet",
+      "context": {
+        "page": "Stránka",
+        "version": "Verze",
+        "window": "Okno",
+        "browser": "Prohlížeč"
+      },
+      "screenshot": "Obrázek k hlášení"
     }
   },
   "announcements": {
@@ -431,5 +464,28 @@
       "Žehlím oslí uši…",
       "Připomínám sousedovi, že má pořád tu knihu…"
     ]
+  },
+  "feedback": {
+    "title": "Nahlásit chybu nebo nápad",
+    "hint": "Co nefunguje, nebo co by se vám hodilo? Každé hlášení si přečteme.",
+    "kind": "O co jde",
+    "kinds": {
+      "bug": "Chyba",
+      "idea": "Nápad",
+      "other": "Jiné"
+    },
+    "message": "Zpráva",
+    "placeholders": {
+      "bug": "Co se stalo, a co jste čekali?",
+      "idea": "Co by vám pomohlo?",
+      "other": "Napište nám…"
+    },
+    "screenshot": "Obrázek",
+    "screenshotHint": "Nepovinný — třeba snímek obrazovky s chybou.",
+    "screenshotPick": "Přetáhněte obrázek sem, nebo ho vyberte",
+    "contextNote": "S hlášením pošleme i adresu stránky, verzi aplikace a údaje o prohlížeči.",
+    "send": "Odeslat",
+    "sent": "Díky! Hlášení jsme dostali.",
+    "sentWithoutScreenshot": "Hlášení jsme dostali, ale obrázek se nepodařilo nahrát."
   }
 }

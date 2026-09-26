@@ -11,7 +11,7 @@ const { t } = useI18n();
 <template>
   <div class="min-h-dvh bg-paper flex flex-col">
     <header class="flex items-center justify-between p-4">
-      <RouterLink to="/" class="rounded-lg">
+      <RouterLink to="/" class="group rounded-lg">
         <AppLogo />
       </RouterLink>
       <AppearanceMenu />

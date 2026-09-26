@@ -9,8 +9,14 @@ import { uiTheme } from './ui.config';
 const THEME_COLOR = '#4f46e5';
 /** The paper behind the app (`--app-paper` in `src/assets/main.css`), shown while it starts. */
 const BACKGROUND_COLOR = '#fff7ec';
+/** How much of the commit hash names a build. */
+const SHORT_COMMIT_LENGTH = 7;
+/** The build's commit on Vercel, which sets `VERCEL_GIT_COMMIT_SHA` while it builds; `dev` elsewhere. */
+const APP_VERSION = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, SHORT_COMMIT_LENGTH) ?? 'dev';
 
 export default defineConfig({
+  // Sent with feedback reports, so a report can be matched to the code it came from.
+  define: { 'import.meta.env.VITE_APP_VERSION': JSON.stringify(APP_VERSION) },
   plugins: [
     vue(),
     ui({

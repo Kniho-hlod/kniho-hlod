@@ -14,6 +14,9 @@ const POP = 'ring-0 shadow-pop';
 /** Pressing a popped control pushes it flat onto its shadow. */
 const PRESSABLE =
   'shadow-pop-sm transition-[color,background-color,box-shadow,translate] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none';
+/** An outlined control lifts into a sticker under the pointer, then presses flat like one. */
+const LIFTS_ON_HOVER =
+  'transition-[color,background-color,box-shadow,translate] hover:shadow-pop-sm active:translate-x-[3px] active:translate-y-[3px] active:shadow-none disabled:shadow-none aria-disabled:shadow-none';
 const OUTLINED_FIELD = 'ring-2 ring-accented';
 
 /**
@@ -34,7 +37,17 @@ export const uiTheme: UiTheme = {
     slots: { base: 'font-semibold' },
     compoundVariants: [
       { variant: 'solid', class: PRESSABLE },
-      { color: 'neutral', variant: 'outline', class: 'ring-2 ring-line hover:bg-elevated' },
+      {
+        color: 'neutral',
+        variant: 'outline',
+        class: `ring-2 ring-line hover:bg-elevated ${LIFTS_ON_HOVER}`,
+      },
+      // Nuxt UI's `bg-elevated` barely shows on the paper; a quiet button still has to answer.
+      {
+        color: 'neutral',
+        variant: 'ghost',
+        class: 'hover:bg-accented/70 hover:text-highlighted active:bg-accented',
+      },
       {
         color: 'neutral',
         variant: 'subtle',
@@ -73,13 +86,17 @@ export const uiTheme: UiTheme = {
   tabs: {
     variants: {
       variant: {
-        pill: { list: 'bg-default ring-2 ring-line rounded-xl', indicator: 'rounded-lg' },
+        pill: {
+          list: 'bg-default ring-2 ring-line rounded-xl',
+          indicator: 'rounded-lg',
+          trigger: 'rounded-lg hover:data-[state=inactive]:bg-elevated',
+        },
       },
     },
   },
   dropdownMenu: { slots: { content: `${POP} rounded-xl` } },
   drawer: { slots: { content: 'ring-2 ring-line', title: 'font-display text-lg font-bold' } },
-  modal: { slots: { title: 'font-display text-lg font-bold' } },
+  modal: { slots: { content: `${POP} rounded-xl`, title: 'font-display text-lg font-bold' } },
   popover: { slots: { content: `${POP} rounded-xl` } },
   toast: { slots: { root: `${POP} rounded-xl`, title: 'font-semibold' } },
 };

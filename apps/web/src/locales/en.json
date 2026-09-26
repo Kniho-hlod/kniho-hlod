@@ -15,7 +15,8 @@
     "admin": "Admin",
     "signOut": "Sign out",
     "main": "Main navigation",
-    "accountMenu": "Account and settings"
+    "accountMenu": "Account and settings",
+    "feedback": "Report a bug or an idea"
   },
   "common": {
     "save": "Save",
@@ -364,6 +365,10 @@
       "announcements": {
         "title": "Announcements",
         "hint": "Messages for everyone, such as planned maintenance"
+      },
+      "feedback": {
+        "title": "Reports",
+        "hint": "Bugs and ideas from readers"
       }
     },
     "users": {
@@ -385,6 +390,34 @@
       "delete": "Delete account",
       "deleteConfirm": "Delete {name}'s account ({email})? All their books, contacts and loans go with it. This can't be undone.",
       "deleted": "{name}'s account is deleted."
+    },
+    "feedback": {
+      "title": "Reports",
+      "hint": "Bugs and ideas readers sent from the app. Reply to them by e-mail.",
+      "newCount": "no new reports | {count} new report | {count} new reports",
+      "tabs": {
+        "new": "New",
+        "resolved": "Resolved"
+      },
+      "empty": {
+        "new": "No new reports. All is well!",
+        "resolved": "Nothing resolved yet."
+      },
+      "resolve": "Resolved",
+      "reopen": "Reopen",
+      "resolved": "The report is resolved.",
+      "reopened": "The report is open again.",
+      "delete": "Delete report",
+      "deleteConfirm": "Delete the report from {name}? Its picture goes too.",
+      "deleted": "The report is deleted.",
+      "unknownReporter": "Deleted account",
+      "context": {
+        "page": "Page",
+        "version": "Version",
+        "window": "Window",
+        "browser": "Browser"
+      },
+      "screenshot": "The report's picture"
     }
   },
   "announcements": {
@@ -431,5 +464,28 @@
       "Ironing out the dog-ears…",
       "Reminding the neighbour they still have that book…"
     ]
+  },
+  "feedback": {
+    "title": "Report a bug or an idea",
+    "hint": "Something broken, or something you'd like? We read every report.",
+    "kind": "What it's about",
+    "kinds": {
+      "bug": "Bug",
+      "idea": "Idea",
+      "other": "Other"
+    },
+    "message": "Message",
+    "placeholders": {
+      "bug": "What happened, and what did you expect?",
+      "idea": "What would help you?",
+      "other": "Tell us…"
+    },
+    "screenshot": "Picture",
+    "screenshotHint": "Optional — a screenshot of the problem, say.",
+    "screenshotPick": "Drop a picture here, or choose one",
+    "contextNote": "The report also carries the page's address, the app's version and your browser.",
+    "send": "Send",
+    "sent": "Thanks! We've got your report.",
+    "sentWithoutScreenshot": "We've got your report, but the picture couldn't be uploaded."
   }
 }

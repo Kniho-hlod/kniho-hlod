@@ -68,7 +68,7 @@ function administrationItem(): NavigationItem {
     <header
       class="sticky top-0 z-10 border-b-2 border-line/10 bg-paper/85 backdrop-blur px-4 h-16 flex items-center justify-between gap-4"
     >
-      <RouterLink :to="{ name: 'home' }" class="rounded-lg">
+      <RouterLink :to="{ name: 'home' }" class="group rounded-lg">
         <AppLogo />
       </RouterLink>
 

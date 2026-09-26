@@ -19,7 +19,7 @@ const { t } = useI18n();
       :aria-checked="color === option"
       :aria-label="t(`shelves.colors.${option}`)"
       :title="t(`shelves.colors.${option}`)"
-      class="flex size-8 items-center justify-center rounded-full ring-offset-2 ring-offset-(--ui-bg) focus-visible:outline-2 focus-visible:outline-primary"
+      class="flex size-8 items-center justify-center rounded-full transition-transform hover:scale-110 motion-reduce:transition-none ring-offset-2 ring-offset-(--ui-bg) focus-visible:outline-2 focus-visible:outline-primary"
       :class="[
         SHELF_DOT_CLASSES[option],
         color === option ? 'ring-2 ring-(--ui-text-highlighted)' : '',

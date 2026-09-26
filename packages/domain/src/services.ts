@@ -4,6 +4,7 @@ import { KnihoHlodAuthService } from './auth';
 import {
   bookEntity,
   contactEntity,
+  feedbackEntity,
   loanEntity,
   shelfEntity,
   systemNotificationEntity,
@@ -25,6 +26,7 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       shelves: shelfEntity,
       isbn: IsbnService,
       stats: StatsService,
+      feedback: feedbackEntity,
     },
     baseUrl,
     tokenSource

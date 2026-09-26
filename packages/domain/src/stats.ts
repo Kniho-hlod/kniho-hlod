@@ -33,6 +33,8 @@ export interface AdminStats {
   lent: number;
   /** … of which past their due date, counted in the default time zone. */
   overdue: number;
+  /** Reports from readers no administrator has resolved yet. */
+  newFeedback: number;
 }
 
 export class StatsService extends ApiClient {

@@ -5,6 +5,7 @@ import { contactEntity } from './contact';
 import { loanEntity } from './loan';
 import { shelfEntity } from './shelf';
 import { bookShelfEntity } from './book-shelf';
+import { feedbackEntity } from './feedback';
 
 export {
   userEntity,
@@ -58,6 +59,20 @@ export {
 } from './shelf';
 export { shelfFields } from './shelf/fields';
 export { bookShelfEntity } from './book-shelf';
+export {
+  feedbackEntity,
+  ADMIN_FEEDBACK_PATH,
+  FEEDBACK_PATH,
+  type Feedback,
+  type FeedbackReporter,
+  type FeedbackReportRequest,
+  type FeedbackWithDetails,
+} from './feedback';
+export {
+  FEEDBACK_CONTEXT_MAX_LENGTH,
+  feedbackFields,
+  feedbackReportFields,
+} from './feedback/fields';
 
 /** Every entity, for the API's `toModelConfigs(allEntities)`. */
 export const allEntities = {
@@ -68,6 +83,7 @@ export const allEntities = {
   loan: loanEntity,
   shelf: shelfEntity,
   bookShelf: bookShelfEntity,
+  feedback: feedbackEntity,
 };
 
 /** Entities whose `/api` CRUD routes are not mounted: book–shelf pairs change through the book. */

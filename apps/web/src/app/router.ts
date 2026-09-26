@@ -109,6 +109,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/pages/AnnouncementFormPage.vue'),
             props: true,
           },
+          {
+            path: 'feedback',
+            name: 'admin-feedback',
+            component: () => import('@/pages/AdminFeedbackPage.vue'),
+          },
         ],
       },
     ],

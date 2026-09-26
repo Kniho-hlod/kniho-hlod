@@ -60,7 +60,7 @@ async function markReturned(): Promise<void> {
       :to="{ name: 'book', params: { id: loan.book.id } }"
       tabindex="-1"
       aria-hidden="true"
-      class="self-start"
+      class="self-start transition-transform hover:-translate-y-1 motion-reduce:transition-none"
     >
       <BookThumbnail :url="fileUrl(loan.book.cover)" :title="loan.book.title" />
     </RouterLink>

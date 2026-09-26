@@ -55,17 +55,28 @@ export const DUE_SOON_DAYS = 7;
 /** The due date a new loan suggests: this many days after lending. */
 export const DEFAULT_LOAN_DAYS = 30;
 
+/** What a reader's report to the administrators is about. */
+export const FEEDBACK_KINDS = ['bug', 'idea', 'other'] as const;
+export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
+export const DEFAULT_FEEDBACK_KIND: FeedbackKind = 'bug';
+/** Whether an administrator has dealt with a report yet. */
+export const FEEDBACK_STATUSES = ['new', 'resolved'] as const;
+export type FeedbackStatus = (typeof FEEDBACK_STATUSES)[number];
+export const DEFAULT_FEEDBACK_STATUS: FeedbackStatus = 'new';
+
 /** What an uploaded file is attached to (be-core file service `refType`). */
 export const FILE_REF_TYPES = {
   user: 'user',
   book: 'book',
+  feedback: 'feedback',
 } as const;
 
 /** The file's slot on that row (be-core file service `role`). */
 export const FILE_ROLES = {
   avatar: 'avatar',
   cover: 'cover',
+  screenshot: 'screenshot',
 } as const;
 
 /** Roles holding a single file: uploading a new one replaces the previous. */
-export const SINGLE_FILE_ROLES = [FILE_ROLES.avatar, FILE_ROLES.cover];
+export const SINGLE_FILE_ROLES = [FILE_ROLES.avatar, FILE_ROLES.cover, FILE_ROLES.screenshot];

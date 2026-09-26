@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { DropdownMenuItem } from '@nuxt/ui';
@@ -9,19 +9,24 @@ import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useColorMode } from '@/composables/use-color-mode';
 import { useAvatar } from '@/features/account/use-avatar';
 import { useSessionStore } from '@/features/auth/session-store';
+import FeedbackModal from '@/features/feedback/FeedbackModal.vue';
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const session = useSessionStore();
 const { avatarUrl } = useAvatar();
 const { isDark, toggle } = useColorMode();
+const isReporting = ref(false);
 
 async function signOut(): Promise<void> {
   await session.signOut();
   await router.push({ name: 'sign-in' });
 }
 
-/** Everything about the reader rather than their library: who they are, the look, signing out. */
+/**
+ * Everything about the reader rather than their library: who they are, the look, a word to the
+ * administrators, signing out.
+ */
 const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
@@ -58,6 +63,15 @@ const items = computed<DropdownMenuItem[][]>(() => [
   ],
   [
     {
+      label: t('nav.feedback'),
+      icon: 'i-lucide-message-square-warning',
+      onSelect: () => {
+        isReporting.value = true;
+      },
+    },
+  ],
+  [
+    {
       label: t('nav.signOut'),
       icon: 'i-lucide-log-out',
       color: 'error',
@@ -72,10 +86,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
     <UButton
       color="neutral"
       variant="ghost"
-      class="rounded-full p-0.5"
+      class="rounded-full p-0.5 transition-shadow hover:shadow-pop-sm data-[state=open]:shadow-pop-sm"
       :aria-label="t('nav.accountMenu')"
     >
       <PersonAvatar :name="session.user?.displayName ?? ''" :src="avatarUrl" size="md" />
     </UButton>
   </UDropdownMenu>
+  <FeedbackModal v-model:open="isReporting" />
 </template>

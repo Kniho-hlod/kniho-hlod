@@ -56,6 +56,13 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `PUT /api/users/:id/role` changes a role. Neither ever touches the caller's own account, so an
   administrator is always left; a changed role reaches the token on its next renewal.
   `GET /api/admin/stats` counts the whole app (overdue in the default time zone).
+- Feedback (`src/feedback/`): any signed-in reader sends a bug report or idea with
+  `POST /api/feedback` (rate-limited per reader); the plugin stores it with `reporterId` and the
+  request's `User-Agent`, e-mails every administrator in their language (a failed e-mail is only
+  logged) and answers the report, whose id the web uploads a `screenshot` file to — only the
+  reporter may. Administrators own the CRUD routes at `/api/admin/feedback` (list with
+  `reporter` and `screenshot`, PATCH `status`, DELETE); POST there is refused, every other field
+  is `readOnly`. `newFeedback` in the admin stats counts unresolved reports.
 - Schema: `syncMode: 'migrate'` — the API applies pending `src/migrations/` on startup. The first,
   `2026-09-26-baseline`, is the DDL `sync()` generated until then, frozen, `IF NOT EXISTS`
   throughout (a no-op on production, which `sync()` built). A model change needs a new migration:
@@ -158,7 +165,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   announcements (`src/features/announcements/`: the form edits times as `datetime-local` in the
   device's zone and sends ISO; `SEVERITY_STYLES` is shared with the banner). A role change shows
   in the other account's app after its next sign-in. The admin e2e test makes its administrator
-  with `seed:admin`, as production does.
+  with `seed:admin`, as production does (helpers in `e2e/accounts.ts`).
+- Feedback (`src/features/feedback/`): "Nahlásit chybu nebo nápad" in the account menu opens
+  `FeedbackModal` (kind, message, optional screenshot shrunk to WebP); the report carries the
+  route, the window size and the build (`import.meta.env.VITE_APP_VERSION`, from Vercel's
+  `VERCEL_GIT_COMMIT_SHA` in `vite.config.ts`, else `dev`). Administrators resolve reports at
+  `/admin/feedback`; the overview's section shows how many are new.
 - The look ("playful and bold": indigo and orange on warm paper, ink outlines, stuck-on shadows)
   lives in two places: `ui.config.ts` themes Nuxt UI's components (colours, 2px rings on cards
   and fields, solid buttons that press flat) and `src/assets/main.css` holds the tokens — the
@@ -166,6 +178,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   Headings use Bricolage Grotesque (`font-display`), text Inter; both are bundled through
   `@fontsource-variable`, no font CDN. Colours picked at runtime come from maps of literal class
   strings (`TILE_COLORS`, `STATUS_STYLES`, `CHIP_STYLES`, `COVER_PALETTES`), never built names.
+  Everything clickable answers the pointer: `main.css` gives buttons and clickable roles the hand
+  cursor (Tailwind 4 and Nuxt UI leave the arrow), outlined buttons lift on hover
+  (`LIFTS_ON_HOVER`), quiet ones darken; a new clickable element needs a hover of its own.
+  `ui.config.ts` is Vite config: after editing it, check the dev server restarted with the change.
 - A book without an image gets a drawn cover (`features/books/generated-cover.ts`,
   `GeneratedCover.vue`): colours and a motif picked from a hash of the title, so it stays the
   same; `PersonAvatar` gives people the same palette by name. Loans say how far off the due date

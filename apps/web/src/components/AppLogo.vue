@@ -8,7 +8,7 @@ const { t } = useI18n();
 <template>
   <span class="flex items-center gap-2.5 font-display text-lg font-extrabold text-highlighted">
     <span
-      class="grid size-8 place-items-center rounded-lg bg-white ring-2 ring-line shadow-pop-sm -rotate-6"
+      class="grid size-8 place-items-center rounded-lg bg-white ring-2 ring-line shadow-pop-sm -rotate-6 transition-transform group-hover:rotate-6 motion-reduce:transition-none"
     >
       <img :src="bookwormUrl" alt="" class="size-7" />
     </span>

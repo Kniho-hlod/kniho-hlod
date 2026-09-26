@@ -1,52 +1,21 @@
-import { execSync } from 'node:child_process';
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { promoteToAdmin, register, signIn, signOut, uniqueEmail } from './accounts';
 
-const PASSWORD = 'correct-horse-battery';
-const API_URL = 'http://localhost:3000';
 const READER_NAME = 'Čtenář k úklidu';
-
-function uniqueEmail(kind: string): string {
-  return `e2e-${kind}-${Date.now()}-${Math.round(Math.random() * 1000)}@kniho-hlod.test`;
-}
-
-/** Makes an account an administrator as production does it: with the API's seed script. */
-function promoteToAdmin(email: string): void {
-  execSync('pnpm --filter @kniho-hlod/api seed:admin', {
-    env: { ...process.env, ADMIN_EMAIL: email, ADMIN_PASSWORD: PASSWORD },
-    stdio: 'pipe',
-  });
-}
-
-async function signIn(page: Page, email: string): Promise<void> {
-  await page.goto('/login');
-  await page.getByLabel('E-mail').fill(email);
-  await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
-  await page.getByRole('button', { name: 'Přihlásit se' }).click();
-  await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
-}
 
 test('an administrator manages accounts and announcements', async ({ page, request }) => {
   const adminEmail = uniqueEmail('admin');
   const readerEmail = uniqueEmail('reader');
   const announcement = `Plánovaná údržba ${Date.now()}`;
-  for (const [email, displayName] of [
-    [adminEmail, 'Správkyně'],
-    [readerEmail, READER_NAME],
-  ]) {
-    const registered = await request.post(`${API_URL}/api/auth/register`, {
-      data: { email, password: PASSWORD, displayName },
-    });
-    expect(registered.status()).toBe(201);
-  }
+  await register(request, adminEmail, 'Správkyně');
+  await register(request, readerEmail, READER_NAME);
 
   await test.step('a reader has no administration', async () => {
     await signIn(page, adminEmail);
     await expect(page.getByRole('link', { name: 'Správa' })).toHaveCount(0);
     await page.goto('/admin');
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
-    await page.getByRole('button', { name: 'Účet a nastavení' }).click();
-    await page.getByRole('menuitem', { name: 'Odhlásit se' }).click();
+    await signOut(page);
   });
 
   await test.step('an administrator gets it with the next sign-in', async () => {

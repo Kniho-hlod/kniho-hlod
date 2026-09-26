@@ -11,9 +11,11 @@ interface StatTile {
 }
 
 interface Section {
-  key: 'users' | 'announcements';
+  key: 'users' | 'announcements' | 'feedback';
   icon: string;
   to: RouteLocationRaw;
+  /** The stat counting what waits for an administrator there, shown as a badge. */
+  waiting?: keyof AdminStats;
 }
 
 const STAT_TILES: StatTile[] = [
@@ -28,10 +30,20 @@ const STAT_TILES: StatTile[] = [
 const SECTIONS: Section[] = [
   { key: 'users', icon: 'i-lucide-users', to: { name: 'admin-users' } },
   { key: 'announcements', icon: 'i-lucide-megaphone', to: { name: 'announcements' } },
+  {
+    key: 'feedback',
+    icon: 'i-lucide-message-square-warning',
+    to: { name: 'admin-feedback' },
+    waiting: 'newFeedback',
+  },
 ];
 
 const { t } = useI18n();
 const { data: stats, error, isPending } = useAdminStats();
+
+function waitingCount(section: Section): number {
+  return section.waiting ? (stats.value?.[section.waiting] ?? 0) : 0;
+}
 </script>
 
 <template>
@@ -57,11 +69,11 @@ const { data: stats, error, isPending } = useAdminStats();
       </li>
     </ul>
 
-    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="section in SECTIONS" :key="section.key">
         <RouterLink
           :to="section.to"
-          class="group flex items-center gap-3 rounded-xl bg-default p-4 ring-2 ring-line transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-pop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          class="group flex h-full items-center gap-3 rounded-xl bg-default p-4 ring-2 ring-line transition-[translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-pop focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <span
             class="grid size-10 shrink-0 place-items-center rounded-lg bg-yellow-300 text-ink-900"
@@ -75,6 +87,13 @@ const { data: stats, error, isPending } = useAdminStats();
             <span class="text-sm text-muted">
               {{ t(`admin.sections.${section.key}.hint`) }}
             </span>
+          </span>
+          <span
+            v-if="waitingCount(section) > 0"
+            class="grid min-w-6 place-items-center rounded-full bg-rose-500 px-1.5 text-xs leading-6 font-bold text-white ring-2 ring-line"
+            :aria-label="t('admin.feedback.newCount', waitingCount(section))"
+          >
+            {{ waitingCount(section) }}
           </span>
           <UIcon name="i-lucide-chevron-right" class="size-5 text-dimmed" />
         </RouterLink>

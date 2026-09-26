@@ -13,6 +13,7 @@ import {
   bookEntity,
   contactEntity,
   ENTITIES_WITHOUT_CRUD_ROUTES,
+  feedbackEntity,
   findActiveRangeIssues,
   findIsbnIssues,
   findLoanDatesIssues,
@@ -32,6 +33,8 @@ import { createAdminStatsPlugin } from './admin/admin-stats-plugin';
 import { createUserAccounts } from './admin/user-accounts';
 import { createUserRolePlugin } from './admin/user-role-plugin';
 import { createFileAuthorizer } from './files/authorize-file-access';
+import { createFeedbackDetails } from './feedback/feedback-details';
+import { createFeedbackPlugin, FEEDBACK_RATE_LIMIT } from './feedback/feedback-plugin';
 import { createBookCovers } from './books/book-covers';
 import { createIsbnCatalogue } from './isbn/isbn-catalogue';
 import { createIsbnPlugin, ISBN_RATE_LIMIT } from './isbn/isbn-plugin';
@@ -148,6 +151,7 @@ export function buildAppConfig(
   const rejectDuplicateShelfName = createShelfNameCheck(models);
   const readerToday = createReaderToday(models, overrides.now);
   const userAccounts = createUserAccounts(models, storageAdapter);
+  const feedbackDetails = createFeedbackDetails(models, storageAdapter);
   const isbnPlugin = createIsbnPlugin({
     catalogue: createIsbnCatalogue({
       fetch: overrides.fetch,
@@ -194,6 +198,7 @@ export function buildAppConfig(
         hooks: { beforeCreate: rejectDuplicateShelfName, beforeUpdate: rejectDuplicateShelfName },
         enrich: bookShelves.countBooks,
       },
+      [feedbackEntity.config.name]: feedbackDetails.routes,
     },
     plugins: [
       models.plugin,
@@ -215,6 +220,12 @@ export function buildAppConfig(
         jwtSecret: environment.jwtSecret,
         registry: models,
         now: overrides.now,
+      }),
+      createFeedbackPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        appBaseUrl: environment.appBaseUrl,
+        rateLimit: overrides.rateLimit === 'off' ? 'off' : FEEDBACK_RATE_LIMIT,
       }),
     ],
     email: {

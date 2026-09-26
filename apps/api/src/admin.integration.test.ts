@@ -186,6 +186,7 @@ describe('Administration', () => {
       contacts: 1,
       lent: 1,
       overdue: 1,
+      newFeedback: 0,
     });
   });
 });
