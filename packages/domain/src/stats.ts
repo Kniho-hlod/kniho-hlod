@@ -27,6 +27,7 @@ export interface AdminStats {
   admins: number;
   /** Accounts that get e-mail reminders. */
   remindersOn: number;
+  /** Books, contacts and loans the readers added themselves, the sample library's left out. */
   books: number;
   contacts: number;
   /** Loans not returned yet … */

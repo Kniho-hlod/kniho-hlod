@@ -9,6 +9,7 @@ import AccountMenu from '@/components/AccountMenu.vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavLink, { type NavigationMatch } from '@/components/NavLink.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
+import OnboardingTour from '@/features/onboarding/OnboardingTour.vue';
 
 const { t } = useI18n();
 const session = useSessionStore();
@@ -126,5 +127,7 @@ function administrationItem(): NavigationItem {
         </li>
       </ul>
     </nav>
+
+    <OnboardingTour />
   </div>
 </template>

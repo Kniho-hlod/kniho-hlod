@@ -10,6 +10,8 @@ import { useColorMode } from '@/composables/use-color-mode';
 import { useAvatar } from '@/features/account/use-avatar';
 import { useSessionStore } from '@/features/auth/session-store';
 import FeedbackModal from '@/features/feedback/FeedbackModal.vue';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
+import { useOnboardingTour } from '@/features/onboarding/use-onboarding-tour';
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -17,6 +19,7 @@ const session = useSessionStore();
 const { avatarUrl } = useAvatar();
 const { isDark, toggle } = useColorMode();
 const isReporting = ref(false);
+const tour = useOnboardingTour();
 
 async function signOut(): Promise<void> {
   await session.signOut();
@@ -24,8 +27,8 @@ async function signOut(): Promise<void> {
 }
 
 /**
- * Everything about the reader rather than their library: who they are, the look, a word to the
- * administrators, signing out.
+ * Everything about the reader rather than their library: who they are, the look, the tour again,
+ * a word to the administrators, signing out.
  */
 const items = computed<DropdownMenuItem[][]>(() => [
   [
@@ -63,6 +66,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
   ],
   [
     {
+      label: t('nav.tour'),
+      icon: 'i-lucide-signpost',
+      onSelect: () => tour.welcome(),
+    },
+    {
       label: t('nav.feedback'),
       icon: 'i-lucide-message-square-warning',
       onSelect: () => {
@@ -88,6 +96,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
       variant="ghost"
       class="rounded-full p-0.5 transition-shadow hover:shadow-pop-sm data-[state=open]:shadow-pop-sm"
       :aria-label="t('nav.accountMenu')"
+      :data-tour="TOUR_TARGETS.accountMenu"
     >
       <PersonAvatar :name="session.user?.displayName ?? ''" :src="avatarUrl" size="md" />
     </UButton>

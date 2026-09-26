@@ -13,6 +13,7 @@ import ReadingNow from '@/features/books/ReadingNow.vue';
 import { useLibraryStats } from '@/features/loans/api';
 import LoanList from '@/features/loans/LoanList.vue';
 import { useToday } from '@/features/loans/use-today';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 
 type StatKey = keyof Pick<LibraryStats, 'books' | 'reading' | 'lent' | 'overdue'>;
 
@@ -93,7 +94,7 @@ function dismissInstallOffer(): void {
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
-    <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+    <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4" :data-tour="TOUR_TARGETS.stats">
       <li v-for="tile in STAT_TILES" :key="tile.key">
         <RouterLink
           :to="tile.to"

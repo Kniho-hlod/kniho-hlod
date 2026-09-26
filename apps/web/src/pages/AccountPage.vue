@@ -5,6 +5,7 @@ import AvatarCard from '@/features/account/AvatarCard.vue';
 import ProfileCard from '@/features/account/ProfileCard.vue';
 import PasswordCard from '@/features/account/PasswordCard.vue';
 import DeleteAccountCard from '@/features/account/DeleteAccountCard.vue';
+import SampleLibraryCard from '@/features/onboarding/SampleLibraryCard.vue';
 
 const { t } = useI18n();
 </script>
@@ -13,6 +14,7 @@ const { t } = useI18n();
   <section class="flex flex-col gap-4">
     <h1 class="text-3xl font-extrabold text-highlighted">{{ t('account.title') }}</h1>
 
+    <SampleLibraryCard />
     <AvatarCard />
     <ProfileCard />
     <InstallAppCard />

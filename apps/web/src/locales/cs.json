@@ -16,7 +16,8 @@
     "signOut": "Odhlásit se",
     "main": "Hlavní navigace",
     "accountMenu": "Účet a nastavení",
-    "feedback": "Nahlásit chybu nebo nápad"
+    "feedback": "Nahlásit chybu nebo nápad",
+    "tour": "Průvodce aplikací"
   },
   "common": {
     "save": "Uložit",
@@ -487,5 +488,58 @@
     "send": "Odeslat",
     "sent": "Díky! Hlášení jsme dostali.",
     "sentWithoutScreenshot": "Hlášení jsme dostali, ale obrázek se nepodařilo nahrát."
+  },
+  "onboarding": {
+    "label": "Průvodce aplikací",
+    "welcome": {
+      "title": "Vítejte v Kniho-hlodu!",
+      "text": "Jsem knihomol a za minutku vám ukážu, co tu všechno jde: knihy, poličky, výpůjčky i upomínky.",
+      "fillSamples": "Naplnit knihovnu ukázkami",
+      "fillSamplesHint": "Pár knih, poliček a výpůjček, ať je na čem ukazovat. Smažete je jedním tlačítkem v Nastavení účtu.",
+      "start": "Provést mě",
+      "skip": "Přeskočit, jdu rovnou do aplikace"
+    },
+    "progress": "Krok {current} z {total}",
+    "end": "Ukončit",
+    "endLabel": "Ukončit průvodce",
+    "back": "Zpět",
+    "next": "Dál",
+    "finish": "Hotovo",
+    "samplesNote": "Ukázky smažete v Nastavení účtu, až budete chtít začít naostro.",
+    "steps": {
+      "home": {
+        "title": "Tady máte přehled",
+        "text": "Kolik máte knih, co zrovna čtete, co je půjčené a co už je po termínu. Výpůjčka po termínu zčervená, ať ji nepřehlédnete."
+      },
+      "books": {
+        "title": "Knihy přidáte raz dva",
+        "text": "Stačí ISBN nebo mobilem načíst čárový kód — název, autora i obálku dohledám v katalozích. Jde to samozřejmě i ručně."
+      },
+      "shelves": {
+        "title": "Poličky na všechno",
+        "text": "Rovnejte si knihy do poliček: oblíbené, na dovolenou, pro děti… Jedna kniha může stát na více poličkách."
+      },
+      "loans": {
+        "title": "Kdo má kterou knihu?",
+        "text": "Když knihu půjčíte, zapište komu a do kdy. Kontakt založíte rovnou při půjčení a vrácení odkliknete jedním tlačítkem."
+      },
+      "reminders": {
+        "title": "Termíny hlídám za vás",
+        "text": "Pár dní před termínem vám pošlu e-mail, a když se kniha nevrací, připomenu se znovu. Kolik dní předem, nastavíte tady."
+      },
+      "done": {
+        "title": "A je to!",
+        "text": "Teď už je knihovna vaše. Průvodce najdete znovu v menu pod avatarem — tam mi můžete nahlásit i chybu nebo nápad."
+      }
+    }
+  },
+  "samples": {
+    "badge": "Ukázka",
+    "title": "Ukázková data",
+    "text": "V knihovně máte ukázkové knihy, poličky, kontakty a výpůjčky z průvodce. Až budete chtít začít naostro, smažte je — vaše vlastní knihy zůstanou.",
+    "remove": "Smazat ukázková data",
+    "confirm": "Opravdu smazat ukázky? Zmizí i výpůjčky ukázkových knih a kontaktů.",
+    "removed": "Ukázky jsou pryč. Knihovna je celá vaše!",
+    "conflict": "Ukázky jdou jen do prázdné knihovny."
   }
 }

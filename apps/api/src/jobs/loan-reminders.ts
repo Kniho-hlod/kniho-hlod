@@ -80,10 +80,13 @@ function dueLoansOf(reader: Row, openLoans: Row[], now: Date): DueLoan[] {
     });
 }
 
-/** Every reader who wants reminders, with the loans that call for one today. */
+/**
+ * Every reader who wants reminders, with the loans that call for one today. The sample library's
+ * loans are only for show and never remind anyone.
+ */
 async function findReadersWithDueLoans(models: Models, now: Date): Promise<ReaderWithDueLoans[]> {
   const openLoans = await models[loanEntity.config.name].findAll({
-    where: { returnedAt: null, dueAt: { [Op.ne]: null } },
+    where: { returnedAt: null, dueAt: { [Op.ne]: null }, isSample: false },
   });
   if (openLoans.length === 0) return [];
   const readers = await models[userEntity.config.name].findAll({

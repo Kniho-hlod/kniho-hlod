@@ -10,7 +10,7 @@ export function uniqueEmail(kind: string): string {
   return `e2e-${kind}-${Date.now()}-${Math.round(Math.random() * 1000)}@kniho-hlod.test`;
 }
 
-/** Registers an account straight through the API. */
+/** Registers an account straight through the API, as a reader who has had the tour. */
 export async function register(
   request: APIRequestContext,
   email: string,
@@ -20,6 +20,18 @@ export async function register(
     data: { email, password: PASSWORD, displayName },
   });
   expect(registered.status()).toBe(CREATED);
+  const { token } = await registered.json();
+  const onboarded = await request.patch(`${API_URL}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { onboardedAt: new Date().toISOString() },
+  });
+  expect(onboarded.ok()).toBe(true);
+}
+
+/** A new reader is greeted with the tour on the home page; tests about other things skip it. */
+export async function skipTour(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Přeskočit, jdu rovnou do aplikace' }).click();
+  await expect(page.getByRole('dialog')).toBeHidden();
 }
 
 /** Makes an account an administrator as production does it: with the API's seed script. */

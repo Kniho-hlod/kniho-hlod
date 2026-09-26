@@ -26,6 +26,12 @@ const readingStatus = computed(() =>
     >
       <BookCover :url="fileUrl(book.cover)" :title="book.title" :author="book.author" />
       <span
+        v-if="book.isSample"
+        class="absolute top-2 right-2 rounded-full bg-yellow-300 px-2 py-0.5 text-xs font-bold text-ink-900 ring-2 ring-line"
+      >
+        {{ t('samples.badge') }}
+      </span>
+      <span
         v-if="book.activeLoan"
         class="absolute bottom-2 left-2 inline-flex max-w-[calc(100%-1rem)] items-center gap-1 rounded-full bg-ink-900 px-2 py-0.5 text-xs font-bold text-yellow-300 ring-2 ring-yellow-300"
         :title="t('loans.lentTo', { name: book.activeLoan.contact.name })"

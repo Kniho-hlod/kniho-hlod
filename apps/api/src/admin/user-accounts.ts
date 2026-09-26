@@ -19,7 +19,10 @@ const onlyAdministratorsDeleting: AccessRule = (req) =>
 export interface UserAccounts {
   /** `routes.user`: the administrators' `/api/users`. */
   routes: ModelRouteOverrides;
-  /** Each account with its number of books (`UserOverview`), as `GET /api/users` lists them. */
+  /**
+   * Each account with its number of books (`UserOverview`), as `GET /api/users` lists them; the
+   * sample library's books don't count.
+   */
   overview: Enrich;
 }
 
@@ -32,7 +35,7 @@ export function createUserAccounts(registry: ModelRegistry, storage: StorageAdap
     const rows = users.map((user) => user.toJSON() as Row);
     if (rows.length === 0) return [];
     const books = await registry.get(bookEntity.config.name).findAll({
-      where: { ownerId: rows.map((row) => String(row.id)) },
+      where: { ownerId: rows.map((row) => String(row.id)), isSample: false },
       attributes: ['ownerId'],
     });
     const counts = new Map<string, number>();

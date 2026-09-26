@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import type { RouteLocationRaw } from 'vue-router';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 import { useShelves } from './api';
 import ShelfDot from './ShelfDot.vue';
 
@@ -22,7 +23,11 @@ function shelfLink(shelfId: string | null): RouteLocationRaw {
 
 <template>
   <!-- The page's side padding is bled into, so the row scrolls edge to edge on a phone. -->
-  <nav :aria-label="t('shelves.title')" class="-mx-4 overflow-x-auto px-4">
+  <nav
+    :aria-label="t('shelves.title')"
+    class="-mx-4 overflow-x-auto px-4"
+    :data-tour="TOUR_TARGETS.shelves"
+  >
     <ul class="flex w-max items-center gap-2 py-1.5">
       <li>
         <!-- `aria-current` set here wins over RouterLink's own, which ignores the query. -->

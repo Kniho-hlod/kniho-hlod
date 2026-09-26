@@ -34,6 +34,12 @@ export {
 export { IsbnService } from './isbn-service';
 export { readerToday } from './reader-today';
 export {
+  SAMPLE_FLAG_FIELD,
+  SAMPLE_LIBRARY_PATH,
+  SampleLibraryService,
+  type SampleLibraryState,
+} from './sample-library';
+export {
   ADMIN_STATS_PATH,
   NEW_USER_DAYS,
   STATS_PATH,

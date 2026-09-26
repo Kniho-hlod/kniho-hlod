@@ -7,6 +7,7 @@ import { VALIDATE_ON, formSchema } from '@/app/validation';
 import { describeError } from '@/app/errors';
 import { LOCALE_LABELS } from '@/app/i18n';
 import { useSessionStore } from '@/features/auth/session-store';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 
 const { t } = useI18n();
 const session = useSessionStore();
@@ -73,17 +74,19 @@ async function saveProfile(): Promise<void> {
         <UInput v-model="state.timezone" class="w-full" />
       </UFormField>
 
-      <UFormField
-        :label="t('account.emailReminders')"
-        :description="t('account.remindersHint')"
-        name="emailReminders"
-      >
-        <USwitch v-model="state.emailReminders" />
-      </UFormField>
+      <div class="flex flex-col gap-4" :data-tour="TOUR_TARGETS.reminders">
+        <UFormField
+          :label="t('account.emailReminders')"
+          :description="t('account.remindersHint')"
+          name="emailReminders"
+        >
+          <USwitch v-model="state.emailReminders" />
+        </UFormField>
 
-      <UFormField :label="t('account.reminderDaysBefore')" name="reminderDaysBefore">
-        <UInputNumber v-model="state.reminderDaysBefore" :min="0" :max="30" class="w-36" />
-      </UFormField>
+        <UFormField :label="t('account.reminderDaysBefore')" name="reminderDaysBefore">
+          <UInputNumber v-model="state.reminderDaysBefore" :min="0" :max="30" class="w-36" />
+        </UFormField>
+      </div>
 
       <div>
         <UButton type="submit" :loading="isSubmitting">{{ t('common.save') }}</UButton>

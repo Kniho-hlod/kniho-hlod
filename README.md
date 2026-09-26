@@ -44,7 +44,7 @@ pnpm --filter @kniho-hlod/web seed:demo    # a demo account with a filled librar
 pnpm lint
 pnpm typecheck
 pnpm test       # unit tests, plus API integration tests against the Postgres container
-pnpm test:e2e   # Playwright: auth, books, ISBN scanning, loans, shelves, administration, feedback
+pnpm test:e2e   # Playwright: auth, books, ISBN scanning, loans, shelves, administration, feedback, tour
 pnpm build
 ```
 

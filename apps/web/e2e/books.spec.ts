@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import type { IsbnCover, IsbnLookupResult } from '@kniho-hlod/domain';
+import { skipTour } from './accounts';
 import { answerFromCzechLibraries } from './czech-libraries';
 
 const PASSWORD = 'correct-horse-battery';
@@ -44,6 +45,7 @@ async function register(page: Page, name: string): Promise<void> {
   await page.getByLabel('E-mail').fill(uniqueEmail());
   await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Založit účet' }).click();
+  await skipTour(page);
   await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 }
 

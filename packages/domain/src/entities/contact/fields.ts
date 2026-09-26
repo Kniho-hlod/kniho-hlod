@@ -1,4 +1,5 @@
 import type { Fields } from '@eleansphere/entity-core';
+import { SAMPLE_FLAG_FIELD } from '../../sample-library';
 
 const NAME_MAX_LENGTH = 100;
 const EMAIL_MAX_LENGTH = 254;
@@ -19,4 +20,5 @@ export const contactFields = {
     readOnly: true,
     references: { model: 'user', onDelete: 'SET NULL' },
   },
+  isSample: SAMPLE_FLAG_FIELD,
 } as const satisfies Fields;

@@ -4,7 +4,10 @@ import type { Locale } from './constants';
 import type { User } from './entities';
 
 /** User columns a registration may set besides email and password. */
-export const REGISTRATION_FIELDS = ['displayName', 'locale'] as const satisfies readonly (keyof User)[];
+export const REGISTRATION_FIELDS = [
+  'displayName',
+  'locale',
+] as const satisfies readonly (keyof User)[];
 
 /** User columns `PATCH /api/auth/me` may change. */
 export const PROFILE_FIELDS = [
@@ -13,6 +16,7 @@ export const PROFILE_FIELDS = [
   'timezone',
   'emailReminders',
   'reminderDaysBefore',
+  'onboardedAt',
 ] as const satisfies readonly (keyof User)[];
 
 export interface RegisterRequest extends CredentialsRequest {

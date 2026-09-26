@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { addDays } from '@eleansphere/schema';
 import { readerToday } from '@kniho-hlod/domain';
+import { skipTour } from './accounts';
 
 const PASSWORD = 'correct-horse-battery';
 const BOOK_TITLE = 'Saturnin';
@@ -21,6 +22,7 @@ test('a reader lends a book, sees it overdue, gets it back and tidies up', async
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
+    await skipTour(page);
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
 
     await page.goto('/books/new');

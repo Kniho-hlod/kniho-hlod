@@ -7,7 +7,7 @@ import type { Fields } from '@eleansphere/entity-core';
 import { VALIDATE_ON, translateIssue } from '@/app/validation';
 import { describeError } from '@/app/errors';
 import PasswordInput from '@/components/PasswordInput.vue';
-import PeekingBookworm, { type BookwormMood } from '@/features/auth/PeekingBookworm.vue';
+import PeekingBookworm, { type BookwormMood } from '@/components/PeekingBookworm.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 
 /** Sign-in only checks that something plausible was typed; the server decides the rest. */

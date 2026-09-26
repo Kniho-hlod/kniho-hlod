@@ -8,6 +8,7 @@ import {
   READING_STATUSES,
 } from '../../constants';
 import { ISBN_INPUT_MAX_LENGTH } from '../../isbn';
+import { SAMPLE_FLAG_FIELD } from '../../sample-library';
 
 const TITLE_MAX_LENGTH = 300;
 const AUTHOR_MAX_LENGTH = 300;
@@ -22,7 +23,7 @@ const PAGE_COUNT_MAX = 100_000;
 
 /**
  * Every column a book will need, including those the app shows only in later phases (reading
- * dates, notes, visibility): the database creates tables once and never alters them.
+ * dates, notes, visibility), declared before the API had migrations. A new column now needs one.
  */
 export const bookFields = {
   title: { type: 'STRING', required: true, maxLength: TITLE_MAX_LENGTH },
@@ -40,4 +41,5 @@ export const bookFields = {
   finishedAt: { type: 'DATEONLY' },
   notes: { type: 'TEXT', maxLength: LONG_TEXT_MAX_LENGTH },
   visibility: { type: 'ENUM', values: BOOK_VISIBILITIES, default: DEFAULT_BOOK_VISIBILITY },
+  isSample: SAMPLE_FLAG_FIELD,
 } as const satisfies Fields;

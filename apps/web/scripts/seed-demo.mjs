@@ -197,6 +197,8 @@ async function main() {
   const { token } = await call('POST', '/api/auth/register', {
     json: { email, password, displayName: 'Jana Čtenářová', locale: 'cs' },
   });
+  // The demo shows a library in use, not the tour's greeting.
+  await call('PATCH', '/api/auth/me', { token, json: { onboardedAt: new Date().toISOString() } });
 
   const shelfIds = new Map();
   for (const shelf of SHELVES) {

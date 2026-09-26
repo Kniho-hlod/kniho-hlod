@@ -46,6 +46,7 @@ import { createReturnLoanPlugin } from './loans/return-loan-plugin';
 import { createBookShelves } from './shelves/book-shelves';
 import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
 import { createShelfNameCheck } from './shelves/shelf-names';
+import { createSampleLibraryPlugin } from './sample-library/sample-library-plugin';
 import { createStatsPlugin } from './stats/stats-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 import { migrations } from './migrations';
@@ -226,6 +227,12 @@ export function buildAppConfig(
         registry: models,
         appBaseUrl: environment.appBaseUrl,
         rateLimit: overrides.rateLimit === 'off' ? 'off' : FEEDBACK_RATE_LIMIT,
+      }),
+      createSampleLibraryPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        bookCovers,
+        now: overrides.now,
       }),
     ],
     email: {

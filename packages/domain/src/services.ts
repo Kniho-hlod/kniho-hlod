@@ -11,6 +11,7 @@ import {
   userEntity,
 } from './entities';
 import { IsbnService } from './isbn-service';
+import { SampleLibraryService } from './sample-library';
 import { StatsService } from './stats';
 
 /** Every API client the web app uses, sharing one base URL and session. */
@@ -27,6 +28,7 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       isbn: IsbnService,
       stats: StatsService,
       feedback: feedbackEntity,
+      sampleLibrary: SampleLibraryService,
     },
     baseUrl,
     tokenSource

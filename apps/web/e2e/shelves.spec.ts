@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { readerToday } from '@kniho-hlod/domain';
+import { skipTour } from './accounts';
 
 const PASSWORD = 'correct-horse-battery';
 const SHELVED_TITLE = 'Saturnin';
@@ -20,6 +21,7 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
+    await skipTour(page);
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
 

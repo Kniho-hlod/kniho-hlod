@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { skipTour } from './accounts';
 import { clearInbox, findLink, waitForEmail } from './mailpit';
 
 const PASSWORD = 'correct-horse-battery';
@@ -18,12 +19,14 @@ test('a reader registers, signs out, resets their password and signs back in', a
     await page.getByLabel('E-mail').fill(email);
     await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
+    await skipTour(page);
     await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
   });
 
-  await test.step('stay signed in across a reload', async () => {
+  await test.step('stay signed in across a reload, without the tour again', async () => {
     await page.reload();
     await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeHidden();
   });
 
   await test.step('sign out', async () => {

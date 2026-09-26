@@ -48,4 +48,9 @@ export const userFields = {
     min: 0,
     max: MAX_REMINDER_DAYS_BEFORE,
   },
+  /**
+   * When the reader finished or skipped the onboarding tour; empty until then, so the tour greets
+   * them on the home page. Set by the app through `PATCH /api/auth/me`.
+   */
+  onboardedAt: { type: 'DATE' },
 } as const satisfies Fields;

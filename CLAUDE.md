@@ -63,6 +63,14 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   reporter may. Administrators own the CRUD routes at `/api/admin/feedback` (list with
   `reporter` and `screenshot`, PATCH `status`, DELETE); POST there is refused, every other field
   is `readOnly`. `newFeedback` in the admin stats counts unresolved reports.
+- Onboarding: `user.onboardedAt` is empty until the reader finishes or skips the tour (the app
+  sets it through `PATCH /api/auth/me`; accounts older than the tour were marked by the
+  migration). The sample library (`src/sample-library/`): `GET /api/sample-library` says whether
+  it can go in (`canFill`: no books, shelves or contacts) or is there (`present`); `POST` puts in
+  the reader's locale's books, shelves, contacts and loans (one overdue, one due soon, one
+  returned) in one transaction, 409 into a library that isn't empty; `DELETE` removes them with
+  the loans of sample books and contacts. The rows carry `isSample` (`SAMPLE_FLAG_FIELD`,
+  `readOnly`); the reminder job and the administrators' numbers leave them out.
 - Schema: `syncMode: 'migrate'` — the API applies pending `src/migrations/` on startup. The first,
   `2026-09-26-baseline`, is the DDL `sync()` generated until then, frozen, `IF NOT EXISTS`
   throughout (a no-op on production, which `sync()` built). A model change needs a new migration:
@@ -135,7 +143,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `src/assets/splash.webp`, preloaded and precached, with jokes from `splash.lines`). The router
   guard awaits `session.restore()` — loaded once, never rejecting — so a reload of a signed-in
   page doesn't bounce to sign-in; `useStartup` lifts the splash once the first page is ready and
-  `MIN_SPLASH_MS` has passed. E2E clicks wait for it on every `page.goto`.
+  `MIN_SPLASH_MS` has passed — one shared state, which the tour waits for too. E2E clicks wait
+  for it on every `page.goto`.
 - Books live in `src/features/books/` (vue-query composables in `api.ts`, form state in
   `book-form.ts`); covers are scaled to WebP in the browser (`src/shared/resize-image.ts`).
   An ISBN lookup asks knihovny.cz and the API at once (`isbn-lookup.ts`): for Czech and Slovak
@@ -171,6 +180,16 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   route, the window size and the build (`import.meta.env.VITE_APP_VERSION`, from Vercel's
   `VERCEL_GIT_COMMIT_SHA` in `vite.config.ts`, else `dev`). Administrators resolve reports at
   `/admin/feedback`; the overview's section shows how many are new.
+- The onboarding tour (`src/features/onboarding/`, mounted in `AppLayout`): `OnboardingTour`
+  greets a reader without `onboardedAt` on the home page once the splash screen is gone
+  (`TourWelcome`: the bookworm, an offer of the sample library while the library is empty,
+  "Přeskočit"), then walks `TOUR_STEPS` — each opens its page and `TourSpotlight` rings the
+  element marked `data-tour` (`TOUR_TARGETS`), dims the rest and scrolls to it once the page has
+  settled. `TourGuide` is the card with the peeking bookworm, "Ukončit" on every step. The
+  account menu starts it again; `SampleLibraryCard` on the account page removes the samples, and
+  sample books wear an "Ukázka" badge. A new element the tour points at needs a `data-tour` mark.
+  E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
+  registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
 - The look ("playful and bold": indigo and orange on warm paper, ink outlines, stuck-on shadows)
   lives in two places: `ui.config.ts` themes Nuxt UI's components (colours, 2px rings on cards
   and fields, solid buttons that press flat) and `src/assets/main.css` holds the tokens — the
@@ -190,7 +209,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   form's save bar, stuck above the phone's tab bar), `NavLink` (`data-active` for Tailwind),
   `AccountMenu` (theme, language and signing out live under the avatar — e2e signs out there),
   `PasswordInput` (an eye button shows the password — so e2e finds the field with
-  `getByLabel('Heslo', { exact: true })`).
+  `getByLabel('Heslo', { exact: true })`), `PeekingBookworm` (moods: watching, shy, sad,
+  happy — on the sign-in card and in the tour).
 - Guest pages: `GuestLayout` shows the splash picture beside the form (a strip above it on a
   phone); the sign-in card has `PeekingBookworm` on its top edge, whose `mood` watches the form,
   shuts its eyes while the password field has focus and sulks after a failed sign-in.
@@ -243,5 +263,6 @@ pnpm --filter @kniho-hlod/api job loan-reminders
 Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
 (contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
-visual redesign, the splash screen and the bookworm mark) are in place. The plan
+visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports and
+the onboarding tour with its sample library since. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

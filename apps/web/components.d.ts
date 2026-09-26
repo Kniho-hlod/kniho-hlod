@@ -20,6 +20,7 @@ declare module 'vue' {
     InstallAppCard: typeof import('./src/components/InstallAppCard.vue')['default']
     NavLink: typeof import('./src/components/NavLink.vue')['default']
     PasswordInput: typeof import('./src/components/PasswordInput.vue')['default']
+    PeekingBookworm: typeof import('./src/components/PeekingBookworm.vue')['default']
     PersonAvatar: typeof import('./src/components/PersonAvatar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

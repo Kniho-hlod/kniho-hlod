@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { IsbnLookupResult } from '@kniho-hlod/domain';
 import { writeBarcodeVideo } from './barcode-video';
+import { skipTour } from './accounts';
 import { answerFromCzechLibraries } from './czech-libraries';
 
 const PASSWORD = 'correct-horse-battery';
@@ -52,6 +53,7 @@ test("a reader adds a book by scanning its barcode, and is warned when it's ther
     await page.getByLabel('E-mail').fill(uniqueEmail());
     await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Založit účet' }).click();
+    await skipTour(page);
     await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
   });
 

@@ -1,4 +1,5 @@
 import type { Fields } from '@eleansphere/entity-core';
+import { SAMPLE_FLAG_FIELD } from '../../sample-library';
 
 const NOTE_MAX_LENGTH = 2000;
 
@@ -16,4 +17,5 @@ export const loanFields = {
   note: { type: 'TEXT', maxLength: NOTE_MAX_LENGTH },
   /** When the owner was last reminded of the due date; kept by the reminder job. */
   lastReminderSentAt: { type: 'DATE', readOnly: true },
+  isSample: SAMPLE_FLAG_FIELD,
 } as const satisfies Fields;

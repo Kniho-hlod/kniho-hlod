@@ -18,6 +18,8 @@ import { asyncHandler } from '../http/async-handler';
 import type { ModelRegistry } from '../models-registry';
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+/** The sample library's books, contacts and loans are only for show: the stats leave them out. */
+const REAL_ROWS = { isSample: false };
 
 export interface AdminStatsPluginOptions {
   jwtSecret: string;
@@ -57,10 +59,10 @@ export function createAdminStatsPlugin({
             users.count({ where: { createdAt: { [Op.gte]: newSince } } }),
             users.count({ where: { role: ADMIN_ROLE } }),
             users.count({ where: { emailReminders: true } }),
-            registry.get(bookEntity.config.name).count(),
-            registry.get(contactEntity.config.name).count(),
-            loans.count({ where: { returnedAt: null } }),
-            loans.count({ where: { returnedAt: null, dueAt: { [Op.lt]: today } } }),
+            registry.get(bookEntity.config.name).count({ where: REAL_ROWS }),
+            registry.get(contactEntity.config.name).count({ where: REAL_ROWS }),
+            loans.count({ where: { ...REAL_ROWS, returnedAt: null } }),
+            loans.count({ where: { ...REAL_ROWS, returnedAt: null, dueAt: { [Op.lt]: today } } }),
             registry
               .get(feedbackEntity.config.name)
               .count({ where: { status: DEFAULT_FEEDBACK_STATUS } }),

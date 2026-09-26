@@ -16,7 +16,8 @@
     "signOut": "Sign out",
     "main": "Main navigation",
     "accountMenu": "Account and settings",
-    "feedback": "Report a bug or an idea"
+    "feedback": "Report a bug or an idea",
+    "tour": "App tour"
   },
   "common": {
     "save": "Save",
@@ -487,5 +488,58 @@
     "send": "Send",
     "sent": "Thanks! We've got your report.",
     "sentWithoutScreenshot": "We've got your report, but the picture couldn't be uploaded."
+  },
+  "onboarding": {
+    "label": "App tour",
+    "welcome": {
+      "title": "Welcome to Kniho-hlod!",
+      "text": "I'm the bookworm, and in a minute I'll show you what you can do here: books, shelves, loans and reminders.",
+      "fillSamples": "Fill the library with samples",
+      "fillSamplesHint": "A few books, shelves and loans to show things on. One button in Account settings removes them.",
+      "start": "Show me around",
+      "skip": "Skip, take me to the app"
+    },
+    "progress": "Step {current} of {total}",
+    "end": "End",
+    "endLabel": "End the tour",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Done",
+    "samplesNote": "Remove the samples in Account settings once you want to start for real.",
+    "steps": {
+      "home": {
+        "title": "Your overview",
+        "text": "How many books you have, what you're reading, what's lent out and what's overdue. An overdue loan turns red, so you won't miss it."
+      },
+      "books": {
+        "title": "Adding books is quick",
+        "text": "Type the ISBN or scan the barcode with your phone — I'll look up the title, author and cover in the catalogues. Typing it all in works too."
+      },
+      "shelves": {
+        "title": "A shelf for everything",
+        "text": "Sort your books onto shelves: favourites, holiday reads, for the kids… One book can stand on several shelves."
+      },
+      "loans": {
+        "title": "Who has which book?",
+        "text": "When you lend a book, note who has it and until when. You add the contact right there, and one button marks it returned."
+      },
+      "reminders": {
+        "title": "I keep an eye on due dates",
+        "text": "A few days before a book is due I'll e-mail you, and if it doesn't come back, I'll remind you again. Set how many days ahead here."
+      },
+      "done": {
+        "title": "That's it!",
+        "text": "The library is yours now. You can take the tour again from the menu under your avatar — you can also report a bug or an idea there."
+      }
+    }
+  },
+  "samples": {
+    "badge": "Sample",
+    "title": "Sample data",
+    "text": "Your library holds sample books, shelves, contacts and loans from the tour. Remove them once you want to start for real — your own books stay.",
+    "remove": "Remove sample data",
+    "confirm": "Remove the samples? Loans of sample books and contacts go too.",
+    "removed": "The samples are gone. The library is all yours!",
+    "conflict": "Samples only go into an empty library."
   }
 }

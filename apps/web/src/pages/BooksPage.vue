@@ -9,6 +9,7 @@ import type { BookListFilters } from '@/features/books/api';
 import BookCard from '@/features/books/BookCard.vue';
 import BookFilters from '@/features/books/BookFilters.vue';
 import { canUseCamera } from '@/features/scanner/camera-support';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 import ShelfTabs from '@/features/shelves/ShelfTabs.vue';
 import { useOnVisible } from '@/shared/use-on-visible';
 
@@ -63,7 +64,9 @@ useOnVisible(listEnd, loadMore);
         >
           {{ t('scanner.scan') }}
         </UButton>
-        <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus">{{ t('books.add') }}</UButton>
+        <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus" :data-tour="TOUR_TARGETS.addBook">
+          {{ t('books.add') }}
+        </UButton>
       </div>
     </header>
 

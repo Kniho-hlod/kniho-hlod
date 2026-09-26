@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import type { LoanListState } from '@/features/loans/api';
 import LoanList from '@/features/loans/LoanList.vue';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 
 const RETURNED_TAB: LoanListState = 'returned';
 const ACTIVE_TAB: LoanListState = 'active';
@@ -34,7 +35,11 @@ const tabs = computed(() => [
         <UButton :to="{ name: 'contacts' }" icon="i-lucide-users" color="neutral" variant="subtle">
           {{ t('loans.contacts') }}
         </UButton>
-        <UButton :to="{ name: 'loan-new' }" icon="i-lucide-hand-helping">
+        <UButton
+          :to="{ name: 'loan-new' }"
+          icon="i-lucide-hand-helping"
+          :data-tour="TOUR_TARGETS.lend"
+        >
           {{ t('loans.lend') }}
         </UButton>
       </div>

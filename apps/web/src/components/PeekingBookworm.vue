@@ -2,10 +2,11 @@
 import { computed } from 'vue';
 
 /**
- * The bookworm peeking over the sign-in card: it watches the form, shuts its eyes while a password
- * is typed and sulks after a failed sign-in. The card hides everything below its head.
+ * The bookworm peeking over a card: on sign-in it watches the form, shuts its eyes while a password
+ * is typed and sulks after a failed sign-in; as the tour's guide it cheers at the end. The card
+ * hides everything below its head.
  */
-export type BookwormMood = 'watching' | 'shy' | 'sad';
+export type BookwormMood = 'watching' | 'shy' | 'sad' | 'happy';
 
 const props = defineProps<{ mood: BookwormMood }>();
 
@@ -23,6 +24,7 @@ const CLOSED_EYE_HALF_WIDTH = 1.7;
 const CLOSED_EYE_DEPTH = 1.6;
 const SMILE = 'M33.4 26.9Q35.4 29 37.4 26.9';
 const FROWN = 'M33.6 27.9Q35.4 26.1 37.2 27.9';
+const GRIN = 'M33 26.6Q35.4 30 37.8 26.6';
 
 interface Face {
   /** Tailwind classes that move the whole worm: ducking behind the card, drooping. */
@@ -36,6 +38,7 @@ const FACES: Record<BookwormMood, Face> = {
   watching: { pose: 'translate-y-0', pupils: { dx: -0.6, dy: 0.6 }, mouth: SMILE },
   shy: { pose: 'translate-y-3.5', pupils: null, mouth: SMILE },
   sad: { pose: '-rotate-6', pupils: { dx: 0, dy: 0.9 }, mouth: FROWN },
+  happy: { pose: '-translate-y-1 rotate-3', pupils: { dx: 0, dy: -0.5 }, mouth: GRIN },
 };
 
 const face = computed(() => FACES[props.mood]);
