@@ -1,24 +1,11 @@
 import type { EmailTemplateFunction } from '@eleansphere/be-core';
-
-const HTML_ENTITIES: Record<string, string> = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;',
-};
-
-function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (character) => HTML_ENTITIES[character]);
-}
+import { escapeHtml } from './escape-html';
 
 /**
  * Sent in Czech and English at once: the reset request doesn't say which language the account
  * uses.
  */
-export const passwordResetEmail: EmailTemplateFunction<{ resetLink: string }> = ({
-  resetLink,
-}) => {
+export const passwordResetEmail: EmailTemplateFunction<{ resetLink: string }> = ({ resetLink }) => {
   const link = escapeHtml(resetLink);
   return {
     subject: 'Obnovení hesla · Password reset — Kniho-hlod',

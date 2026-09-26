@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { RouteLocationRaw } from 'vue-router';
+import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
 import { useLibraryStats } from '@/features/loans/api';
 import AppearanceMenu from '@/components/AppearanceMenu.vue';
@@ -68,7 +69,18 @@ const navigation = computed<NavigationItem[]>(() => [
     to: { name: 'account' },
     match: 'section',
   },
+  ...(session.user?.role === ADMIN_ROLE ? [administrationItem()] : []),
 ]);
+
+/** Only administrators see it. */
+function administrationItem(): NavigationItem {
+  return {
+    label: t('nav.admin'),
+    icon: 'i-lucide-shield',
+    to: { name: 'admin' },
+    match: 'section',
+  };
+}
 
 async function signOut(): Promise<void> {
   await session.signOut();

@@ -74,7 +74,11 @@ async function saveProfile(): Promise<void> {
         <UInput v-model="state.timezone" class="w-full" />
       </UFormField>
 
-      <UFormField :label="t('account.emailReminders')" name="emailReminders">
+      <UFormField
+        :label="t('account.emailReminders')"
+        :description="t('account.remindersHint')"
+        name="emailReminders"
+      >
         <USwitch v-model="state.emailReminders" />
       </UFormField>
 

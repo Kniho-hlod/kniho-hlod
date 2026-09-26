@@ -67,7 +67,8 @@
     "dangerZone": "Delete account",
     "deleteAccount": "Delete account",
     "deleteAccountHint": "Deletes your account with all your books and loans. This cannot be undone.",
-    "deleteAccountConfirm": "Enter your password to confirm."
+    "deleteAccountConfirm": "Enter your password to confirm.",
+    "remindersHint": "We'll e-mail you when a lent book is nearly due back, then once a week while it's overdue."
   },
   "home": {
     "welcome": "Welcome, {name}!",
@@ -186,7 +187,8 @@
       "email": "email address",
       "isbn": "ISBN"
     },
-    "minDate": "The date can't be before {min}."
+    "minDate": "The date can't be before {min}.",
+    "after": "The end must come after the start."
   },
   "loans": {
     "title": "Loans",
@@ -324,5 +326,76 @@
     "shareMenuSteps": "In Safari, tap Share, then “Add to Home Screen”.",
     "install": "Install",
     "notNow": "Not now"
+  },
+  "admin": {
+    "title": "Admin",
+    "stats": {
+      "users": "Users",
+      "newUsers": "New in 30 days",
+      "books": "Books",
+      "lent": "Lent",
+      "overdue": "Overdue",
+      "remindersOn": "With reminders"
+    },
+    "sections": {
+      "users": {
+        "title": "Users",
+        "hint": "Roles and deleting accounts"
+      },
+      "announcements": {
+        "title": "Announcements",
+        "hint": "Messages for everyone, such as planned maintenance"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "search": "Search by name or e-mail",
+      "empty": "Nobody here yet.",
+      "emptyFiltered": "Nobody matches that.",
+      "admin": "Admin",
+      "you": "You",
+      "bookCount": "no books | {count} book | {count} books | {count} books",
+      "joined": "joined {date}",
+      "actions": "Actions for {name}",
+      "makeAdmin": "Make an admin",
+      "makeReader": "Remove admin rights",
+      "roleChanged": {
+        "admin": "{name} is now an admin.",
+        "user": "{name} is no longer an admin."
+      },
+      "delete": "Delete account",
+      "deleteConfirm": "Delete {name}'s account ({email})? All their books, contacts and loans go with it. This can't be undone.",
+      "deleted": "{name}'s account is deleted."
+    }
+  },
+  "announcements": {
+    "title": "Announcements",
+    "hint": "An announcement shows to everyone, in the app and on the sign-in page, while it runs.",
+    "add": "New announcement",
+    "edit": "Edit announcement",
+    "empty": "No announcements yet.",
+    "fields": {
+      "title": "Title",
+      "message": "Message",
+      "severity": "Severity",
+      "activeFrom": "Show from",
+      "activeTo": "Show until"
+    },
+    "severities": {
+      "info": "Information",
+      "warning": "Warning",
+      "critical": "Important"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "active": "Showing",
+      "ended": "Ended"
+    },
+    "period": "{from} – {to}",
+    "preview": "Preview",
+    "saved": "The announcement is saved.",
+    "delete": "Delete announcement",
+    "deleteConfirm": "Delete the announcement “{title}”?",
+    "deleted": "The announcement is deleted."
   }
 }

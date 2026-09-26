@@ -113,6 +113,13 @@ describe('Kniho-hlod API', () => {
       .send(announcement);
     expect(byAdmin.status).toBe(201);
 
+    // One end sent alone is checked against the stored other.
+    const endBeforeStart = await api()
+      .patch(`/api/system-notifications/${byAdmin.body.id}`)
+      .set('Authorization', bearer(adminToken))
+      .send({ activeTo: new Date(now - 2 * DAY_MS).toISOString() });
+    expect(endBeforeStart.status).toBe(400);
+
     const active = await api().get('/api/system-notifications/active');
     expect(active.status).toBe(200);
     expect(active.body.map((item: { title: string }) => item.title)).toContain(announcement.title);
@@ -131,13 +138,5 @@ describe('Kniho-hlod API', () => {
       403
     );
     expect((await upload({ refType: 'user', refId: reader.id, role: 'banner' })).status).toBe(403);
-  });
-
-  it('keeps the user CRUD routes unmounted', async () => {
-    const { body: reader } = await register('crud@test.cz');
-
-    const res = await api().get('/api/users').set('Authorization', bearer(reader.token));
-
-    expect(res.status).toBe(404);
   });
 });

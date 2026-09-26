@@ -33,4 +33,11 @@ export {
 } from './isbn';
 export { IsbnService } from './isbn-service';
 export { readerToday } from './reader-today';
-export { STATS_PATH, StatsService, type LibraryStats } from './stats';
+export {
+  ADMIN_STATS_PATH,
+  NEW_USER_DAYS,
+  STATS_PATH,
+  StatsService,
+  type AdminStats,
+  type LibraryStats,
+} from './stats';

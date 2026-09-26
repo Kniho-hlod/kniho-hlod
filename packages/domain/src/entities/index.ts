@@ -6,13 +6,20 @@ import { loanEntity } from './loan';
 import { shelfEntity } from './shelf';
 import { bookShelfEntity } from './book-shelf';
 
-export { userEntity, type User } from './user';
+export {
+  userEntity,
+  USERS_PATH,
+  type SetUserRoleRequest,
+  type User,
+  type UserOverview,
+} from './user';
 export { userFields } from './user/fields';
 export {
   systemNotificationEntity,
   findActiveRangeIssues,
   type SystemNotification,
 } from './system-notification';
+export { systemNotificationFields } from './system-notification/fields';
 export {
   bookEntity,
   BOOKS_PATH,
@@ -30,11 +37,14 @@ export {
   loanEntity,
   LOANS_PATH,
   findLoanDatesIssues,
+  loanReminderDue,
   loanStatus,
+  OVERDUE_REMINDER_INTERVAL_DAYS,
   type ActiveLoan,
   type Loan,
   type LoanBook,
   type LoanContact,
+  type LoanReminderKind,
   type LoanWithDetails,
   type ReturnLoanRequest,
 } from './loan';
@@ -60,5 +70,5 @@ export const allEntities = {
   bookShelf: bookShelfEntity,
 };
 
-/** Entities whose `/api` CRUD routes are not mounted (yet). */
-export const ENTITIES_WITHOUT_CRUD_ROUTES = [userEntity.config.name, bookShelfEntity.config.name];
+/** Entities whose `/api` CRUD routes are not mounted: book–shelf pairs change through the book. */
+export const ENTITIES_WITHOUT_CRUD_ROUTES = [bookShelfEntity.config.name];

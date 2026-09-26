@@ -28,6 +28,8 @@ function withReadableFormat(params: ValidationIssue['params']): ValidationIssue[
 
 /** `{ path: 'title', code: 'minLength', params: { minLength: 2 } }` → the translated message. */
 export function translateIssue(issue: ValidationIssue): string {
+  // A range whose end must follow its start: `{ code: 'min', params: { after: 'activeFrom' } }`.
+  if (issue.code === 'min' && issue.params?.after) return translate('validation.after');
   const min = issue.params?.min;
   if (issue.code === 'min' && isDateOnly(min)) {
     return translate('validation.minDate', { min: formatDate(min) });

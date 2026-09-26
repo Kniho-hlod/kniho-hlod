@@ -4,6 +4,11 @@ import { loanFields } from './fields';
 
 export { findLoanDatesIssues } from './loan-dates';
 export { loanStatus } from './loan-status';
+export {
+  loanReminderDue,
+  OVERDUE_REMINDER_INTERVAL_DAYS,
+  type LoanReminderKind,
+} from './loan-reminder';
 
 /** Where loans live; the API also serves `POST {LOANS_PATH}/:id/return` there. */
 export const LOANS_PATH = '/api/loans';

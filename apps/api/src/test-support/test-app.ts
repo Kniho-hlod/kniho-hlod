@@ -36,6 +36,8 @@ export const bearer = (token: string) => `Bearer ${token}`;
 
 export interface TestApp {
   core: CoreInstance;
+  /** The Postgres schema holding this app's tables. */
+  schema: string;
   outbox: MemoryEmailTransport;
   api: () => ReturnType<typeof request>;
   /** Registers a reader; the response body holds `token`, `refreshToken`, `id` and `user`. */
@@ -68,6 +70,7 @@ export async function startTestApp(
   const api = () => request(core.app);
   return {
     core,
+    schema,
     outbox,
     api,
     register: (email) =>

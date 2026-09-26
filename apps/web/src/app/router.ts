@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
+import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import type { UserRole } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
 
@@ -82,6 +83,34 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       { path: 'account', name: 'account', component: () => import('@/pages/AccountPage.vue') },
+      {
+        path: 'admin',
+        meta: { requiresRole: ADMIN_ROLE },
+        children: [
+          { path: '', name: 'admin', component: () => import('@/pages/AdminPage.vue') },
+          {
+            path: 'users',
+            name: 'admin-users',
+            component: () => import('@/pages/AdminUsersPage.vue'),
+          },
+          {
+            path: 'announcements',
+            name: 'announcements',
+            component: () => import('@/pages/AdminAnnouncementsPage.vue'),
+          },
+          {
+            path: 'announcements/new',
+            name: 'announcement-new',
+            component: () => import('@/pages/AnnouncementFormPage.vue'),
+          },
+          {
+            path: 'announcements/:id/edit',
+            name: 'announcement-edit',
+            component: () => import('@/pages/AnnouncementFormPage.vue'),
+            props: true,
+          },
+        ],
+      },
     ],
   },
   {

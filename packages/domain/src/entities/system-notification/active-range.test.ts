@@ -20,6 +20,15 @@ describe('findActiveRangeIssues', () => {
     ]);
   });
 
+  it('compares a sent end with the stored one, as the database returns it', () => {
+    expect(
+      findActiveRangeIssues({
+        activeFrom: new Date('2026-10-02T00:00:00.000Z'),
+        activeTo: '2026-10-01T00:00:00.000Z',
+      })
+    ).toEqual([{ path: 'activeTo', code: 'min', params: { after: 'activeFrom' } }]);
+  });
+
   it('leaves a partial range alone', () => {
     expect(findActiveRangeIssues({ activeTo: '2026-10-01T00:00:00.000Z' })).toEqual([]);
   });

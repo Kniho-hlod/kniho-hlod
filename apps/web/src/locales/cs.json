@@ -67,7 +67,8 @@
     "dangerZone": "Smazání účtu",
     "deleteAccount": "Smazat účet",
     "deleteAccountHint": "Smaže účet i všechny vaše knihy a výpůjčky. Tohle nelze vrátit.",
-    "deleteAccountConfirm": "Pro potvrzení zadejte heslo."
+    "deleteAccountConfirm": "Pro potvrzení zadejte heslo.",
+    "remindersHint": "Pošleme vám e-mail, když se blíží termín vrácení půjčené knihy, a pak jednou týdně, dokud je po termínu."
   },
   "home": {
     "welcome": "Vítejte, {name}!",
@@ -186,7 +187,8 @@
       "email": "e-mail",
       "isbn": "kód ISBN"
     },
-    "minDate": "Datum nesmí být dřív než {min}."
+    "minDate": "Datum nesmí být dřív než {min}.",
+    "after": "Konec musí být později než začátek."
   },
   "loans": {
     "title": "Výpůjčky",
@@ -324,5 +326,76 @@
     "shareMenuSteps": "V Safari klepněte na Sdílet a pak na „Přidat na plochu“.",
     "install": "Nainstalovat",
     "notNow": "Teď ne"
+  },
+  "admin": {
+    "title": "Správa",
+    "stats": {
+      "users": "Uživatelé",
+      "newUsers": "Noví za 30 dní",
+      "books": "Knihy",
+      "lent": "Půjčené",
+      "overdue": "Po termínu",
+      "remindersOn": "S upomínkami"
+    },
+    "sections": {
+      "users": {
+        "title": "Uživatelé",
+        "hint": "Role a mazání účtů"
+      },
+      "announcements": {
+        "title": "Oznámení",
+        "hint": "Zprávy pro všechny, třeba o plánované údržbě"
+      }
+    },
+    "users": {
+      "title": "Uživatelé",
+      "search": "Hledat podle jména nebo e-mailu",
+      "empty": "Zatím tu nikdo není.",
+      "emptyFiltered": "Nikoho takového nenacházím.",
+      "admin": "Administrátor",
+      "you": "Vy",
+      "bookCount": "žádná kniha | {count} kniha | {count} knihy | {count} knih",
+      "joined": "registrace {date}",
+      "actions": "Akce pro {name}",
+      "makeAdmin": "Udělat administrátorem",
+      "makeReader": "Odebrat administrátorská práva",
+      "roleChanged": {
+        "admin": "Účet {name} má teď administrátorská práva.",
+        "user": "Účet {name} už administrátorská práva nemá."
+      },
+      "delete": "Smazat účet",
+      "deleteConfirm": "Smazat účet {name} ({email})? Zmizí s ním i všechny knihy, kontakty a výpůjčky toho účtu. Tohle nelze vrátit.",
+      "deleted": "Účet {name} je smazaný."
+    }
+  },
+  "announcements": {
+    "title": "Oznámení",
+    "hint": "Oznámení se zobrazuje všem v aplikaci i na přihlašovací stránce, dokud trvá.",
+    "add": "Nové oznámení",
+    "edit": "Upravit oznámení",
+    "empty": "Zatím tu není žádné oznámení.",
+    "fields": {
+      "title": "Nadpis",
+      "message": "Zpráva",
+      "severity": "Závažnost",
+      "activeFrom": "Zobrazit od",
+      "activeTo": "Zobrazit do"
+    },
+    "severities": {
+      "info": "Informace",
+      "warning": "Upozornění",
+      "critical": "Důležité"
+    },
+    "status": {
+      "scheduled": "Naplánované",
+      "active": "Zobrazuje se",
+      "ended": "Skončilo"
+    },
+    "period": "{from} – {to}",
+    "preview": "Náhled",
+    "saved": "Oznámení je uložené.",
+    "delete": "Smazat oznámení",
+    "deleteConfirm": "Smazat oznámení „{title}“?",
+    "deleted": "Oznámení je smazané."
   }
 }

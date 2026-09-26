@@ -46,9 +46,27 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 
 - Auth is be-core's: registration, login with rotating refresh tokens, `GET/PATCH/DELETE /api/auth/me`,
   password change and single-use reset links, rate limiting.
-- Access: `user` is `admin`-only and currently has no CRUD routes; `systemNotification` is
-  `admin`-only for writes, with a public `GET /api/system-notifications/active`; `book`, `contact`,
-  `loan` and `shelf` are `owner`-only (another reader's row answers 404).
+- Access: `user` is `admin`-only; `systemNotification` is `admin`-only, with a public
+  `GET /api/system-notifications/active`; `book`, `contact`, `loan` and `shelf` are `owner`-only
+  (another reader's row answers 404).
+- Administration (`src/admin/`): administrators list accounts through `GET /api/users` (with
+  `bookCount`) and delete them there — the only write `routes.user.access` allows; an account is
+  created by registering and edited by its owner. Deleting takes the account's files along (as
+  `DELETE /api/auth/me` does) and the database cascades to its library.
+  `PUT /api/users/:id/role` changes a role. Neither ever touches the caller's own account, so an
+  administrator is always left; a changed role reaches the token on its next renewal.
+  `GET /api/admin/stats` counts the whole app (overdue in the default time zone).
+- Schema: `syncMode: 'migrate'` — the API applies pending `src/migrations/` on startup. The first,
+  `2026-09-26-baseline`, is the DDL `sync()` generated until then, frozen, `IF NOT EXISTS`
+  throughout (a no-op on production, which `sync()` built). A model change needs a new migration:
+  `migrations.integration.test.ts` compares a migrated schema with a `sync()`ed one (columns,
+  indexes, constraints). Integration tests all run on migrated schemas.
+- Reminders (`src/jobs/`): `node dist/jobs.cjs loan-reminders` (locally
+  `pnpm --filter @kniho-hlod/api job loan-reminders`) creates the core without migrating, sends
+  each reader with `emailReminders` one e-mail (`src/emails/loan-reminder.ts`, in their locale)
+  about the loans `loanReminderDue` picks — due soon once from `reminderDaysBefore` days ahead,
+  overdue the day after and then weekly — and stamps `lastReminderSentAt`. Days are the reader's,
+  so a second run the same day sends nothing; a failed e-mail is retried on the next run.
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
@@ -91,7 +109,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   touches the API. `NODE_AUTH_TOKEN` arrives as a build arg; never name it in a `RUN` line —
   BuildKit prints RUN lines with args expanded, which once leaked the token into the build log.
   It reaches pnpm through the `${NODE_AUTH_TOKEN}` placeholder in `tooling/user.npmrc`, which
-  the Vercel build (`apps/web/vercel.json`) copies the same way.
+  the Vercel build (`apps/web/vercel.json`) copies the same way. The reminders run as a Railway
+  cron service on the same Dockerfile (start `node dist/jobs.cjs loan-reminders`, `0 5 * * *`
+  UTC), configured in its settings: Railway retires Config as Code (`railway.json`) on 2026-12-01
+  and new services can't use it.
 
 ## Frontend
 
@@ -123,6 +144,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)
   and tells iOS readers to use the Share menu. The web's `icons` script draws the icons into
   `public/`. Czech plurals use `czechPluralForm` (`žádná | 1 | 2–4 | 5+`).
+- Administration under `/admin` (`meta.requiresRole: 'admin'`, a nav item only administrators
+  see): the overview with `GET /api/admin/stats`, accounts (`src/features/admin/`) and
+  announcements (`src/features/announcements/`: the form edits times as `datetime-local` in the
+  device's zone and sends ISO; `SEVERITY_STYLES` is shared with the banner). A role change shows
+  in the other account's app after its next sign-in. The admin e2e test makes its administrator
+  with `seed:admin`, as production does.
 - `describeError(err, { conflict })` — a 409 means something different per action (e-mail taken,
   book lent out, …), so the caller names it. The query cache is cleared whenever the signed-in user
   changes (`main.ts`).
@@ -152,6 +179,7 @@ pnpm dev                  # API :3000 + web :5173
 pnpm lint / typecheck / test / build
 pnpm test:e2e             # Playwright; needs the containers and both .env files
 pnpm --filter @kniho-hlod/api seed:admin
+pnpm --filter @kniho-hlod/api job loan-reminders
 ```
 
 ## Conventions
@@ -164,6 +192,6 @@ pnpm --filter @kniho-hlod/api seed:admin
 ## Status
 
 Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, covers), phase 3
-(contacts, loans, dashboard) and phase 4 (shelves, reading dates and notes, barcode scanning,
-installable PWA) are in place. Reminders and the admin section arrive in phase 5; the plan lives in
-the user's Obsidian vault (`moje_projekty/Kniho-hlod`).
+(contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
+installable PWA) and phase 5 (loan reminders, administration, migrations) are in place. The plan
+lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

@@ -28,6 +28,9 @@ import {
 } from '@kniho-hlod/domain';
 import type { Environment, StorageSettings } from './env';
 import { createModelRegistry } from './models-registry';
+import { createAdminStatsPlugin } from './admin/admin-stats-plugin';
+import { createUserAccounts } from './admin/user-accounts';
+import { createUserRolePlugin } from './admin/user-role-plugin';
 import { createFileAuthorizer } from './files/authorize-file-access';
 import { createBookCovers } from './books/book-covers';
 import { createIsbnCatalogue } from './isbn/isbn-catalogue';
@@ -42,6 +45,7 @@ import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
 import { createShelfNameCheck } from './shelves/shelf-names';
 import { createStatsPlugin } from './stats/stats-plugin';
 import { passwordResetEmail } from './emails/password-reset';
+import { migrations } from './migrations';
 
 const ACCESS_TOKEN_LIFETIME = '15m';
 const REFRESH_TOKEN_LIFETIME = '60d';
@@ -65,14 +69,20 @@ interface BookInput {
   finishedAt?: string | null;
 }
 
+interface ActiveRangeInput {
+  activeFrom?: string | Date | null;
+  activeTo?: string | Date | null;
+}
+
 interface LoanInput {
   lentAt?: string | null;
   dueAt?: string | null;
   returnedAt?: string | null;
 }
 
-const rejectInvalidActiveRange: CrudHook = async (data) => {
-  const issues = findActiveRangeIssues(data as { activeFrom?: string; activeTo?: string });
+/** An announcement ends after it starts — checked against the stored end, since a PATCH may send one. */
+const rejectInvalidActiveRange: CrudHook = async (data, _req, stored) => {
+  const issues = findActiveRangeIssues({ ...stored, ...data } as ActiveRangeInput);
   if (issues.length > 0) throw new ValidationError(issues);
   return data;
 };
@@ -137,6 +147,7 @@ export function buildAppConfig(
     bookShelves.attachToBooks(await activeLoans.attachToBooks(await bookCovers.attach(books)));
   const rejectDuplicateShelfName = createShelfNameCheck(models);
   const readerToday = createReaderToday(models, overrides.now);
+  const userAccounts = createUserAccounts(models, storageAdapter);
   const isbnPlugin = createIsbnPlugin({
     catalogue: createIsbnCatalogue({
       fetch: overrides.fetch,
@@ -150,12 +161,15 @@ export function buildAppConfig(
     databaseUrl: environment.databaseUrl,
     dbSsl: environment.databaseSsl,
     schema: overrides.schema,
+    syncMode: 'migrate',
+    migrations,
     jwtSecret: environment.jwtSecret,
     port: environment.port,
     trustProxy: environment.trustProxy,
     cors: { origin: environment.corsOrigins },
     modelConfigs: toModelConfigs(allEntities, { custom: ENTITIES_WITHOUT_CRUD_ROUTES }),
     routes: {
+      [userEntity.config.name]: userAccounts.routes,
       [systemNotificationEntity.config.name]: {
         hooks: { beforeCreate: rejectInvalidActiveRange, beforeUpdate: rejectInvalidActiveRange },
       },
@@ -192,6 +206,16 @@ export function buildAppConfig(
       }),
       createStatsPlugin({ jwtSecret: environment.jwtSecret, registry: models, readerToday }),
       createBookShelvesPlugin({ jwtSecret: environment.jwtSecret, registry: models, bookDetails }),
+      createUserRolePlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        userOverview: userAccounts.overview,
+      }),
+      createAdminStatsPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        now: overrides.now,
+      }),
     ],
     email: {
       from: environment.emailFrom,
