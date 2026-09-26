@@ -21,10 +21,15 @@ export const READING_STATUSES = ['none', 'want', 'reading', 'read'] as const;
 export type ReadingStatus = (typeof READING_STATUSES)[number];
 export const DEFAULT_READING_STATUS: ReadingStatus = 'none';
 
-/** Public books will be visible to other readers once community lending arrives. */
-export const BOOK_VISIBILITIES = ['private', 'public'] as const;
+/**
+ * Who sees a book besides its owner: the owner's friends, once the owner shares the library
+ * (`user.shareLibrary`), or nobody.
+ */
+export const BOOK_VISIBILITIES = ['friends', 'private'] as const;
 export type BookVisibility = (typeof BOOK_VISIBILITIES)[number];
-export const DEFAULT_BOOK_VISIBILITY: BookVisibility = 'private';
+export const DEFAULT_BOOK_VISIBILITY: BookVisibility = 'friends';
+/** The visibility of a book hidden from friends. */
+export const HIDDEN_BOOK_VISIBILITY: BookVisibility = 'private';
 
 export const RATING_MIN = 1;
 export const RATING_MAX = 5;
@@ -63,6 +68,16 @@ export const DEFAULT_FEEDBACK_KIND: FeedbackKind = 'bug';
 export const FEEDBACK_STATUSES = ['new', 'resolved'] as const;
 export type FeedbackStatus = (typeof FEEDBACK_STATUSES)[number];
 export const DEFAULT_FEEDBACK_STATUS: FeedbackStatus = 'new';
+
+/** A friendship starts as one reader's request and holds once the other accepts it. */
+export const FRIENDSHIP_STATUSES = ['pending', 'accepted'] as const;
+export type FriendshipStatus = (typeof FRIENDSHIP_STATUSES)[number];
+export const DEFAULT_FRIENDSHIP_STATUS: FriendshipStatus = 'pending';
+export const ACCEPTED_FRIENDSHIP: FriendshipStatus = 'accepted';
+
+/** What a notification in the bell tells the reader. */
+export const NOTIFICATION_KINDS = ['friendRequest', 'friendAccepted'] as const;
+export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
 /** What an uploaded file is attached to (be-core file service `refType`). */
 export const FILE_REF_TYPES = {

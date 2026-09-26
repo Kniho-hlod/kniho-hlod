@@ -10,6 +10,7 @@ import EmptyState from '@/components/EmptyState.vue';
 import InstallAppCard from '@/components/InstallAppCard.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 import ReadingNow from '@/features/books/ReadingNow.vue';
+import FriendsReading from '@/features/friends/FriendsReading.vue';
 import { useLibraryStats } from '@/features/loans/api';
 import LoanList from '@/features/loans/LoanList.vue';
 import { useToday } from '@/features/loans/use-today';
@@ -147,6 +148,8 @@ function dismissInstallOffer(): void {
     </section>
 
     <ReadingNow v-if="hasBooks" />
+
+    <FriendsReading />
 
     <InstallAppCard v-if="!isInstallOfferDismissed">
       <template #actions>

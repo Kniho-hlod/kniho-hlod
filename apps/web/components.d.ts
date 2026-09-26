@@ -43,6 +43,7 @@ declare module 'vue' {
     ULink: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/vue/overrides/vue-router/Link.vue')['default']
     UModal: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Modal.vue')['default']
     UpdatePrompt: typeof import('./src/components/UpdatePrompt.vue')['default']
+    UPopover: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Popover.vue')['default']
     UProgress: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Progress.vue')['default']
     URadioGroup: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/RadioGroup.vue')['default']
     USelect: typeof import('./../../node_modules/.pnpm/@nuxt+ui@4.11.1_f49454208c45f56c1ab6dbcdf13e446f/node_modules/@nuxt/ui/dist/runtime/components/Select.vue')['default']

@@ -10,7 +10,9 @@ import {
   systemNotificationEntity,
   userEntity,
 } from './entities';
+import { FriendsService } from './friends';
 import { IsbnService } from './isbn-service';
+import { NotificationsService } from './notifications';
 import { SampleLibraryService } from './sample-library';
 import { StatsService } from './stats';
 
@@ -29,6 +31,8 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       stats: StatsService,
       feedback: feedbackEntity,
       sampleLibrary: SampleLibraryService,
+      friends: FriendsService,
+      notifications: NotificationsService,
     },
     baseUrl,
     tokenSource

@@ -4,7 +4,9 @@ import { useI18n } from 'vue-i18n';
 import type { RouteLocationRaw } from 'vue-router';
 import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
+import { useFriendRequests } from '@/features/friends/api';
 import { useLibraryStats } from '@/features/loans/api';
+import NotificationBell from '@/features/notifications/NotificationBell.vue';
 import AccountMenu from '@/components/AccountMenu.vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavLink, { type NavigationMatch } from '@/components/NavLink.vue';
@@ -15,13 +17,14 @@ import WhatsNew from '@/features/releases/WhatsNew.vue';
 const { t } = useI18n();
 const session = useSessionStore();
 const { data: stats } = useLibraryStats();
+const { data: friendRequests } = useFriendRequests();
 
 interface NavigationItem {
   label: string;
   icon: string;
   to: RouteLocationRaw;
   match: NavigationMatch;
-  /** A count to call out next to the item — overdue loans; none when 0. */
+  /** A count to call out next to the item — overdue loans, friend requests; none when 0. */
   alertCount?: number;
 }
 
@@ -46,11 +49,26 @@ const navigation = computed<NavigationItem[]>(() => [
     alertCount: stats.value?.overdue ?? 0,
   },
   {
+    label: t('nav.friends'),
+    icon: 'i-lucide-users-round',
+    to: { name: 'friends' },
+    match: 'section',
+    alertCount: friendRequests.value?.incoming.length ?? 0,
+  },
+  {
     label: t('nav.account'),
     icon: 'i-lucide-user-round',
     to: { name: 'account' },
     match: 'section',
   },
+]);
+
+/**
+ * The header has room for administration too; the phone's tab bar doesn't, so administrators
+ * find it in the account menu there.
+ */
+const headerNavigation = computed<NavigationItem[]>(() => [
+  ...navigation.value,
   ...(session.user?.role === ADMIN_ROLE ? [administrationItem()] : []),
 ]);
 
@@ -76,7 +94,7 @@ function administrationItem(): NavigationItem {
 
       <nav class="hidden lg:flex items-center gap-1.5" :aria-label="t('nav.main')">
         <NavLink
-          v-for="item in navigation"
+          v-for="item in headerNavigation"
           :key="item.label"
           :to="item.to"
           :match="item.match"
@@ -93,7 +111,10 @@ function administrationItem(): NavigationItem {
         </NavLink>
       </nav>
 
-      <AccountMenu />
+      <div class="flex items-center gap-1.5">
+        <NotificationBell />
+        <AccountMenu />
+      </div>
     </header>
 
     <main class="app-content mx-auto w-full max-w-5xl px-4 py-6 flex flex-col gap-5">

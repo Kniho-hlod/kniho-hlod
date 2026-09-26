@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n';
 import InstallAppCard from '@/components/InstallAppCard.vue';
 import AvatarCard from '@/features/account/AvatarCard.vue';
 import ProfileCard from '@/features/account/ProfileCard.vue';
+import SharingCard from '@/features/friends/SharingCard.vue';
 import PasswordCard from '@/features/account/PasswordCard.vue';
 import DeleteAccountCard from '@/features/account/DeleteAccountCard.vue';
 import SampleLibraryCard from '@/features/onboarding/SampleLibraryCard.vue';
@@ -18,6 +19,7 @@ const { t } = useI18n();
     <SampleLibraryCard />
     <AvatarCard />
     <ProfileCard />
+    <SharingCard />
     <InstallAppCard />
     <PasswordCard />
     <DeleteAccountCard />

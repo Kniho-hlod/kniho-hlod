@@ -5,8 +5,10 @@ import { useRoute, useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
 import {
   bookFields,
+  DEFAULT_BOOK_VISIBILITY,
   findIsbnIssues,
   findReadingDatesIssues,
+  HIDDEN_BOOK_VISIBILITY,
   READING_STATUSES,
   readingDatesForStatus,
   toIsbn13,
@@ -75,6 +77,14 @@ const errorMessage = ref('');
 const lookupNotice = ref<Notice>();
 /** The reader's other book with the ISBN just looked up: adding it again is likely a mistake. */
 const duplicate = ref<Book>();
+
+/** The switch speaks of hiding; the book stores who sees it. */
+const isHiddenFromFriends = computed({
+  get: () => state.visibility === HIDDEN_BOOK_VISIBILITY,
+  set: (hidden: boolean) => {
+    state.visibility = hidden ? HIDDEN_BOOK_VISIBILITY : DEFAULT_BOOK_VISIBILITY;
+  },
+});
 
 const readingStatusItems = computed(() =>
   READING_STATUSES.map((status) => ({ label: t(`books.readingStatus.${status}`), value: status }))
@@ -423,6 +433,16 @@ function cancel(): void {
               autoresize
               class="w-full"
             />
+          </UFormField>
+
+          <UFormField
+            :label="t('books.hideFromFriends')"
+            :description="t('books.hideFromFriendsHint')"
+            name="visibility"
+            orientation="horizontal"
+            class="sm:col-span-2"
+          >
+            <USwitch v-model="isHiddenFromFriends" :aria-label="t('books.hideFromFriends')" />
           </UFormField>
         </div>
       </UCard>

@@ -17,7 +17,8 @@
     "main": "Hlavní navigace",
     "accountMenu": "Účet a nastavení",
     "feedback": "Nahlásit chybu nebo nápad",
-    "tour": "Průvodce aplikací"
+    "tour": "Průvodce aplikací",
+    "friends": "Přátelé"
   },
   "common": {
     "save": "Uložit",
@@ -186,7 +187,9 @@
       "title": "Filtry",
       "done": "Hotovo",
       "clear": "Zrušit filtry"
-    }
+    },
+    "hideFromFriends": "Skrýt před přáteli",
+    "hideFromFriendsHint": "Tuhle knihu přátelé neuvidí, ani když knihovnu sdílíte."
   },
   "validation": {
     "required": "Vyplňte prosím tuto položku.",
@@ -493,7 +496,7 @@
     "label": "Průvodce aplikací",
     "welcome": {
       "title": "Vítejte v Kniho-hlodu!",
-      "text": "Jsem knihomol a za minutku vám ukážu, co tu všechno jde: knihy, poličky, výpůjčky i upomínky.",
+      "text": "Jsem knihomol a za minutku vám ukážu, co tu všechno jde: knihy, poličky, výpůjčky, přátelé i upomínky.",
       "fillSamples": "Naplnit knihovnu ukázkami",
       "fillSamplesHint": "Pár knih, poliček a výpůjček, ať je na čem ukazovat. Smažete je jedním tlačítkem v Nastavení účtu.",
       "start": "Provést mě",
@@ -523,6 +526,10 @@
         "title": "Kdo má kterou knihu?",
         "text": "Když knihu půjčíte, zapište komu a do kdy. Kontakt založíte rovnou při půjčení a vrácení odkliknete jedním tlačítkem."
       },
+      "friends": {
+        "title": "Kniho-hlod s přáteli",
+        "text": "Pozvěte přátele odkazem, QR kódem nebo e-mailem. Když knihovnu nasdílíte, uvidí vaše knihy a co zrovna čtete — poznámky a výpůjčky nikdy."
+      },
       "reminders": {
         "title": "Termíny hlídám za vás",
         "text": "Pár dní před termínem vám pošlu e-mail, a když se kniha nevrací, připomenu se znovu. Kolik dní předem, nastavíte tady."
@@ -550,5 +557,121 @@
     "thanks": "Díky!",
     "current": "Aktuální",
     "versionWithBuild": "verze {version} · sestavení {build}"
+  },
+  "notifications": {
+    "title": "Upozornění",
+    "bell": "Upozornění",
+    "bellUnread": "Upozornění, nepřečtená: {count}",
+    "markAllRead": "Označit vše jako přečtené",
+    "empty": "Zatím nic nového.",
+    "unread": "Nepřečtené",
+    "kinds": {
+      "friendRequest": "{name} vás žádá o přátelství",
+      "friendAccepted": "Vy a {name} jste teď přátelé"
+    }
+  },
+  "friends": {
+    "title": "Přátelé",
+    "listTitle": "Vaši přátelé",
+    "emptyTitle": "Zatím tu nikdo není",
+    "empty": "Pozvěte přátele odkazem nebo e-mailem — až pozvání přijmou, objeví se tady.",
+    "since": "Přátelé od {date}",
+    "notSharing": "Knihovnu zatím nesdílí.",
+    "readingNow": "Právě čte",
+    "readingNothing": "Zrovna nic nečte.",
+    "homeTitle": "Přátelé právě čtou",
+    "isReading": "{name} čte",
+    "notFound": "Tohoto čtenáře mezi přáteli nemáte",
+    "notFoundHint": "Přátelství mohlo skončit, nebo odkaz nepatří k vašemu účtu.",
+    "unfriend": "Odebrat z přátel",
+    "unfriendConfirm": "Odebrat {name} z přátel? Přestanete si navzájem vidět knihovny. Rozjeté výpůjčky zůstanou.",
+    "unfriended": "{name} už mezi přáteli není.",
+    "requests": {
+      "incoming": "Žádosti o přátelství",
+      "outgoing": "Čekají na odpověď",
+      "sentOn": "Posláno {date}",
+      "accept": "Přijmout",
+      "decline": "Odmítnout",
+      "accepted": "Vy a {name} jste teď přátelé.",
+      "declined": "Žádost je odmítnutá.",
+      "waiting": "{name} · čeká na odpověď",
+      "takeBack": "Zrušit žádost",
+      "takenBack": "Žádost je zrušená."
+    },
+    "invite": {
+      "title": "Pozvat přátele",
+      "linkHint": "Pošlete odkaz nebo ukažte QR kód. Kdo ho otevře a pozvání přijme, bude váš přítel.",
+      "link": "Váš odkaz s pozvánkou",
+      "copy": "Zkopírovat",
+      "copied": "Odkaz je zkopírovaný.",
+      "copyFailed": "Odkaz se nepodařilo zkopírovat — označte ho a zkopírujte ručně.",
+      "share": "Sdílet",
+      "shareTitle": "Pojď do Kniho-hlodu",
+      "showQrCode": "Ukázat QR kód",
+      "hideQrCode": "Skrýt QR kód",
+      "qrCode": "QR kód s odkazem na pozvánku",
+      "replace": "Nový odkaz",
+      "replaceConfirm": "Vytvořit nový odkaz? Starý přestane platit a nikdo se přes něj už nepřidá.",
+      "replaced": "Máte nový odkaz, starý už neplatí.",
+      "byEmail": "Pozvat e-mailem",
+      "byEmailHint": "Kdo už Kniho-hlod používá, dostane žádost o přátelství; ostatním přijde pozvánka.",
+      "emailPlaceholder": "kamarad{'@'}example.cz",
+      "send": "Pozvat",
+      "sent": "Pozvánka pro {email} je na cestě."
+    },
+    "sharing": {
+      "title": "Sdílení s přáteli",
+      "shareLibrary": "Sdílet knihovnu s přáteli",
+      "shareLibraryHint": "Přátelé uvidí vaše knihy a co právě čtete. Jednotlivé knihy jde skrýt.",
+      "seenTitle": "Přátelé uvidí",
+      "seen": "Knihy (obálku, název, autora), poličky, stav čtení a hodnocení, co čtete a jestli je kniha doma.",
+      "privateTitle": "Nikdy neuvidí",
+      "private": "Vaše poznámky, komu jste co půjčili, kontakty, e-mail a knihy skryté před přáteli.",
+      "emailNotifications": "E-maily o žádostech",
+      "emailNotificationsHint": "Pošleme e-mail, když vás někdo požádá o přátelství.",
+      "offTitle": "Vaši knihovnu přátelé zatím nevidí",
+      "offHint": "Zapněte sdílení, ať přátelé vidí vaše knihy a co čtete.",
+      "turnOn": "Sdílet knihovnu",
+      "saved": {
+        "shareLibrary": {
+          "true": "Knihovnu teď vidí vaši přátelé.",
+          "false": "Knihovnu už přátelé nevidí."
+        },
+        "emailNotifications": {
+          "true": "E-maily o žádostech zapnuté.",
+          "false": "E-maily o žádostech vypnuté."
+        }
+      }
+    },
+    "library": {
+      "search": "Hledat podle názvu nebo autora",
+      "empty": "V knihovně zatím nic není.",
+      "notShared": "{name} zatím knihovnu nesdílí",
+      "notSharedHint": "Jakmile sdílení zapne, knihy se objeví tady.",
+      "ownedBy": "Z knihovny: {name}",
+      "atHome": "Doma",
+      "lent": "Půjčená",
+      "lentUntil": "Půjčená do {date}"
+    },
+    "inviteLanding": {
+      "title": "{name} vás zve mezi přátele",
+      "hint": "Přátelé v Kniho-hlodu si můžou prohlížet sdílené knihovny a vidí, co kdo čte.",
+      "accept": "Přijmout pozvání",
+      "accepted": "Vy a {name} jste teď přátelé.",
+      "signUp": "Založit účet a přijmout",
+      "signIn": "Už mám účet — přihlásit se",
+      "self": "Tohle je váš vlastní odkaz. Pošlete ho přátelům.",
+      "already": "Už jste přátelé.",
+      "openLibrary": "Otevřít knihovnu",
+      "invalid": "Tahle pozvánka už neplatí",
+      "invalidHint": "Odkaz mohl být nahrazený novým. Požádejte o nový.",
+      "toApp": "Do Kniho-hlodu"
+    },
+    "readingStatus": {
+      "none": "Bez stavu",
+      "want": "Chce číst",
+      "reading": "Čte",
+      "read": "Přečteno"
+    }
   }
 }

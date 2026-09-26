@@ -24,7 +24,18 @@ const STATUS_STYLES: Record<ReadingStatus, StatusStyle> = {
   },
 };
 
-defineProps<{ status: ReadingStatus }>();
+/** Whose reading it is: the reader's own ("Čtu") or a friend's ("Čte"). */
+export type ReadingStatusReader = 'self' | 'friend';
+
+/** Where each reader's status labels live. */
+const LABEL_KEYS: Record<ReadingStatusReader, string> = {
+  self: 'books.readingStatus',
+  friend: 'friends.readingStatus',
+};
+
+withDefaults(defineProps<{ status: ReadingStatus; reader?: ReadingStatusReader }>(), {
+  reader: 'self',
+});
 
 const { t } = useI18n();
 </script>
@@ -36,6 +47,6 @@ const { t } = useI18n();
     :icon="STATUS_STYLES[status].icon"
     :class="STATUS_STYLES[status].classes"
   >
-    {{ t(`books.readingStatus.${status}`) }}
+    {{ t(`${LABEL_KEYS[reader]}.${status}`) }}
   </UBadge>
 </template>

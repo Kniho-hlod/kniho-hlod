@@ -31,7 +31,38 @@ export {
   type IsbnCover,
   type IsbnLookupResult,
 } from './isbn';
+export {
+  FRIEND_BOOK_QUERY,
+  FRIEND_INVITATIONS_PATH,
+  FRIEND_REQUESTS_PATH,
+  friendInvitationFields,
+  FRIENDS_PAGE_PATH,
+  FRIENDS_PATH,
+  FriendsService,
+  INVITE_PAGE_PATH,
+  INVITES_PATH,
+  MY_INVITE_PATH,
+  type Friend,
+  type FriendBook,
+  type FriendBookListRequest,
+  type FriendBookSummary,
+  type FriendInvitationRequest,
+  type FriendRequest,
+  type FriendRequests,
+  type FriendShelf,
+  type InviteInfo,
+  type InviteRelation,
+  type MyInvite,
+  type PersonSummary,
+} from './friends';
 export { IsbnService } from './isbn-service';
+export {
+  NOTIFICATIONS_PATH,
+  NotificationsService,
+  type MarkNotificationsReadRequest,
+  type NotificationFeed,
+  type NotificationItem,
+} from './notifications';
 export { readerToday } from './reader-today';
 export {
   SAMPLE_FLAG_FIELD,

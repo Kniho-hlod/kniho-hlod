@@ -48,6 +48,15 @@ import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
 import { createShelfNameCheck } from './shelves/shelf-names';
 import { createSampleLibraryPlugin } from './sample-library/sample-library-plugin';
 import { createStatsPlugin } from './stats/stats-plugin';
+import { createFriendDescriber } from './friends/describe-friends';
+import { createFriendLibrary } from './friends/friend-library';
+import { createFriendLibraryPlugin } from './friends/friend-library-plugin';
+import { createFriendships } from './friends/friendships';
+import { createFriendsPlugin, FRIEND_INVITATION_RATE_LIMIT } from './friends/friends-plugin';
+import { createInviteCodes } from './friends/invite-codes';
+import { createInvitesPlugin } from './friends/invites-plugin';
+import { createPeople } from './friends/people';
+import { createNotificationsPlugin, createNotifier } from './notifications/notifications-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 import { migrations } from './migrations';
 
@@ -153,6 +162,21 @@ export function buildAppConfig(
   const readerToday = createReaderToday(models, overrides.now);
   const userAccounts = createUserAccounts(models, storageAdapter);
   const feedbackDetails = createFeedbackDetails(models, storageAdapter);
+  const people = createPeople(models, storageAdapter);
+  const friendships = createFriendships(models);
+  const friendLibrary = createFriendLibrary(models, bookCovers, bookShelves);
+  const describeFriends = createFriendDescriber(people, friendships, friendLibrary);
+  const inviteCodes = createInviteCodes(models);
+  const notify = createNotifier(models);
+  const friendsContext = {
+    jwtSecret: environment.jwtSecret,
+    registry: models,
+    people,
+    friendships,
+    describeFriends,
+    inviteCodes,
+    notify,
+  };
   const isbnPlugin = createIsbnPlugin({
     catalogue: createIsbnCatalogue({
       fetch: overrides.fetch,
@@ -228,6 +252,19 @@ export function buildAppConfig(
         appBaseUrl: environment.appBaseUrl,
         rateLimit: overrides.rateLimit === 'off' ? 'off' : FEEDBACK_RATE_LIMIT,
       }),
+      createFriendsPlugin({
+        ...friendsContext,
+        appBaseUrl: environment.appBaseUrl,
+        rateLimit: overrides.rateLimit === 'off' ? 'off' : FRIEND_INVITATION_RATE_LIMIT,
+      }),
+      createInvitesPlugin(friendsContext),
+      createFriendLibraryPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        friendships,
+        friendLibrary,
+      }),
+      createNotificationsPlugin({ jwtSecret: environment.jwtSecret, registry: models, people }),
       createSampleLibraryPlugin({
         jwtSecret: environment.jwtSecret,
         registry: models,

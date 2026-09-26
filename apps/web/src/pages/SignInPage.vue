@@ -96,7 +96,12 @@ async function signIn(): Promise<void> {
       <template #footer>
         <div class="flex flex-col gap-2">
           <p class="text-center text-sm text-muted">{{ t('auth.noAccount') }}</p>
-          <UButton :to="{ name: 'sign-up' }" color="neutral" variant="outline" block>
+          <UButton
+            :to="{ name: 'sign-up', query: route.query }"
+            color="neutral"
+            variant="outline"
+            block
+          >
             {{ t('auth.signUp') }}
           </UButton>
         </div>

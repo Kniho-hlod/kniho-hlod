@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import type { DropdownMenuItem } from '@nuxt/ui';
-import { LOCALES } from '@kniho-hlod/domain';
+import { ADMIN_ROLE, LOCALES } from '@kniho-hlod/domain';
 import { LOCALE_LABELS, setLocale } from '@/app/i18n';
 import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useColorMode } from '@/composables/use-color-mode';
@@ -48,6 +48,9 @@ const items = computed<DropdownMenuItem[][]>(() => [
       icon: 'i-lucide-user-round',
       to: { name: 'account' },
     },
+    ...(session.user?.role === ADMIN_ROLE
+      ? [{ label: t('nav.admin'), icon: 'i-lucide-shield', to: { name: 'admin' } }]
+      : []),
     {
       label: isDark.value ? t('common.light') : t('common.dark'),
       icon: isDark.value ? 'i-lucide-sun' : 'i-lucide-moon',

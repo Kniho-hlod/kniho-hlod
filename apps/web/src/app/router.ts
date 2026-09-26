@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
-import { ADMIN_ROLE } from '@kniho-hlod/domain';
+import { ADMIN_ROLE, INVITE_PAGE_PATH } from '@kniho-hlod/domain';
 import type { UserRole } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
 
@@ -82,6 +82,25 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
+      {
+        // A friend's library and books sit under friends, so the Friends tab stays highlighted.
+        path: 'friends',
+        children: [
+          { path: '', name: 'friends', component: () => import('@/pages/FriendsPage.vue') },
+          {
+            path: ':userId',
+            name: 'friend',
+            component: () => import('@/pages/FriendPage.vue'),
+            props: true,
+          },
+          {
+            path: ':userId/books/:bookId',
+            name: 'friend-book',
+            component: () => import('@/pages/FriendBookPage.vue'),
+            props: true,
+          },
+        ],
+      },
       { path: 'account', name: 'account', component: () => import('@/pages/AccountPage.vue') },
       {
         path: 'admin',
@@ -134,6 +153,19 @@ const routes: RouteRecordRaw[] = [
         path: 'reset-password',
         name: 'reset-password',
         component: () => import('@/pages/ResetPasswordPage.vue'),
+      },
+    ],
+  },
+  {
+    // For visitors and readers alike: a visitor signs up or in from here and comes back.
+    path: `${INVITE_PAGE_PATH}/:code`,
+    component: () => import('@/layouts/GuestLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'invite',
+        component: () => import('@/pages/InvitePage.vue'),
+        props: true,
       },
     ],
   },

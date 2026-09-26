@@ -10,13 +10,14 @@ export const TOUR_TARGETS = {
   addBook: 'add-book',
   shelves: 'shelf-tabs',
   lend: 'lend-book',
+  friends: 'invite-friends',
   reminders: 'reminder-settings',
   accountMenu: 'account-menu',
 } as const;
 export type TourTarget = (typeof TOUR_TARGETS)[keyof typeof TOUR_TARGETS];
 
 /** Each step's texts live under `onboarding.steps.<key>`. */
-export type TourStepKey = 'home' | 'books' | 'shelves' | 'loans' | 'reminders' | 'done';
+export type TourStepKey = 'home' | 'books' | 'shelves' | 'loans' | 'friends' | 'reminders' | 'done';
 
 export interface TourStep {
   key: TourStepKey;
@@ -31,6 +32,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
   { key: 'books', route: { name: 'books' }, target: TOUR_TARGETS.addBook, mood: 'watching' },
   { key: 'shelves', route: { name: 'books' }, target: TOUR_TARGETS.shelves, mood: 'watching' },
   { key: 'loans', route: { name: 'loans' }, target: TOUR_TARGETS.lend, mood: 'watching' },
+  { key: 'friends', route: { name: 'friends' }, target: TOUR_TARGETS.friends, mood: 'watching' },
   {
     key: 'reminders',
     route: { name: 'account' },

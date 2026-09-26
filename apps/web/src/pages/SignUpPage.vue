@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { userFields } from '@kniho-hlod/domain';
 import { pickFields } from '@/app/fields';
 import { VALIDATE_ON, formSchema } from '@/app/validation';
@@ -10,6 +10,7 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 
 const { t, locale } = useI18n();
+const route = useRoute();
 const router = useRouter();
 const session = useSessionStore();
 
@@ -23,7 +24,9 @@ async function signUp(): Promise<void> {
   isSubmitting.value = true;
   try {
     await session.register({ ...state, locale: locale.value as 'cs' | 'en' });
-    await router.push({ name: 'home' });
+    // Where the visitor was going — an invite link — or the home page.
+    const redirect = route.query.redirect;
+    await router.push(typeof redirect === 'string' ? redirect : { name: 'home' });
   } catch (err) {
     errorMessage.value = describeError(err, { conflict: t('auth.emailTaken') });
   } finally {
@@ -65,7 +68,12 @@ async function signUp(): Promise<void> {
     <template #footer>
       <div class="flex flex-col gap-2">
         <p class="text-center text-sm text-muted">{{ t('auth.haveAccount') }}</p>
-        <UButton :to="{ name: 'sign-in' }" color="neutral" variant="outline" block>
+        <UButton
+          :to="{ name: 'sign-in', query: route.query }"
+          color="neutral"
+          variant="outline"
+          block
+        >
           {{ t('auth.signIn') }}
         </UButton>
       </div>

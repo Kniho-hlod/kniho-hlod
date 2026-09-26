@@ -16,6 +16,7 @@ const TIMEZONE_MAX_LENGTH = 64;
 const DEFAULT_REMINDER_DAYS_BEFORE = 2;
 const MAX_REMINDER_DAYS_BEFORE = 30;
 const RELEASE_VERSION_MAX_LENGTH = 20;
+const INVITE_CODE_MAX_LENGTH = 32;
 
 export const userFields = {
   email: {
@@ -59,4 +60,19 @@ export const userFields = {
    * anything newer. Empty for a reader the app hasn't recorded yet. Set through `PATCH /api/auth/me`.
    */
   lastSeenRelease: { type: 'STRING', maxLength: RELEASE_VERSION_MAX_LENGTH },
+  /** Friends see the reader's library (the books not hidden from them) and what they read. */
+  shareLibrary: { type: 'BOOLEAN', default: false },
+  /** E-mails about friend requests; the bell shows everything either way. */
+  emailNotifications: { type: 'BOOLEAN', default: true },
+  /**
+   * The reader's invite link (`/invite/<code>`): whoever opens it can become their friend. Made
+   * by the server when first asked for, replaced on request; never in a response of its own.
+   */
+  inviteCode: {
+    type: 'STRING',
+    unique: true,
+    readOnly: true,
+    writeOnly: true,
+    maxLength: INVITE_CODE_MAX_LENGTH,
+  },
 } as const satisfies Fields;

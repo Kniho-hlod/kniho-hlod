@@ -64,7 +64,7 @@ describe('Books', () => {
     expect(res.body).toMatchObject({
       isbn: KNOWN_ISBN,
       readingStatus: 'none',
-      visibility: 'private',
+      visibility: 'friends',
       cover: null,
     });
   });

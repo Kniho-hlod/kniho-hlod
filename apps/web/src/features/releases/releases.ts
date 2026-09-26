@@ -18,6 +18,25 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.5',
+    date: '2026-09-27',
+    title: { cs: 'Přátelé', en: 'Friends' },
+    notes: {
+      cs: [
+        'Pozvěte přátele odkazem, QR kódem nebo e-mailem — nová záložka Přátelé.',
+        'Když knihovnu nasdílíte, přátelé uvidí vaše knihy, poličky a co zrovna čtete. Poznámky, výpůjčky a kontakty nikdy. Sdílení zapnete v Nastavení účtu, jednotlivé knihy jde skrýt.',
+        'Prohlédněte si knihovny přátel a na přehledu uvidíte, co právě čtou.',
+        'Zvoneček v hlavičce hlásí žádosti o přátelství a nové přátele.',
+      ],
+      en: [
+        'Invite friends with a link, a QR code or by e-mail — there is a new Friends tab.',
+        'Share your library and friends see your books, shelves and what you are reading — never your notes, loans or contacts. Turn sharing on in Account settings; single books can be hidden.',
+        "Browse your friends' libraries, and see on the overview what they are reading.",
+        'The bell in the header tells you about friend requests and new friends.',
+      ],
+    },
+  },
+  {
     version: '1.4',
     date: '2026-09-26',
     title: { cs: 'Verze a novinky', en: "Versions and what's new" },

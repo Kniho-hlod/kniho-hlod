@@ -1,10 +1,7 @@
-import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
-import type { Book, IsbnLookupResult, ReadingStatus } from '@kniho-hlod/domain';
+import { DEFAULT_BOOK_VISIBILITY, DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
+import type { Book, BookVisibility, IsbnLookupResult, ReadingStatus } from '@kniho-hlod/domain';
 
-/**
- * The book fields the form edits. Visibility waits for community lending: until then every book
- * is private.
- */
+/** The book fields the form edits. */
 export const BOOK_FORM_FIELDS = [
   'title',
   'author',
@@ -19,6 +16,7 @@ export const BOOK_FORM_FIELDS = [
   'startedAt',
   'finishedAt',
   'notes',
+  'visibility',
 ] as const;
 
 export interface BookFormState {
@@ -35,6 +33,8 @@ export interface BookFormState {
   startedAt: string | null;
   finishedAt: string | null;
   notes: string | null;
+  /** Hidden from friends (`private`) or shown to them once the library is shared. */
+  visibility: BookVisibility;
 }
 
 /** What happens to the cover when the form is saved. */
@@ -70,6 +70,7 @@ export function emptyBookForm(): BookFormState {
     startedAt: null,
     finishedAt: null,
     notes: null,
+    visibility: DEFAULT_BOOK_VISIBILITY,
   };
 }
 
@@ -88,6 +89,7 @@ export function bookFormFrom(book: Book): BookFormState {
     startedAt: book.startedAt ?? null,
     finishedAt: book.finishedAt ?? null,
     notes: book.notes ?? null,
+    visibility: book.visibility ?? DEFAULT_BOOK_VISIBILITY,
   };
 }
 

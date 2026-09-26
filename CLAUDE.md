@@ -71,6 +71,20 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   returned) in one transaction, 409 into a library that isn't empty; `DELETE` removes them with
   the loans of sample books and contacts. The rows carry `isSample` (`SAMPLE_FLAG_FIELD`,
   `readOnly`); the reminder job and the administrators' numbers leave them out.
+- Friends (`src/friends/`, `src/notifications/`; plan in `~/.claude/plans/kniho-hlod-faze-3-komunita.md`):
+  `friendship` (requester, addressee, `pending`/`accepted`) and `notification` have no CRUD
+  routes — their plugins know both sides. `GET /api/friends` (each with `readingNow`),
+  `…/requests`, `POST …/invitations` (by e-mail, rate-limited; the answer is the same whether
+  the address has an account: a reader gets a request, anyone else the inviter's link),
+  accept/decline/take back, `DELETE /api/friends/:userId`. Invite links: `GET/POST /api/me/invite`
+  (the code is `user.inviteCode`, `readOnly` + `writeOnly`, never in a response of its own),
+  `GET /api/invites/:code` (public: who invites), `POST …/accept` (friends at once).
+  **A friend's library goes through its own routes** (`friend-library-plugin.ts`:
+  `/api/friends/:userId/books|shelves`) with a whitelisted `FriendBook` — never widen `/api/books`
+  access, which would hand out notes and borrowers' names. Only friends of a reader with
+  `shareLibrary`, only books with `visibility = friends` and not samples; anything else is 404.
+  `GET /api/notifications` + `POST …/read` feed the bell; e-mails (`emails/friend-request.ts`,
+  `friend-invitation.ts`) only for requests and invitations, and only with `emailNotifications`.
 - Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
   reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
   `1.3`, the release before the notes. The releases themselves live in the web app.
@@ -192,6 +206,15 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   sample books wear an "Ukázka" badge. A new element the tour points at needs a `data-tour` mark.
   E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
   registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
+- Friends (`src/features/friends/`, pages `Friends`, `Friend`, `FriendBook`, `Invite`): the
+  Friends tab (its badge counts incoming requests; on a phone administration moved to the
+  account menu to make room), `InviteCard` (link, share, QR code drawn by `uqr` in the browser,
+  a new link, invitation by e-mail), a friend's library read-only with their shelves (`?shelf=`),
+  `SharingCard` on the account page, "Skrýt před přáteli" in the book form, "Přátelé právě čtou"
+  on the home page. `/invite/:code` works signed in or out (GuestLayout); sign-up and sign-in
+  keep `?redirect=` and come back. A friend's reading status reads in the third person
+  (`ReadingStatusBadge reader="friend"`). The bell (`src/features/notifications/`) polls every
+  minute and on focus. The tour has a Friends step.
 - Versions and release notes (`src/features/releases/`): `RELEASES` in `releases.ts` is the one
   source — newest first, each with a version (`1.4`), a date, a title and notes in every language
   (content, so it lives there rather than in the locale files; the types demand both languages).
@@ -248,6 +271,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   Iconify API. All texts go through vue-i18n (`src/locales/{cs,en}.json`) — including validation
   messages, keyed by issue code, with `validation.formats.*` naming formats such as `isbn`. The
   release notes and the sample library are content, kept per language in their own files.
+  vue-i18n reads `@` as a linked message: write `{'@'}` (an e-mail placeholder once broke a
+  whole page); `i18n.test.ts` compiles every message in both languages.
 - Every `UForm` binds `:validate-on="VALIDATE_ON"` (`src/app/validation.ts`). Nuxt UI's default
   also validates on blur, so leaving an untouched field shows an error and shifts the layout under
   the pointer — the link or button being clicked moves away and the click is lost.
@@ -279,5 +304,7 @@ Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, c
 (contacts, loans, dashboard), phase 4 (shelves, reading dates and notes, barcode scanning,
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
 visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports,
-the onboarding tour with its sample library and versioned release notes since. The plan
+the onboarding tour with its sample library, versioned release notes and friends (phase 3a:
+friendships, invites, shared libraries, the bell) since. Next: 3b lending between friends, 3c
+comments. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

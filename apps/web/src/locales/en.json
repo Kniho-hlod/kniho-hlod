@@ -17,7 +17,8 @@
     "main": "Main navigation",
     "accountMenu": "Account and settings",
     "feedback": "Report a bug or an idea",
-    "tour": "App tour"
+    "tour": "App tour",
+    "friends": "Friends"
   },
   "common": {
     "save": "Save",
@@ -186,7 +187,9 @@
       "title": "Filters",
       "done": "Done",
       "clear": "Clear filters"
-    }
+    },
+    "hideFromFriends": "Hide from friends",
+    "hideFromFriendsHint": "Friends won't see this book, even when you share your library."
   },
   "validation": {
     "required": "This field is required.",
@@ -493,7 +496,7 @@
     "label": "App tour",
     "welcome": {
       "title": "Welcome to Kniho-hlod!",
-      "text": "I'm the bookworm, and in a minute I'll show you what you can do here: books, shelves, loans and reminders.",
+      "text": "I'm the bookworm, and in a minute I'll show you what you can do here: books, shelves, loans, friends and reminders.",
       "fillSamples": "Fill the library with samples",
       "fillSamplesHint": "A few books, shelves and loans to show things on. One button in Account settings removes them.",
       "start": "Show me around",
@@ -523,6 +526,10 @@
         "title": "Who has which book?",
         "text": "When you lend a book, note who has it and until when. You add the contact right there, and one button marks it returned."
       },
+      "friends": {
+        "title": "Kniho-hlod with friends",
+        "text": "Invite friends with a link, a QR code or by e-mail. Once you share your library they see your books and what you are reading — never your notes or loans."
+      },
       "reminders": {
         "title": "I keep an eye on due dates",
         "text": "A few days before a book is due I'll e-mail you, and if it doesn't come back, I'll remind you again. Set how many days ahead here."
@@ -550,5 +557,121 @@
     "thanks": "Thanks!",
     "current": "Current",
     "versionWithBuild": "version {version} · build {build}"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bell": "Notifications",
+    "bellUnread": "Notifications, unread: {count}",
+    "markAllRead": "Mark all as read",
+    "empty": "Nothing new yet.",
+    "unread": "Unread",
+    "kinds": {
+      "friendRequest": "{name} sent you a friend request",
+      "friendAccepted": "You and {name} are friends now"
+    }
+  },
+  "friends": {
+    "title": "Friends",
+    "listTitle": "Your friends",
+    "emptyTitle": "Nobody here yet",
+    "empty": "Invite friends with a link or by e-mail — they show up here once they accept.",
+    "since": "Friends since {date}",
+    "notSharing": "Isn't sharing their library yet.",
+    "readingNow": "Reading now",
+    "readingNothing": "Not reading anything right now.",
+    "homeTitle": "Friends are reading",
+    "isReading": "{name} is reading",
+    "notFound": "This reader isn't among your friends",
+    "notFoundHint": "They may have ended the friendship, or the link isn't for your account.",
+    "unfriend": "Remove friend",
+    "unfriendConfirm": "Remove {name} from your friends? You'll stop seeing each other's libraries. Loans in progress stay.",
+    "unfriended": "{name} isn't your friend any more.",
+    "requests": {
+      "incoming": "Friend requests",
+      "outgoing": "Waiting for an answer",
+      "sentOn": "Sent {date}",
+      "accept": "Accept",
+      "decline": "Decline",
+      "accepted": "You and {name} are friends now.",
+      "declined": "The request is declined.",
+      "waiting": "{name} · waiting for an answer",
+      "takeBack": "Cancel request",
+      "takenBack": "The request is cancelled."
+    },
+    "invite": {
+      "title": "Invite friends",
+      "linkHint": "Send the link or show the QR code. Whoever opens it and accepts is your friend.",
+      "link": "Your invite link",
+      "copy": "Copy",
+      "copied": "The link is copied.",
+      "copyFailed": "The link couldn't be copied — select it and copy it yourself.",
+      "share": "Share",
+      "shareTitle": "Come to Kniho-hlod",
+      "showQrCode": "Show QR code",
+      "hideQrCode": "Hide QR code",
+      "qrCode": "A QR code with your invite link",
+      "replace": "New link",
+      "replaceConfirm": "Make a new link? The old one stops working and nobody joins through it.",
+      "replaced": "You have a new link; the old one no longer works.",
+      "byEmail": "Invite by e-mail",
+      "byEmailHint": "Readers already on Kniho-hlod get a friend request; others get an invitation.",
+      "emailPlaceholder": "friend{'@'}example.com",
+      "send": "Invite",
+      "sent": "The invitation for {email} is on its way."
+    },
+    "sharing": {
+      "title": "Sharing with friends",
+      "shareLibrary": "Share my library with friends",
+      "shareLibraryHint": "Friends see your books and what you're reading. Single books can be hidden.",
+      "seenTitle": "Friends see",
+      "seen": "Your books (cover, title, author), shelves, reading status and ratings, what you read and whether a book is at home.",
+      "privateTitle": "They never see",
+      "private": "Your notes, who has which book, your contacts, your e-mail and books hidden from friends.",
+      "emailNotifications": "E-mails about requests",
+      "emailNotificationsHint": "We e-mail you when someone sends you a friend request.",
+      "offTitle": "Your friends can't see your library yet",
+      "offHint": "Turn sharing on, so friends see your books and what you're reading.",
+      "turnOn": "Share my library",
+      "saved": {
+        "shareLibrary": {
+          "true": "Your friends can see your library now.",
+          "false": "Your friends no longer see your library."
+        },
+        "emailNotifications": {
+          "true": "E-mails about requests are on.",
+          "false": "E-mails about requests are off."
+        }
+      }
+    },
+    "library": {
+      "search": "Search by title or author",
+      "empty": "Nothing in the library yet.",
+      "notShared": "{name} isn't sharing their library yet",
+      "notSharedHint": "Once they turn sharing on, you'll see their books here.",
+      "ownedBy": "From {name}'s library",
+      "atHome": "At home",
+      "lent": "Lent out",
+      "lentUntil": "Lent out until {date}"
+    },
+    "inviteLanding": {
+      "title": "{name} invites you to be friends",
+      "hint": "Friends on Kniho-hlod browse each other's shared libraries and see what the other is reading.",
+      "accept": "Accept the invitation",
+      "accepted": "You and {name} are friends now.",
+      "signUp": "Sign up and accept",
+      "signIn": "I have an account — sign in",
+      "self": "This is your own link. Send it to your friends.",
+      "already": "You are friends already.",
+      "openLibrary": "Open their library",
+      "invalid": "This invitation no longer works",
+      "invalidHint": "The link may have been replaced. Ask for a new one.",
+      "toApp": "Go to Kniho-hlod"
+    },
+    "readingStatus": {
+      "none": "No status",
+      "want": "Wants to read",
+      "reading": "Reading",
+      "read": "Read"
+    }
   }
 }

@@ -1,16 +1,26 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router';
 import type { ShelfSummary } from '@kniho-hlod/domain';
 import ShelfDot from './ShelfDot.vue';
 
-/** A book's shelves, each a link to the books on it. */
-defineProps<{ shelves: ShelfSummary[] }>();
+/**
+ * A book's shelves, each a link to the books on it — the reader's own books unless `linkTo` says
+ * where (a friend's library).
+ */
+withDefaults(
+  defineProps<{
+    shelves: ShelfSummary[];
+    linkTo?: (shelf: ShelfSummary) => RouteLocationRaw;
+  }>(),
+  { linkTo: (shelf: ShelfSummary) => ({ name: 'books', query: { shelf: shelf.id } }) }
+);
 </script>
 
 <template>
   <ul class="flex flex-wrap gap-1.5">
     <li v-for="shelf in shelves" :key="shelf.id">
       <RouterLink
-        :to="{ name: 'books', query: { shelf: shelf.id } }"
+        :to="linkTo(shelf)"
         class="inline-flex items-center gap-1.5 rounded-full bg-elevated px-2.5 py-0.5 text-xs font-medium text-default ring ring-default hover:bg-accented focus-visible:outline-2 focus-visible:outline-primary"
       >
         <ShelfDot :color="shelf.color" />

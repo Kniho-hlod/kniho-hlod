@@ -8,6 +8,7 @@ const STEP_TITLES = [
   'Knihy přidáte raz dva',
   'Poličky na všechno',
   'Kdo má kterou knihu?',
+  'Kniho-hlod s přáteli',
   'Termíny hlídám za vás',
   'A je to!',
 ];
@@ -59,12 +60,16 @@ test('a new reader takes the tour with a sample library, then clears it out', as
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
     await expectStep(page, 5);
+    await expect(page).toHaveURL(/\/friends$/);
+
+    await tour(page).getByRole('button', { name: 'Dál' }).click();
+    await expectStep(page, 6);
     await expect(page).toHaveURL(/\/account$/);
     // Further down the page than the window reaches: the tour scrolls to it.
     await expect(page.locator('[data-tour="reminder-settings"]')).toBeInViewport();
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
-    await expectStep(page, 6);
+    await expectStep(page, 7);
     await expect(tour(page).getByText('Ukázky smažete v Nastavení účtu')).toBeVisible();
     await tour(page).getByRole('button', { name: 'Hotovo' }).click();
     await expect(tour(page)).toBeHidden();
