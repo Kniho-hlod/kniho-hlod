@@ -17,5 +17,7 @@ export const loanFields = {
   note: { type: 'TEXT', maxLength: NOTE_MAX_LENGTH },
   /** When the owner was last reminded of the due date; kept by the reminder job. */
   lastReminderSentAt: { type: 'DATE', readOnly: true },
+  /** When the friend who borrowed the book (a linked contact) was last reminded; job-kept. */
+  lastBorrowerReminderSentAt: { type: 'DATE', readOnly: true },
   isSample: SAMPLE_FLAG_FIELD,
 } as const satisfies Fields;

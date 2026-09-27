@@ -63,7 +63,7 @@ export function createFriendLibraryPlugin({
             offset: list.offset,
           });
           const page: PaginatedResponse<FriendBook> = {
-            data: await friendLibrary.toFriendBooks(rows),
+            data: await friendLibrary.toFriendBooks(rows, String(req.user?.id)),
             total: count,
             page: list.page,
             limit: list.limit,
@@ -81,7 +81,7 @@ export function createFriendLibraryPlugin({
             where: { ...friendLibrary.sharedBooks(friendId), id: String(req.params.bookId) },
           });
           if (!book) throw new HttpError(NOT_FOUND, 'book not found');
-          const [friendBook] = await friendLibrary.toFriendBooks([book]);
+          const [friendBook] = await friendLibrary.toFriendBooks([book], String(req.user?.id));
           res.json(friendBook);
         })
       );

@@ -227,7 +227,8 @@
     "contacts": "Kontakty",
     "tabs": {
       "active": "Půjčené",
-      "returned": "Vrácené"
+      "returned": "Vrácené",
+      "borrowed": "Mám půjčené"
     },
     "empty": {
       "active": "Teď nemáte nic půjčeného.",
@@ -288,7 +289,8 @@
       "email": "E-mail",
       "phone": "Telefon",
       "note": "Poznámka"
-    }
+    },
+    "linked": "Přítel v Kniho-hlodu"
   },
   "shelves": {
     "title": "Poličky",
@@ -567,7 +569,10 @@
     "unread": "Nepřečtené",
     "kinds": {
       "friendRequest": "{name} vás žádá o přátelství",
-      "friendAccepted": "Vy a {name} jste teď přátelé"
+      "friendAccepted": "Vy a {name} jste teď přátelé",
+      "loanRequest": "{name} si chce půjčit „{book}“",
+      "loanRequestAccepted": "{name} vám půjčí „{book}“",
+      "loanRequestDeclined": "{name} teď nemůže půjčit „{book}“"
     }
   },
   "friends": {
@@ -672,6 +677,43 @@
       "want": "Chce číst",
       "reading": "Čte",
       "read": "Přečteno"
+    }
+  },
+  "lending": {
+    "requests": {
+      "title": "Žádosti o vypůjčení",
+      "asks": "{name} si chce půjčit",
+      "suggests": "Navrhuje vrácení do {date}",
+      "dueAt": "Vrátit do",
+      "lend": "Půjčit",
+      "decline": "Odmítnout",
+      "lent": "Hotovo, „{title}“ je půjčená — {name} to ví.",
+      "declined": "Žádost je odmítnutá.",
+      "alreadyLent": "Tahle kniha už je půjčená."
+    },
+    "ask": {
+      "button": "Požádat o vypůjčení",
+      "title": "Žádost o vypůjčení",
+      "message": "Vzkaz",
+      "messagePlaceholder": "Např. kdy a kde si knihu vyzvednu",
+      "dueAt": "Vrátím do",
+      "dueAtHint": "Je to návrh — vlastník ho může změnit.",
+      "send": "Poslat žádost",
+      "sent": "Žádost je odeslaná. Dáme vám vědět, jak {name} odpoví.",
+      "waiting": "Žádost je odeslaná, čeká se na odpověď ({name}).",
+      "conflict": "Tuhle knihu teď půjčit nejde — je půjčená, nebo už o ni žádáte."
+    },
+    "outgoing": {
+      "title": "Čekají na odpověď",
+      "waiting": "„{title}“ · {name}",
+      "cancel": "Zrušit žádost",
+      "cancelled": "Žádost je zrušená."
+    },
+    "borrowed": {
+      "empty": "Od přátel teď nic půjčeného nemáte",
+      "emptyHint": "O knihu z knihovny přítele požádáte na jejím detailu.",
+      "from": "Vlastník: {name}",
+      "homeTitle": "Mám půjčené od přátel"
     }
   }
 }

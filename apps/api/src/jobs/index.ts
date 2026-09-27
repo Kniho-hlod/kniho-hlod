@@ -3,6 +3,7 @@ import type { CoreInstance } from '@eleansphere/be-core';
 import { buildAppConfig } from '../app-config';
 import { loadEnvFile, readEnvironment } from '../env';
 import type { Environment } from '../env';
+import { sendBorrowerReminders } from './borrower-reminders';
 import { sendLoanReminders } from './loan-reminders';
 
 /** A scheduled job: does its work on the API's models and says what it did. */
@@ -11,12 +12,18 @@ type Job = (core: CoreInstance, environment: Environment) => Promise<string>;
 const JOBS: Record<string, Job> = {
   'loan-reminders': async (core, environment) => {
     if (!core.emailService) throw new Error('Loan reminders need e-mail configured');
-    const { readers, loans, failed } = await sendLoanReminders({
+    const reminders = {
       models: core.models,
       emailService: core.emailService,
       appBaseUrl: environment.appBaseUrl,
-    });
-    return `Reminded ${readers} readers of ${loans} loans; ${failed} e-mails failed`;
+    };
+    const { readers, loans, failed } = await sendLoanReminders(reminders);
+    const borrowed = await sendBorrowerReminders(reminders);
+    return (
+      `Reminded ${readers} readers of ${loans} loans; ${failed} e-mails failed. ` +
+      `Reminded ${borrowed.borrowers} friends of ${borrowed.loans} borrowed books; ` +
+      `${borrowed.failed} e-mails failed`
+    );
   },
 };
 

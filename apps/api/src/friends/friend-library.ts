@@ -2,7 +2,9 @@ import {
   bookEntity,
   bookShelfEntity,
   DEFAULT_BOOK_VISIBILITY,
+  DEFAULT_LOAN_REQUEST_STATUS,
   loanEntity,
+  loanRequestEntity,
   shelfEntity,
 } from '@kniho-hlod/domain';
 import type {
@@ -41,8 +43,11 @@ const SHELF_ORDER_COLUMNS: [string, string][] = [
 export interface FriendLibrary {
   /** The friend's books their friends may see: not hidden and not the tour's samples. */
   sharedBooks(friendId: string): SharedBooksWhere;
-  /** Books as friends see them: details, cover, shelves, at home or not — nothing private. */
-  toFriendBooks(books: Row[]): Promise<FriendBook[]>;
+  /**
+   * Books as a friend (`readerId`) sees them: details, cover, shelves, at home or not, and the
+   * reader's own waiting request — nothing private.
+   */
+  toFriendBooks(books: Row[], readerId: string): Promise<FriendBook[]>;
   /** What each of these (sharing) friends is reading now, a few books each. */
   readingNow(friendIds: string[]): Promise<Map<string, FriendBookSummary[]>>;
   /** The friend's shelves that hold shared books, in the friend's order. */
@@ -60,7 +65,11 @@ function numberOrNull(value: unknown): number | null {
 }
 
 /** The fields a friend may see — listed one by one, so a new private column never leaks. */
-function toFriendBook(book: Plain, lentUntil: Map<string, string | null>): FriendBook {
+function toFriendBook(
+  book: Plain,
+  lentUntil: Map<string, string | null>,
+  myRequests: Map<string, string>
+): FriendBook {
   const id = String(book.id);
   return {
     id,
@@ -83,6 +92,7 @@ function toFriendBook(book: Plain, lentUntil: Map<string, string | null>): Frien
       color,
     })),
     lent: lentUntil.has(id) ? { dueAt: lentUntil.get(id) ?? null } : null,
+    myRequest: myRequests.has(id) ? { id: myRequests.get(id) ?? '' } : null,
   };
 }
 
@@ -108,6 +118,20 @@ export function createFriendLibrary(
     );
   }
 
+  /** The reader's requests still waiting for an answer, by book. */
+  async function waitingRequests(
+    bookIds: string[],
+    readerId: string
+  ): Promise<Map<string, string>> {
+    const waiting = await registry.get(loanRequestEntity.config.name).findAll({
+      where: { bookId: bookIds, requesterId: readerId, status: DEFAULT_LOAN_REQUEST_STATUS },
+      attributes: ['id', 'bookId'],
+    });
+    return new Map(
+      waiting.map((request) => [String(request.get('bookId')), String(request.get('id'))])
+    );
+  }
+
   async function sharedBookIds(friendId: string): Promise<string[]> {
     const shared = await books().findAll({ where: sharedBooks(friendId), attributes: ['id'] });
     return shared.map((book) => String(book.get('id')));
@@ -116,11 +140,15 @@ export function createFriendLibrary(
   return {
     sharedBooks,
 
-    async toFriendBooks(rows) {
+    async toFriendBooks(rows, readerId) {
       if (rows.length === 0) return [];
+      const bookIds = rows.map((book) => String(book.get('id')));
       const withShelves = await bookShelves.attachToBooks(await bookCovers.attach(rows));
-      const lent = await lentUntil(rows.map((book) => String(book.get('id'))));
-      return withShelves.map((book) => toFriendBook(book, lent));
+      const [lent, myRequests] = await Promise.all([
+        lentUntil(bookIds),
+        waitingRequests(bookIds, readerId),
+      ]);
+      return withShelves.map((book) => toFriendBook(book, lent, myRequests));
     },
 
     async readingNow(friendIds) {

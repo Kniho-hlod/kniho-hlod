@@ -57,6 +57,17 @@ export {
 } from './friends';
 export { IsbnService } from './isbn-service';
 export {
+  BORROWED_PATH,
+  LendingService,
+  LOAN_REQUESTS_PATH,
+  LOANS_PAGE_PATH,
+  type AcceptLoanRequestBody,
+  type BorrowedLoan,
+  type LoanRequestBody,
+  type LoanRequestItem,
+  type LoanRequests,
+} from './lending';
+export {
   NOTIFICATIONS_PATH,
   NotificationsService,
   type MarkNotificationsReadRequest,

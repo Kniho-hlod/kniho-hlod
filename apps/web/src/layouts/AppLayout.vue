@@ -5,6 +5,7 @@ import type { RouteLocationRaw } from 'vue-router';
 import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
 import { useFriendRequests } from '@/features/friends/api';
+import { useLoanRequests } from '@/features/lending/api';
 import { useLibraryStats } from '@/features/loans/api';
 import NotificationBell from '@/features/notifications/NotificationBell.vue';
 import AccountMenu from '@/components/AccountMenu.vue';
@@ -18,13 +19,14 @@ const { t } = useI18n();
 const session = useSessionStore();
 const { data: stats } = useLibraryStats();
 const { data: friendRequests } = useFriendRequests();
+const { data: loanRequests } = useLoanRequests();
 
 interface NavigationItem {
   label: string;
   icon: string;
   to: RouteLocationRaw;
   match: NavigationMatch;
-  /** A count to call out next to the item — overdue loans, friend requests; none when 0. */
+  /** A count to call out next to the item — what waits for the reader there; none when 0. */
   alertCount?: number;
 }
 
@@ -46,7 +48,8 @@ const navigation = computed<NavigationItem[]>(() => [
     icon: 'i-lucide-hand-helping',
     to: { name: 'loans' },
     match: 'section',
-    alertCount: stats.value?.overdue ?? 0,
+    // Overdue loans and friends' requests to borrow: both wait for the reader.
+    alertCount: (stats.value?.overdue ?? 0) + (loanRequests.value?.incoming.length ?? 0),
   },
   {
     label: t('nav.friends'),

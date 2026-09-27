@@ -2,6 +2,7 @@
 import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ApiError } from '@eleansphere/entity-core';
+import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
 import type { ShelfSummary } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import { formatDate } from '@/app/dates';
@@ -11,6 +12,7 @@ import BookCover from '@/features/books/BookCover.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
 import { useFriend, useFriendBook } from '@/features/friends/api';
+import RequestBookPanel from '@/features/lending/RequestBookPanel.vue';
 import ShelfChips from '@/features/shelves/ShelfChips.vue';
 
 const NOT_FOUND = 404;
@@ -110,7 +112,11 @@ const shelfLink = (shelf: ShelfSummary) => ({
         </header>
 
         <div class="flex flex-wrap items-center gap-3">
-          <ReadingStatusBadge :status="book.readingStatus" reader="friend" />
+          <ReadingStatusBadge
+            v-if="book.readingStatus !== DEFAULT_READING_STATUS"
+            :status="book.readingStatus"
+            reader="friend"
+          />
           <RatingStars v-if="book.rating" :rating="book.rating" />
         </div>
 
@@ -127,6 +133,13 @@ const shelfLink = (shelf: ShelfSummary) => ({
           <UIcon :name="book.lent ? 'i-lucide-hand-helping' : 'i-lucide-house'" class="size-4" />
           {{ whereabouts }}
         </p>
+
+        <RequestBookPanel
+          v-if="friend"
+          :book="book"
+          :friend-id="userId"
+          :friend-name="friend.displayName"
+        />
 
         <dl v-if="details.length > 0" class="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <div

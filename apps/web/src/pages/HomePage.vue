@@ -11,6 +11,9 @@ import InstallAppCard from '@/components/InstallAppCard.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 import ReadingNow from '@/features/books/ReadingNow.vue';
 import FriendsReading from '@/features/friends/FriendsReading.vue';
+import { useBorrowed } from '@/features/lending/api';
+import BorrowedList from '@/features/lending/BorrowedList.vue';
+import IncomingLoanRequests from '@/features/lending/IncomingLoanRequests.vue';
 import { useLibraryStats } from '@/features/loans/api';
 import LoanList from '@/features/loans/LoanList.vue';
 import { useToday } from '@/features/loans/use-today';
@@ -48,6 +51,7 @@ const today = useToday();
 const firstName = computed(() => session.user?.displayName.trim().split(/\s+/)[0] ?? '');
 
 const { data: stats, error, isPending } = useLibraryStats();
+const { data: borrowed } = useBorrowed();
 const hasBooks = computed(() => (stats.value?.books ?? 0) > 0);
 const hasLoansDue = computed(() => (stats.value?.overdue ?? 0) + (stats.value?.dueSoon ?? 0) > 0);
 
@@ -94,6 +98,8 @@ function dismissInstallOffer(): void {
     </header>
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
+
+    <IncomingLoanRequests />
 
     <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4" :data-tour="TOUR_TARGETS.stats">
       <li v-for="tile in STAT_TILES" :key="tile.key">
@@ -148,6 +154,11 @@ function dismissInstallOffer(): void {
     </section>
 
     <ReadingNow v-if="hasBooks" />
+
+    <section v-if="(borrowed ?? []).length > 0" class="flex flex-col gap-3">
+      <h2 class="text-xl font-bold text-highlighted">{{ t('lending.borrowed.homeTitle') }}</h2>
+      <BorrowedList />
+    </section>
 
     <FriendsReading />
 

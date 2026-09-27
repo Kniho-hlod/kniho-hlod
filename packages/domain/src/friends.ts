@@ -104,6 +104,8 @@ export interface FriendBook extends FriendBookSummary {
   shelves: Pick<FriendShelf, 'id' | 'name' | 'color'>[];
   /** The book is out on a loan, due back then (`null`: no date agreed); `null` when at home. */
   lent: { dueAt: string | null } | null;
+  /** The reader's own request to borrow it, while it waits for an answer. */
+  myRequest: { id: string } | null;
 }
 
 /** The friend's list of books, a page at a time. */

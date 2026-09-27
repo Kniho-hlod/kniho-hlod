@@ -18,6 +18,23 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.6',
+    date: '2026-09-27',
+    title: { cs: 'Půjčování mezi přáteli', en: 'Lending between friends' },
+    notes: {
+      cs: [
+        'O knihu z knihovny přítele požádáte na jejím detailu — se vzkazem a návrhem, kdy ji vrátíte.',
+        'Žádosti o vaše knihy najdete ve Výpůjčkách a na přehledu. Jedním tlačítkem knihu půjčíte a přítel se vám sám objeví v kontaktech.',
+        'Nová záložka Mám půjčené ukáže, co máte od přátel a do kdy. Před termínem vám pošleme připomínku.',
+      ],
+      en: [
+        "Ask for a book on its page in a friend's library — with a message and when you'd bring it back.",
+        'Requests for your books wait in Loans and on the overview. One button lends the book, and the friend joins your contacts by themselves.',
+        'The new Borrowed tab shows what you have from friends and until when. We remind you before it is due.',
+      ],
+    },
+  },
+  {
     version: '1.5',
     date: '2026-09-27',
     title: { cs: 'Přátelé', en: 'Friends' },

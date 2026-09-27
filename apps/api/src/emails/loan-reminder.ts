@@ -1,5 +1,6 @@
 import type { EmailTemplateFunction } from '@eleansphere/be-core';
 import type { Locale, LoanReminderKind } from '@kniho-hlod/domain';
+import { dayCount, formatEmailDate } from './email-dates';
 import { escapeHtml } from './escape-html';
 
 export interface RemindedLoan {
@@ -33,18 +34,8 @@ interface ReminderCopy {
 }
 
 const APP_NAME = 'Kniho-hlod';
-const CZECH_FEW_MAX = 4;
-
-/** "1 den", "2 dny", "5 dní". */
-function czechDays(count: number): string {
-  if (count === 1) return '1 den';
-  if (count > 1 && count <= CZECH_FEW_MAX) return `${count} dny`;
-  return `${count} dní`;
-}
-
-function englishDays(count: number): string {
-  return count === 1 ? '1 day' : `${count} days`;
-}
+const czechDays = (count: number) => dayCount(count, 'cs');
+const englishDays = (count: number) => dayCount(count, 'en');
 
 const COPY: Record<Locale, ReminderCopy> = {
   cs: {
@@ -79,14 +70,6 @@ const COPY: Record<Locale, ReminderCopy> = {
   },
 };
 
-/** `2026-10-10` → "10. 10. 2026" or "Oct 10, 2026", as the app shows dates. */
-function formatDate(date: string, locale: Locale): string {
-  const [year, month, day] = date.split('-').map(Number);
-  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' }).format(
-    new Date(Date.UTC(year, month - 1, day))
-  );
-}
-
 function bookLabel({ title, author }: RemindedLoan): string {
   return author ? `${title} (${author})` : title;
 }
@@ -102,7 +85,7 @@ export const loanReminderEmail: EmailTemplateFunction<LoanReminderEmailData> = (
   const copy = COPY[locale];
   const lines = loans.map((loan) => ({
     book: bookLabel(loan),
-    details: `${copy.lentTo(loan.contactName)} — ${copy.due(loan, formatDate(loan.dueAt, locale))}`,
+    details: `${copy.lentTo(loan.contactName)} — ${copy.due(loan, formatEmailDate(loan.dueAt, locale))}`,
   }));
   return {
     subject: copy.subject(loans.some((loan) => loan.kind === 'overdue')),

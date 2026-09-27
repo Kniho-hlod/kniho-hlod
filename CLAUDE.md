@@ -85,6 +85,18 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `shareLibrary`, only books with `visibility = friends` and not samples; anything else is 404.
   `GET /api/notifications` + `POST …/read` feed the bell; e-mails (`emails/friend-request.ts`,
   `friend-invitation.ts`) only for requests and invitations, and only with `emailNotifications`.
+- Lending between friends (`src/lending/`, phase 3b): `loanRequest` (book, requester, `lenderId`,
+  message, suggested `dueAt`, `pending`/`accepted`/`declined`/`cancelled`, `loanId`; a partial
+  unique index allows one waiting request per friend and book) has no CRUD routes.
+  `POST /api/friends/:userId/books/:bookId/requests` asks for a shared book at home (409 when
+  lent or asked already); `GET /api/loan-requests` lists both ways; accepting
+  (`lend-to-friend.ts`, one transaction) finds the owner's contact for the friend — linked
+  already, or one with the friend's e-mail, which gets linked, or a new one named after them —
+  lends the book from the owner's today (the due date chosen, suggested or a month) and declines
+  the other waiting requests for it; decline and cancel answer one side each. Ending a friendship
+  drops the waiting requests, never loans. `GET /api/borrowed` is what the reader has out on
+  loans to contacts linked to them. The bell and, with `emailNotifications`, e-mail tell each
+  side (`emails/loan-request.ts`, `loan-request-answer.ts`); notifications carry `bookId`.
 - Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
   reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
   `1.3`, the release before the notes. The releases themselves live in the web app.
@@ -98,7 +110,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   each reader with `emailReminders` one e-mail (`src/emails/loan-reminder.ts`, in their locale)
   about the loans `loanReminderDue` picks — due soon once from `reminderDaysBefore` days ahead,
   overdue the day after and then weekly — and stamps `lastReminderSentAt`. Days are the reader's,
-  so a second run the same day sends nothing; a failed e-mail is retried on the next run.
+  so a second run the same day sends nothing; a failed e-mail is retried on the next run. The same
+  job then reminds friends who borrowed a book (a loan to a contact linked to their account) by
+  their own settings (`jobs/borrower-reminders.ts`, `emails/borrowed-reminder.ts`, stamping
+  `lastBorrowerReminderSentAt`); nobody else a book was lent to is ever e-mailed.
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
@@ -215,6 +230,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   keep `?redirect=` and come back. A friend's reading status reads in the third person
   (`ReadingStatusBadge reader="friend"`). The bell (`src/features/notifications/`) polls every
   minute and on focus. The tour has a Friends step.
+- Lending (`src/features/lending/`): `RequestBookPanel` on a friend's book (message, suggested
+  date; the waiting request with "Zrušit žádost"), `IncomingLoanRequests` on the home and loans
+  pages (`LoanRequestCard` asks for the due date before lending), the Loans page's third tab
+  `?tab=borrowed` (`BorrowedList`: books from friends and the reader's waiting requests), "Mám
+  půjčené od přátel" on the home page. The Loans tab's badge counts overdue loans and waiting
+  requests; a contact linked to an account says "Přítel v Kniho-hlodu".
 - Versions and release notes (`src/features/releases/`): `RELEASES` in `releases.ts` is the one
   source — newest first, each with a version (`1.4`), a date, a title and notes in every language
   (content, so it lives there rather than in the locale files; the types demand both languages).
@@ -305,6 +326,6 @@ Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, c
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
 visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports,
 the onboarding tour with its sample library, versioned release notes and friends (phase 3a:
-friendships, invites, shared libraries, the bell) since. Next: 3b lending between friends, 3c
-comments. The plan
+friendships, invites, shared libraries, the bell) and lending between friends (3b: requests,
+linked contacts, borrowed books, reminders to borrowers) since. Next: 3c comments. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

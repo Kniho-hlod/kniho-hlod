@@ -12,5 +12,7 @@ export const notificationFields = {
   recipientId: READER,
   actorId: READER,
   kind: { type: 'ENUM', values: NOTIFICATION_KINDS, required: true },
+  /** The book it is about, for loan requests; a deleted book takes its notifications along. */
+  bookId: { type: 'STRING', references: { model: 'book', onDelete: 'CASCADE' } },
   readAt: { type: 'DATE' },
 } as const satisfies Fields;

@@ -57,6 +57,8 @@ import { createInviteCodes } from './friends/invite-codes';
 import { createInvitesPlugin } from './friends/invites-plugin';
 import { createPeople } from './friends/people';
 import { createNotificationsPlugin, createNotifier } from './notifications/notifications-plugin';
+import { createBookSummaries } from './lending/book-summaries';
+import { createLendingPlugin } from './lending/lending-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 import { migrations } from './migrations';
 
@@ -265,6 +267,17 @@ export function buildAppConfig(
         friendLibrary,
       }),
       createNotificationsPlugin({ jwtSecret: environment.jwtSecret, registry: models, people }),
+      createLendingPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        people,
+        friendships,
+        friendLibrary,
+        bookSummaries: createBookSummaries(models, bookCovers),
+        readerToday,
+        notify,
+        appBaseUrl: environment.appBaseUrl,
+      }),
       createSampleLibraryPlugin({
         jwtSecret: environment.jwtSecret,
         registry: models,

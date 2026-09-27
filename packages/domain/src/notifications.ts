@@ -10,6 +10,8 @@ export interface NotificationItem {
   kind: NotificationKind;
   /** Who did it. */
   actor: PersonSummary;
+  /** The book it is about (loan requests), while it exists. */
+  book: { id: string; title: string } | null;
   createdAt: string;
   /** `null` until the reader has seen it. */
   readAt: string | null;

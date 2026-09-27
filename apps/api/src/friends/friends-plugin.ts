@@ -10,6 +10,7 @@ import {
 import type { EmailService, ProjectPlugin, RateLimitConfig } from '@eleansphere/be-core';
 import {
   DEFAULT_FRIENDSHIP_STATUS,
+  DEFAULT_LOAN_REQUEST_STATUS,
   DEFAULT_LOCALE,
   FRIEND_INVITATIONS_PATH,
   FRIEND_REQUESTS_PATH,
@@ -18,6 +19,7 @@ import {
   FRIENDS_PATH,
   friendshipEntity,
   INVITE_PAGE_PATH,
+  loanRequestEntity,
   LOCALES,
   userEntity,
 } from '@kniho-hlod/domain';
@@ -284,6 +286,16 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
             throw new HttpError(NOT_FOUND, 'friend not found');
           }
           await (await friendships.between(readerId, friendId))?.destroy();
+          // Requests to borrow between them lapse with the friendship; loans already made stay.
+          await registry.get(loanRequestEntity.config.name).destroy({
+            where: {
+              status: DEFAULT_LOAN_REQUEST_STATUS,
+              [Op.or]: [
+                { requesterId: readerId, lenderId: friendId },
+                { requesterId: friendId, lenderId: readerId },
+              ],
+            },
+          });
           res.status(NO_CONTENT).send();
         })
       );

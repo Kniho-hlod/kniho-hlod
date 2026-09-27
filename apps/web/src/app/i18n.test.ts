@@ -24,7 +24,7 @@ describe('Messages', () => {
     );
   }
 
-  it.each(['cs', 'en'] as const)('all compile in %s — `@` must be written {\'@\'}', (locale) => {
+  it.each(['cs', 'en'] as const)("all compile in %s — `@` must be written {'@'}", (locale) => {
     const keys = leafKeys(i18n.global.getLocaleMessage(locale));
 
     expect(keys.length).toBeGreaterThan(0);

@@ -26,6 +26,12 @@ const unread = computed(() => feed.value?.unread ?? 0);
 const DESTINATIONS: Record<NotificationKind, (item: NotificationItem) => RouteLocationRaw> = {
   friendRequest: () => ({ name: 'friends' }),
   friendAccepted: (item) => ({ name: 'friend', params: { userId: item.actor.id } }),
+  loanRequest: () => ({ name: 'loans' }),
+  loanRequestAccepted: () => ({ name: 'loans', query: { tab: 'borrowed' } }),
+  loanRequestDeclined: (item) =>
+    item.book
+      ? { name: 'friend-book', params: { userId: item.actor.id, bookId: item.book.id } }
+      : { name: 'friend', params: { userId: item.actor.id } },
 };
 
 async function open(item: NotificationItem): Promise<void> {
@@ -88,7 +94,12 @@ async function open(item: NotificationItem): Promise<void> {
                   class="text-sm"
                   :class="item.readAt ? 'text-toned' : 'font-semibold text-highlighted'"
                 >
-                  {{ t(`notifications.kinds.${item.kind}`, { name: item.actor.displayName }) }}
+                  {{
+                    t(`notifications.kinds.${item.kind}`, {
+                      name: item.actor.displayName,
+                      book: item.book?.title ?? '',
+                    })
+                  }}
                 </span>
                 <span class="text-xs text-muted">{{ formatDateTime(item.createdAt) }}</span>
               </span>

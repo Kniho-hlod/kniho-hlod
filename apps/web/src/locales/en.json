@@ -227,7 +227,8 @@
     "contacts": "Contacts",
     "tabs": {
       "active": "Lent out",
-      "returned": "Returned"
+      "returned": "Returned",
+      "borrowed": "Borrowed"
     },
     "empty": {
       "active": "Nothing is lent out right now.",
@@ -288,7 +289,8 @@
       "email": "E-mail",
       "phone": "Phone",
       "note": "Note"
-    }
+    },
+    "linked": "A friend on Kniho-hlod"
   },
   "shelves": {
     "title": "Shelves",
@@ -567,7 +569,10 @@
     "unread": "Unread",
     "kinds": {
       "friendRequest": "{name} sent you a friend request",
-      "friendAccepted": "You and {name} are friends now"
+      "friendAccepted": "You and {name} are friends now",
+      "loanRequest": "{name} would like to borrow “{book}”",
+      "loanRequestAccepted": "{name} will lend you “{book}”",
+      "loanRequestDeclined": "{name} can't lend you “{book}” right now"
     }
   },
   "friends": {
@@ -672,6 +677,43 @@
       "want": "Wants to read",
       "reading": "Reading",
       "read": "Read"
+    }
+  },
+  "lending": {
+    "requests": {
+      "title": "Requests to borrow",
+      "asks": "{name} would like to borrow",
+      "suggests": "Suggests bringing it back by {date}",
+      "dueAt": "Due back",
+      "lend": "Lend",
+      "decline": "Decline",
+      "lent": "Done, “{title}” is lent — {name} knows.",
+      "declined": "The request is declined.",
+      "alreadyLent": "This book is lent out already."
+    },
+    "ask": {
+      "button": "Ask to borrow",
+      "title": "Ask to borrow",
+      "message": "Message",
+      "messagePlaceholder": "E.g. when and where I'll pick it up",
+      "dueAt": "I'll bring it back by",
+      "dueAtHint": "A suggestion — the owner can change it.",
+      "send": "Send request",
+      "sent": "The request is sent. We'll let you know how {name} answers.",
+      "waiting": "Request sent, waiting for an answer ({name}).",
+      "conflict": "This book can't be borrowed now — it is lent out, or you asked already."
+    },
+    "outgoing": {
+      "title": "Waiting for an answer",
+      "waiting": "“{title}” · {name}",
+      "cancel": "Cancel request",
+      "cancelled": "The request is cancelled."
+    },
+    "borrowed": {
+      "empty": "You haven't borrowed anything from friends right now",
+      "emptyHint": "Ask for a book on its page in a friend's library.",
+      "from": "Owner: {name}",
+      "homeTitle": "Borrowed from friends"
     }
   }
 }

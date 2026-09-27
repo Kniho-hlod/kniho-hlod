@@ -75,8 +75,22 @@ export type FriendshipStatus = (typeof FRIENDSHIP_STATUSES)[number];
 export const DEFAULT_FRIENDSHIP_STATUS: FriendshipStatus = 'pending';
 export const ACCEPTED_FRIENDSHIP: FriendshipStatus = 'accepted';
 
+/**
+ * A friend's request to borrow a book: waiting for the owner, lent (`accepted`), `declined` by
+ * the owner or `cancelled` by the friend.
+ */
+export const LOAN_REQUEST_STATUSES = ['pending', 'accepted', 'declined', 'cancelled'] as const;
+export type LoanRequestStatus = (typeof LOAN_REQUEST_STATUSES)[number];
+export const DEFAULT_LOAN_REQUEST_STATUS: LoanRequestStatus = 'pending';
+
 /** What a notification in the bell tells the reader. */
-export const NOTIFICATION_KINDS = ['friendRequest', 'friendAccepted'] as const;
+export const NOTIFICATION_KINDS = [
+  'friendRequest',
+  'friendAccepted',
+  'loanRequest',
+  'loanRequestAccepted',
+  'loanRequestDeclined',
+] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 
 /** What an uploaded file is attached to (be-core file service `refType`). */

@@ -1,6 +1,6 @@
 import { createVerifyToken, generateId, ValidationError } from '@eleansphere/be-core';
 import type { ProjectPlugin } from '@eleansphere/be-core';
-import { NOTIFICATIONS_PATH, notificationEntity } from '@kniho-hlod/domain';
+import { bookEntity, NOTIFICATIONS_PATH, notificationEntity } from '@kniho-hlod/domain';
 import type { NotificationFeed, NotificationItem, NotificationKind } from '@kniho-hlod/domain';
 import type { People } from '../friends/people';
 import type { Transaction } from '../friends/friendships';
@@ -16,6 +16,8 @@ export interface NewNotification {
   recipientId: string;
   actorId: string;
   kind: NotificationKind;
+  /** The book it is about, for loan requests. */
+  bookId?: string;
 }
 
 /** Puts a notification in a reader's bell. */
@@ -30,6 +32,11 @@ export function createNotifier(registry: ModelRegistry): Notify {
         { transaction }
       );
   };
+}
+
+function bookOf(bookId: string | null, titles: Map<string, string>): NotificationItem['book'] {
+  const title = bookId ? titles.get(bookId) : undefined;
+  return bookId && title !== undefined ? { id: bookId, title } : null;
 }
 
 /** The body's `ids` (strings), or `undefined` for "all of them". */
@@ -82,6 +89,18 @@ export function createNotificationsPlugin({
           const actors = await people.summaries(
             latest.map((notification) => String(notification.get('actorId')))
           );
+          const bookIds = [
+            ...new Set(latest.flatMap((notification) => notification.get('bookId') ?? [])),
+          ] as string[];
+          const books =
+            bookIds.length === 0
+              ? []
+              : await registry
+                  .get(bookEntity.config.name)
+                  .findAll({ where: { id: bookIds }, attributes: ['id', 'title'] });
+          const titles = new Map(
+            books.map((book) => [String(book.get('id')), String(book.get('title'))])
+          );
           const data: NotificationItem[] = latest.flatMap((notification) => {
             const actor = actors.get(String(notification.get('actorId')));
             if (!actor) return [];
@@ -90,6 +109,7 @@ export function createNotificationsPlugin({
                 id: String(notification.get('id')),
                 kind: notification.get('kind') as NotificationKind,
                 actor,
+                book: bookOf(notification.get('bookId') as string | null, titles),
                 createdAt: (notification.get('createdAt') as Date).toISOString(),
                 readAt: (notification.get('readAt') as Date | null)?.toISOString() ?? null,
               },

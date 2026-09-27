@@ -18,7 +18,14 @@ const { t } = useI18n();
       <p class="truncate font-display font-bold text-highlighted group-hover:text-primary">
         {{ contact.name }}
       </p>
-      <p v-if="contact.email || contact.phone" class="truncate text-sm text-muted">
+      <p
+        v-if="contact.linkedUserId"
+        class="flex items-center gap-1 text-xs font-semibold text-secondary"
+      >
+        <UIcon name="i-lucide-users-round" class="size-3.5" />
+        {{ t('contacts.linked') }}
+      </p>
+      <p v-else-if="contact.email || contact.phone" class="truncate text-sm text-muted">
         {{ contact.email ?? contact.phone }}
       </p>
     </div>
