@@ -205,7 +205,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)
   and tells iOS readers to use the Share menu. The app's mark is the bookworm from the first
   Kniho-hlod's favicon, redrawn in `src/assets/bookworm.svg`: `AppLogo` shows it, and the web's
-  `icons` script draws the favicon and the PWA icons from it into `public/`. Czech plurals use
+  `icons` script draws the favicon and the PWA icons from it into `public/`. A shared link's
+  preview is Open Graph in `index.html` (no `og:url`, so invite links stay themselves); its picture
+  `public/og-image.jpg` comes from the `share-image` script (splash + logo card). Czech plurals use
   `czechPluralForm` (`žádná | 1 | 2–4 | 5+`); shelves are „poličky“ in Czech.
 - Administration under `/admin` (`meta.requiresRole: 'admin'`, a nav item only administrators
   see): the overview with `GET /api/admin/stats`, accounts (`src/features/admin/`) and

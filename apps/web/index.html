@@ -10,6 +10,32 @@
     <meta name="apple-mobile-web-app-title" content="Kniho-hlod" />
     <meta name="theme-color" content="#4f46e5" />
     <title>Kniho-hlod</title>
+    <meta
+      name="description"
+      content="Vaše knihovna a přehled o tom, komu jste co půjčili. Sdílejte ji s přáteli, půjčujte si knihy navzájem a povídejte si o nich."
+    />
+    <!--
+      What a shared link shows on Facebook, in chats and elsewhere. Crawlers do not run the app,
+      so every page shares these; the image needs a full address (`pnpm share-image` draws it).
+      No `og:url`: Facebook would send every shared link, invites too, to that one address.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kniho-hlod" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:title" content="Kniho-hlod — víte, kdo má vaši knihu?" />
+    <meta
+      property="og:description"
+      content="Vaše knihovna a přehled o tom, komu jste co půjčili. Sdílejte ji s přáteli, půjčujte si knihy navzájem a povídejte si o nich."
+    />
+    <meta property="og:image" content="https://kniho-hlod.klotilda.cz/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Knihomol v brýlích na otevřené knize v útulné knihovně"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="app" class="isolate"></div>
