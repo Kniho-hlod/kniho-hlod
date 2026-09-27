@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import { ADMIN_ROLE, INVITE_PAGE_PATH } from '@kniho-hlod/domain';
 import type { UserRole } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
+import { withoutTrackingParameters } from './tracking-parameters';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -183,6 +184,10 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  const cleanQuery = withoutTrackingParameters(to.query);
+  if (cleanQuery) {
+    return { path: to.path, query: cleanQuery, hash: to.hash, replace: true };
+  }
   const session = useSessionStore();
   // Where a page may go depends on who is signed in: the first navigation waits for the stored
   // session, so a reload of a signed-in page does not bounce to sign-in. Later ones find it loaded.
