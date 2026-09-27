@@ -9,6 +9,7 @@ export {
   type FetchJson,
 } from './catalogue/book-details';
 export { findInKnihovnyCz } from './catalogue/knihovny-cz';
+export { COMMENTS_PATH, CommentsService, type CommentBody, type CommentItem } from './comments';
 export * from './constants';
 export * from './entities';
 export {

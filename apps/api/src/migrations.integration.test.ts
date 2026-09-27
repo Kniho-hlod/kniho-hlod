@@ -73,6 +73,8 @@ describe('Migrations', () => {
     const [applied] = await database.query(
       `SELECT name FROM "${syncedSchema}"."${MIGRATIONS_TABLE}" ORDER BY name`
     );
-    expect(applied).toEqual(config.migrations?.map(({ name }) => ({ name })));
+    // They run in array order; the table records only names, so compare them as a set.
+    const expected = (config.migrations ?? []).map(({ name }) => ({ name }));
+    expect(applied).toEqual(expected.sort((left, right) => left.name.localeCompare(right.name)));
   });
 });

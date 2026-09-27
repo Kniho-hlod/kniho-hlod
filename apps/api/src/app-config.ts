@@ -59,6 +59,7 @@ import { createPeople } from './friends/people';
 import { createNotificationsPlugin, createNotifier } from './notifications/notifications-plugin';
 import { createBookSummaries } from './lending/book-summaries';
 import { createLendingPlugin } from './lending/lending-plugin';
+import { COMMENT_RATE_LIMIT, createCommentsPlugin } from './comments/comments-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 import { migrations } from './migrations';
 
@@ -152,6 +153,7 @@ export function buildAppConfig(
   overrides: AppConfigOverrides = {}
 ): AppConfig {
   const models = createModelRegistry();
+  const rateLimitsOff = overrides.rateLimit === 'off' || environment.rateLimits === 'off';
   const storageAdapter = buildStorageAdapter(environment.storage, overrides.storageAdapter);
   const bookCovers = createBookCovers(models, storageAdapter);
   const activeLoans = createActiveLoans(models);
@@ -185,7 +187,7 @@ export function buildAppConfig(
       googleBooksApiKey: environment.googleBooksApiKey,
     }),
     jwtSecret: environment.jwtSecret,
-    rateLimit: overrides.rateLimit === 'off' ? 'off' : ISBN_RATE_LIMIT,
+    rateLimit: rateLimitsOff ? 'off' : ISBN_RATE_LIMIT,
   });
 
   return {
@@ -252,12 +254,12 @@ export function buildAppConfig(
         jwtSecret: environment.jwtSecret,
         registry: models,
         appBaseUrl: environment.appBaseUrl,
-        rateLimit: overrides.rateLimit === 'off' ? 'off' : FEEDBACK_RATE_LIMIT,
+        rateLimit: rateLimitsOff ? 'off' : FEEDBACK_RATE_LIMIT,
       }),
       createFriendsPlugin({
         ...friendsContext,
         appBaseUrl: environment.appBaseUrl,
-        rateLimit: overrides.rateLimit === 'off' ? 'off' : FRIEND_INVITATION_RATE_LIMIT,
+        rateLimit: rateLimitsOff ? 'off' : FRIEND_INVITATION_RATE_LIMIT,
       }),
       createInvitesPlugin(friendsContext),
       createFriendLibraryPlugin({
@@ -277,6 +279,14 @@ export function buildAppConfig(
         readerToday,
         notify,
         appBaseUrl: environment.appBaseUrl,
+      }),
+      createCommentsPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        people,
+        friendships,
+        notify,
+        rateLimit: rateLimitsOff ? 'off' : COMMENT_RATE_LIMIT,
       }),
       createSampleLibraryPlugin({
         jwtSecret: environment.jwtSecret,
@@ -304,7 +314,7 @@ export function buildAppConfig(
       profileFields: [...PROFILE_FIELDS],
       deleteAccount: true,
       passwordReset: { appBaseUrl: environment.appBaseUrl, template: passwordResetEmail },
-      rateLimit: overrides.rateLimit,
+      rateLimit: rateLimitsOff ? 'off' : overrides.rateLimit,
     },
   };
 }

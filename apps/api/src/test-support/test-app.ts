@@ -30,6 +30,7 @@ export const testEnvironment: Environment = {
   emailFrom: 'Kniho-hlod <noreply@test.cz>',
   email: { kind: 'log' },
   storage: { kind: 'memory' },
+  rateLimits: 'on',
 };
 
 export const bearer = (token: string) => `Bearer ${token}`;

@@ -5,13 +5,15 @@ import { useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
 import type { DropdownMenuItem } from '@nuxt/ui';
 import { ApiError } from '@eleansphere/entity-core';
-import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
+import { DEFAULT_BOOK_VISIBILITY, DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
 import type { ReadingStatus } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import { formatDate } from '@/app/dates';
 import { describeError } from '@/app/errors';
 import EmptyState from '@/components/EmptyState.vue';
+import { useSessionStore } from '@/features/auth/session-store';
 import { useBook, useChangeReadingStatus, useDeleteBook } from '@/features/books/api';
+import BookComments from '@/features/comments/BookComments.vue';
 import BookCover from '@/features/books/BookCover.vue';
 import BookLoanCard from '@/features/books/BookLoanCard.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
@@ -47,6 +49,14 @@ function languageName(code: string | null | undefined): string | null | undefine
 }
 
 const { data: book, error, isPending } = useBook(toRef(props, 'id'));
+const session = useSessionStore();
+/** Friends see the book, so they may comment on it; otherwise only earlier comments show. */
+const isSeenByFriends = computed(
+  () =>
+    (session.user?.shareLibrary ?? false) &&
+    book.value?.visibility === DEFAULT_BOOK_VISIBILITY &&
+    !book.value?.isSample
+);
 const isMissing = computed(
   () => error.value instanceof ApiError && error.value.status === NOT_FOUND
 );
@@ -231,6 +241,12 @@ async function confirmDelete(): Promise<void> {
         </section>
       </div>
     </article>
+
+    <BookComments
+      v-if="book"
+      :book-id="book.id"
+      :when-empty="isSeenByFriends ? 'invite' : 'hide'"
+    />
 
     <section v-if="book" class="flex flex-col gap-3">
       <h2 class="text-xl font-bold text-highlighted">{{ t('books.loanHistory') }}</h2>

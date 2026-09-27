@@ -5,6 +5,7 @@ import { onboarding } from './2026-09-26-onboarding';
 import { releaseNotes } from './2026-09-26-release-notes';
 import { friends } from './2026-09-27-friends';
 import { loanRequests } from './2026-09-27-loan-requests';
+import { comments } from './2026-09-27-comments';
 
 /**
  * Every change to the database schema, in the order it was made; the API applies the pending ones
@@ -18,4 +19,5 @@ export const migrations: Migration[] = [
   releaseNotes,
   friends,
   loanRequests,
+  comments,
 ];

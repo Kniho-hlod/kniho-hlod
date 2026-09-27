@@ -572,7 +572,8 @@
       "friendAccepted": "Vy a {name} jste teď přátelé",
       "loanRequest": "{name} si chce půjčit „{book}“",
       "loanRequestAccepted": "{name} vám půjčí „{book}“",
-      "loanRequestDeclined": "{name} teď nemůže půjčit „{book}“"
+      "loanRequestDeclined": "{name} teď nemůže půjčit „{book}“",
+      "comment": "{name} komentuje „{book}“"
     }
   },
   "friends": {
@@ -715,5 +716,18 @@
       "from": "Vlastník: {name}",
       "homeTitle": "Mám půjčené od přátel"
     }
+  },
+  "comments": {
+    "title": "Komentáře",
+    "empty": "Zatím tu nikdo nic nenapsal. Začněte debatu.",
+    "write": "Napsat komentář",
+    "placeholder": "Co na knihu říkáte?",
+    "send": "Přidat komentář",
+    "edit": "Upravit komentář",
+    "delete": "Smazat komentář",
+    "deleteConfirm": "Opravdu smazat tenhle komentář? Vrátit to nejde.",
+    "deleted": "Komentář je smazaný.",
+    "edited": "upraveno",
+    "actions": "Akce s komentářem ({name})"
   }
 }

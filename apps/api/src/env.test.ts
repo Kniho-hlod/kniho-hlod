@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ALLOW_MISSING_SERVICES_FLAG, readEnvironment } from './env';
+import { ALLOW_MISSING_SERVICES_FLAG, RATE_LIMITS_VARIABLE, readEnvironment } from './env';
 
 const BASE_VARIABLES = {
   APP_BASE_URL: 'https://kniho-hlod.example',
@@ -41,5 +41,30 @@ describe('readEnvironment in production', () => {
 
   it('checks nothing outside production', () => {
     expect(readEnvironment(BASE_VARIABLES).isProduction).toBe(false);
+  });
+});
+
+describe('readEnvironment rate limits', () => {
+  it('keeps them on unless told otherwise', () => {
+    expect(readEnvironment(BASE_VARIABLES).rateLimits).toBe('on');
+    expect(readEnvironment({ ...BASE_VARIABLES, [RATE_LIMITS_VARIABLE]: 'no' }).rateLimits).toBe(
+      'on'
+    );
+  });
+
+  it('lifts them for local end-to-end runs', () => {
+    expect(readEnvironment({ ...BASE_VARIABLES, [RATE_LIMITS_VARIABLE]: 'off' }).rateLimits).toBe(
+      'off'
+    );
+  });
+
+  it('never lifts them in production', () => {
+    expect(() =>
+      readEnvironment({
+        ...PRODUCTION_WITHOUT_SERVICES,
+        [ALLOW_MISSING_SERVICES_FLAG]: 'true',
+        [RATE_LIMITS_VARIABLE]: 'off',
+      })
+    ).toThrow(/RATE_LIMITS=off is for local development/);
   });
 });

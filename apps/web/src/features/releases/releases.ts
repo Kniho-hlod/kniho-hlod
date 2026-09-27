@@ -18,6 +18,23 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.7',
+    date: '2026-09-27',
+    title: { cs: 'Komentáře', en: 'Comments' },
+    notes: {
+      cs: [
+        'Pod knihami přátel i pod vlastními sdílenými knihami se dá psát. Komentáře vidí jen vlastník knihy a jeho přátelé.',
+        'Svůj komentář upravíte nebo smažete; pod svou knihou smažete kterýkoli.',
+        'Když vám někdo okomentuje knihu, ozve se zvoneček.',
+      ],
+      en: [
+        "Write under your friends' books and under your own shared ones. Only the book's owner and their friends see the comments.",
+        'Edit or delete your comments; under your own book you can delete any.',
+        'The bell rings when someone comments on your book.',
+      ],
+    },
+  },
+  {
     version: '1.6',
     date: '2026-09-27',
     title: { cs: 'Půjčování mezi přáteli', en: 'Lending between friends' },

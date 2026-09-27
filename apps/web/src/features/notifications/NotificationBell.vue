@@ -32,6 +32,8 @@ const DESTINATIONS: Record<NotificationKind, (item: NotificationItem) => RouteLo
     item.book
       ? { name: 'friend-book', params: { userId: item.actor.id, bookId: item.book.id } }
       : { name: 'friend', params: { userId: item.actor.id } },
+  comment: (item) =>
+    item.book ? { name: 'book', params: { id: item.book.id } } : { name: 'home' },
 };
 
 async function open(item: NotificationItem): Promise<void> {

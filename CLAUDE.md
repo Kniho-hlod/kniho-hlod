@@ -97,6 +97,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   drops the waiting requests, never loans. `GET /api/borrowed` is what the reader has out on
   loans to contacts linked to them. The bell and, with `emailNotifications`, e-mail tell each
   side (`emails/loan-request.ts`, `loan-request-answer.ts`); notifications carry `bookId`.
+- Comments (`src/comments/`, phase 3c): `comment` (book, author, text, `editedAt`; no CRUD
+  routes). `GET`/`POST /api/books/:id/comments`, `PATCH`/`DELETE /api/comments/:id`. A book's
+  comments are for its owner and the owner's friends who see the book (shared, not hidden, not a
+  sample) — anyone else, an ex-friend included, gets 404. The author edits and deletes; the book's
+  owner deletes any under their book (`canEdit`/`canDelete` in each item). A comment by someone
+  else rings the owner's bell (in-app only). Rate-limited per reader.
 - Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
   reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
   `1.3`, the release before the notes. The releases themselves live in the web app.
@@ -236,6 +242,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `?tab=borrowed` (`BorrowedList`: books from friends and the reader's waiting requests), "Mám
   půjčené od přátel" on the home page. The Loans tab's badge counts overdue loans and waiting
   requests; a contact linked to an account says "Přítel v Kniho-hlodu".
+- Comments (`src/features/comments/BookComments.vue`): under a friend's book, and under the
+  reader's own book — inviting the first comment while friends see the book, otherwise shown only
+  when some exist (`whenEmpty: 'invite' | 'hide'`). Edit and delete wait behind "…".
 - Versions and release notes (`src/features/releases/`): `RELEASES` in `releases.ts` is the one
   source — newest first, each with a version (`1.4`), a date, a title and notes in every language
   (content, so it lives there rather than in the locale files; the types demand both languages).
@@ -299,6 +308,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   the pointer — the link or button being clicked moves away and the click is lost.
 - E2E: Playwright reuses servers already running on :3000/:5173, and `DATABASE_URL` from the
   environment beats `apps/api/.env`. Make sure both point at the local containers before a run.
+  The suite signs up more readers than the sign-up limit allows from one address: run the API
+  with `RATE_LIMITS=off` (in `apps/api/.env`; Playwright sets it for a server it starts).
+  Migrations run in array order; their names only have to be unique.
 
 ## Commands
 
@@ -326,6 +338,6 @@ Phase 1 (skeleton, auth, account, announcements), phase 2 (books, ISBN lookup, c
 installable PWA), phase 5 (loan reminders, administration, migrations) and phase 6 (the
 visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports,
 the onboarding tour with its sample library, versioned release notes and friends (phase 3a:
-friendships, invites, shared libraries, the bell) and lending between friends (3b: requests,
-linked contacts, borrowed books, reminders to borrowers) since. Next: 3c comments. The plan
+friendships, invites, shared libraries, the bell), lending between friends (3b: requests, linked
+contacts, borrowed books, reminders to borrowers) and comments (3c) since. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

@@ -572,7 +572,8 @@
       "friendAccepted": "You and {name} are friends now",
       "loanRequest": "{name} would like to borrow “{book}”",
       "loanRequestAccepted": "{name} will lend you “{book}”",
-      "loanRequestDeclined": "{name} can't lend you “{book}” right now"
+      "loanRequestDeclined": "{name} can't lend you “{book}” right now",
+      "comment": "{name} commented on “{book}”"
     }
   },
   "friends": {
@@ -715,5 +716,18 @@
       "from": "Owner: {name}",
       "homeTitle": "Borrowed from friends"
     }
+  },
+  "comments": {
+    "title": "Comments",
+    "empty": "Nobody has written anything yet. Start the conversation.",
+    "write": "Write a comment",
+    "placeholder": "What do you make of the book?",
+    "send": "Add comment",
+    "edit": "Edit comment",
+    "delete": "Delete comment",
+    "deleteConfirm": "Delete this comment? This can't be undone.",
+    "deleted": "The comment is deleted.",
+    "edited": "edited",
+    "actions": "Comment actions ({name})"
   }
 }

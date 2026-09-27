@@ -18,7 +18,14 @@ export interface Environment {
   storage: StorageSettings;
   /** Gives the ISBN lookup its own Google Books quota; optional, see `createIsbnCatalogue`. */
   googleBooksApiKey?: string;
+  /**
+   * `off` lifts every rate limit — for local end-to-end runs, which sign up more readers from one
+   * address than the sign-up limit allows. Never in production.
+   */
+  rateLimits: RateLimitsSetting;
 }
+
+export type RateLimitsSetting = 'on' | 'off';
 
 type Variables = NodeJS.ProcessEnv;
 
@@ -30,6 +37,8 @@ const DEFAULT_EMAIL_FROM = 'Kniho-hlod <noreply@kniho-hlod.local>';
 /** Local SMTP catchers such as Mailpit accept any credentials. */
 const LOCAL_SMTP_CREDENTIALS = { user: 'kniho-hlod', pass: 'kniho-hlod' };
 const LIST_SEPARATOR = ',';
+export const RATE_LIMITS_VARIABLE = 'RATE_LIMITS';
+const RATE_LIMITS_OFF: RateLimitsSetting = 'off';
 
 /** Loads `.env` from the working directory when present (local development). */
 export function loadEnvFile(): void {
@@ -122,11 +131,20 @@ function assertProductionReady(environment: Environment, variables: Variables): 
   for (const gap of gaps) console.warn(`${ALLOW_MISSING_SERVICES_FLAG}: running without ${gap}`);
 }
 
+function readRateLimits(variables: Variables, isProduction: boolean): RateLimitsSetting {
+  if (variables[RATE_LIMITS_VARIABLE] !== RATE_LIMITS_OFF) return 'on';
+  if (isProduction) {
+    throw new Error(`${RATE_LIMITS_VARIABLE}=off is for local development and tests only`);
+  }
+  return RATE_LIMITS_OFF;
+}
+
 /** Reads and checks the API's configuration. Throws on anything missing or unsafe. */
 export function readEnvironment(variables: Variables = process.env): Environment {
   const appBaseUrl = requireVariable(variables, 'APP_BASE_URL');
+  const isProduction = variables.NODE_ENV === 'production';
   const environment: Environment = {
-    isProduction: variables.NODE_ENV === 'production',
+    isProduction,
     port: Number(variables.PORT ?? DEFAULT_PORT),
     databaseUrl: requireVariable(variables, 'DATABASE_URL'),
     databaseSsl: variables.DATABASE_SSL !== 'false',
@@ -138,6 +156,7 @@ export function readEnvironment(variables: Variables = process.env): Environment
     email: readEmailTransport(variables),
     storage: readStorage(variables),
     googleBooksApiKey: variables.GOOGLE_BOOKS_API_KEY || undefined,
+    rateLimits: readRateLimits(variables, isProduction),
   };
   assertProductionReady(environment, variables);
   return environment;

@@ -13,6 +13,7 @@ import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
 import { useFriend, useFriendBook } from '@/features/friends/api';
 import RequestBookPanel from '@/features/lending/RequestBookPanel.vue';
+import BookComments from '@/features/comments/BookComments.vue';
 import ShelfChips from '@/features/shelves/ShelfChips.vue';
 
 const NOT_FOUND = 404;
@@ -157,5 +158,7 @@ const shelfLink = (shelf: ShelfSummary) => ({
         </p>
       </div>
     </article>
+
+    <BookComments v-if="book" :book-id="book.id" when-empty="invite" />
   </section>
 </template>

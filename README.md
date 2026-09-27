@@ -44,7 +44,7 @@ pnpm --filter @kniho-hlod/web seed:demo    # a demo account with a filled librar
 pnpm lint
 pnpm typecheck
 pnpm test       # unit tests, plus API integration tests against the Postgres container
-pnpm test:e2e   # Playwright: auth, books, ISBN scanning, loans, shelves, administration, feedback, tour, what's new, friends, lending
+pnpm test:e2e   # Playwright: auth, books, ISBN scanning, loans, shelves, administration, feedback, tour, what's new, friends, lending, comments
 pnpm build
 ```
 
@@ -103,6 +103,7 @@ API ([`apps/api/.env.example`](apps/api/.env.example) has local defaults):
 | `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_PUBLIC_BASE_URL` | Uploaded covers and avatars; without `R2_BUCKET` they are kept in memory |
 | `GOOGLE_BOOKS_API_KEY` | Optional: the ISBN lookup's own Google Books quota |
 | `ALLOW_MISSING_EMAIL_AND_STORAGE` | `true` lets production start without e-mail and R2 (first deploys only) |
+| `RATE_LIMITS` | `off` lifts every rate limit for local end-to-end runs; production refuses to start with it |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_DISPLAY_NAME` | Only for `seed:admin` |
 | `NODE_AUTH_TOKEN` | Build only: reads `@eleansphere/*` from GitHub Packages |
 

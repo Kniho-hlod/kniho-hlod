@@ -90,6 +90,7 @@ export const NOTIFICATION_KINDS = [
   'loanRequest',
   'loanRequestAccepted',
   'loanRequestDeclined',
+  'comment',
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 

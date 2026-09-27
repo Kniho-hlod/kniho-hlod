@@ -23,6 +23,8 @@ export default defineConfig({
   webServer: [
     {
       command: 'pnpm --filter @kniho-hlod/api dev',
+      // The suite signs up more readers from one address than the sign-up limit allows.
+      env: { RATE_LIMITS: 'off' },
       url: `${API_URL}/`,
       cwd: '../..',
       reuseExistingServer: !process.env.CI,
