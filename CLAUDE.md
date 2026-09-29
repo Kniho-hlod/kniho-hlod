@@ -195,8 +195,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   calls `invalidateLibrary` (`src/app/library-queries.ts`).
 - Shelves in `src/features/shelves/`, managed at `/books/shelves`; the books list takes its shelf
   from `?shelf=`, so a shelf can be linked to. Picking a reading status in the form dates the start
-  or end today (`readingDatesForStatus` in the domain) — only on the reader's own choice, never
-  when a stored book fills the form.
+  or end today (`readingDatesForStatus` in the domain) and moving a book back clears the dates
+  that no longer hold — only on the reader's own choice, never when a stored book fills the form.
+  The book page moves a book on with one tap; any other status waits in its "…" menu.
 - ISBN scanning (`src/features/scanner/`): the native `BarcodeDetector` where it reads EAN-13,
   else the `barcode-detector` ponyfill, whose `.wasm` is served with the app (not from its default
   CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away.
@@ -225,8 +226,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   "Přeskočit"), then walks `TOUR_STEPS` — each opens its page and `TourSpotlight` rings the
   element marked `data-tour` (`TOUR_TARGETS`), dims the rest and scrolls to it once the page has
   settled. `TourGuide` is the card with the peeking bookworm, "Ukončit" on every step. The
-  account menu starts it again; `SampleLibraryCard` on the account page removes the samples, and
-  sample books wear an "Ukázka" badge. A new element the tour points at needs a `data-tour` mark.
+  account menu starts it again; `SampleLibraryCard` on the account page and
+  `SampleLibraryBanner` over every other page (once the tour is closed; "Zatím nechat" hides it
+  until a reload) remove the samples, and sample books wear an "Ukázka" badge. A new element the
+  tour points at needs a `data-tour` mark.
   E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
   registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
 - Friends (`src/features/friends/`, pages `Friends`, `Friend`, `FriendBook`, `Invite`): the

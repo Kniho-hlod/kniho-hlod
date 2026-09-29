@@ -84,7 +84,7 @@ test('a new reader takes the tour with a sample library, then clears it out', as
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
     await expectStep(page, 9);
-    await expect(tour(page).getByText('Ukázky smažete v Nastavení účtu')).toBeVisible();
+    await expect(tour(page).getByText('Ukázky smažete tlačítkem nahoře na stránce')).toBeVisible();
     await tour(page).getByRole('button', { name: 'Hotovo' }).click();
     await expect(tour(page)).toBeHidden();
   });
@@ -95,17 +95,27 @@ test('a new reader takes the tour with a sample library, then clears it out', as
     await expect(page.getByRole('dialog')).toBeHidden();
   });
 
-  await test.step('clear the samples out in the account settings', async () => {
+  await test.step('the samples offer to go on every page but the account page', async () => {
+    const banner = page.getByRole('region', { name: 'Ukázková data' });
+    await expect(banner).toBeVisible();
+    await banner.getByRole('button', { name: 'Zatím nechat' }).click();
+    await expect(banner).toBeHidden();
+
     await page.goto('/account');
-    await page.getByRole('button', { name: 'Smazat ukázková data' }).click();
-    await expect(page.getByText('Opravdu smazat ukázky?')).toBeVisible();
-    await page.getByRole('button', { name: 'Smazat ukázková data' }).click();
+    await expect(page.getByRole('heading', { name: 'Ukázková data' })).toBeVisible();
+    await expect(banner).toBeHidden();
+  });
+
+  await test.step('clear the samples out from the banner', async () => {
+    await page.goto('/books');
+    const banner = page.getByRole('region', { name: 'Ukázková data' });
+    await banner.getByRole('button', { name: 'Smazat ukázky' }).click();
+    await expect(banner.getByText('Opravdu smazat ukázky?')).toBeVisible();
+    await banner.getByRole('button', { name: 'Smazat ukázková data' }).click();
     await expect(
       page.getByText('Ukázky jsou pryč. Knihovna je celá vaše!', { exact: true })
     ).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Ukázková data' })).toBeHidden();
-
-    await page.goto('/books');
+    await expect(banner).toBeHidden();
     await expect(page.getByText('Zatím tu nemáte žádnou knihu.')).toBeVisible();
   });
 

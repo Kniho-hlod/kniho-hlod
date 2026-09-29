@@ -16,16 +16,25 @@ export function findReadingDatesIssues({ startedAt, finishedAt }: ReadingDates):
 }
 
 /**
- * The dates a new reading status fills in: starting a book dates its start and finishing it
- * dates its end, both `today`. A date the reader already has is never overwritten, and a
- * finished book whose start is unknown stays without one.
+ * The dates a new reading status fills in or clears. Starting a book dates its start and finishing
+ * it dates its end, both `today`; a date the reader already has is never overwritten, and a
+ * finished book whose start is unknown stays without one. Moving a book back clears what no
+ * longer holds: a book being read again isn't finished, one not yet begun has no dates at all.
  */
 export function readingDatesForStatus(
   status: ReadingStatus,
   { startedAt, finishedAt }: ReadingDates,
   today: string
 ): ReadingDates {
-  if (status === 'reading' && !startedAt) return { startedAt: today };
-  if (status === 'read' && !finishedAt) return { finishedAt: today };
-  return {};
+  if (status === 'reading') {
+    return {
+      ...(startedAt ? {} : { startedAt: today }),
+      ...(finishedAt ? { finishedAt: null } : {}),
+    };
+  }
+  if (status === 'read') return finishedAt ? {} : { finishedAt: today };
+  return {
+    ...(startedAt ? { startedAt: null } : {}),
+    ...(finishedAt ? { finishedAt: null } : {}),
+  };
 }
