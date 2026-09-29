@@ -57,6 +57,15 @@ test('a reader shelves a book, reads it and tidies the shelves', async ({ page }
     await expect(page.getByRole('button', { name: 'Dočteno' })).toBeHidden();
   });
 
+  await test.step('take it back to reading from the “…” menu', async () => {
+    await page.getByRole('button', { name: 'Další akce' }).click();
+    await page.getByRole('menuitem', { name: 'Čtu' }).click();
+    await expect(page.getByText(/^Čtu od /)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Dočteno' })).toBeVisible();
+    await page.getByRole('button', { name: 'Dočteno' }).click();
+    await expect(page.getByText(/^Čteno .+ – /)).toBeVisible();
+  });
+
   await test.step('see only the shelf’s books', async () => {
     await page.goto('/books/new');
     await page.getByLabel('Název').fill(OTHER_TITLE);

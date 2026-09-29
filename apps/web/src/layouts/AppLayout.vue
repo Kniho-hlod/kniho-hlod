@@ -13,6 +13,7 @@ import AppLogo from '@/components/AppLogo.vue';
 import NavLink, { type NavigationMatch } from '@/components/NavLink.vue';
 import SystemNotificationBanner from '@/components/SystemNotificationBanner.vue';
 import OnboardingTour from '@/features/onboarding/OnboardingTour.vue';
+import SampleLibraryBanner from '@/features/onboarding/SampleLibraryBanner.vue';
 import WhatsNew from '@/features/releases/WhatsNew.vue';
 
 const { t } = useI18n();
@@ -122,6 +123,7 @@ function administrationItem(): NavigationItem {
 
     <main class="app-content mx-auto w-full max-w-5xl px-4 py-6 flex flex-col gap-5">
       <SystemNotificationBanner />
+      <SampleLibraryBanner />
       <RouterView />
     </main>
 

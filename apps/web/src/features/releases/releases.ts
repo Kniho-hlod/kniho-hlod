@@ -39,6 +39,21 @@ export const RELEASES: readonly Release[] = [
     },
   },
   {
+    version: '1.9',
+    date: '2026-09-29',
+    title: { cs: 'Opravy podle vašich hlášení', en: 'Fixes from your reports' },
+    notes: {
+      cs: [
+        'Přečtenou knihu vrátíte zpátky na „Čtu“, „Chci číst“ nebo bez stavu v menu „…“ na jejím detailu. Data, která už neplatí, zmizí.',
+        'Ukázky z průvodce smažete tlačítkem nahoře na kterékoli stránce, ne jen v Nastavení účtu.',
+      ],
+      en: [
+        'Take a finished book back to Reading, Want to read or no status from the “…” menu on its page. Dates that no longer hold are cleared.',
+        "Remove the tour's samples with the button at the top of any page, not only in Account settings.",
+      ],
+    },
+  },
+  {
     version: '1.8',
     date: '2026-09-29',
     title: { cs: 'Knihomol ukáže i přátele', en: 'The bookworm shows friends too' },

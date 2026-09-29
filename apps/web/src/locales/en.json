@@ -183,9 +183,12 @@
       "reading": "Start reading",
       "read": "Finished"
     },
+    "changeReadingStatus": "Change reading status",
     "readingStatusChanged": {
       "reading": "Happy reading!",
-      "read": "Finished. Remember to rate it."
+      "read": "Finished. Remember to rate it.",
+      "want": "Back on your want-to-read list.",
+      "none": "Reading status cleared."
     },
     "filters": {
       "title": "Filters",
@@ -514,7 +517,7 @@
     "back": "Back",
     "next": "Next",
     "finish": "Done",
-    "samplesNote": "Remove the samples in Account settings once you want to start for real.",
+    "samplesNote": "Remove the samples with the button at the top of the page or in Account settings once you want to start for real.",
     "steps": {
       "home": {
         "title": "Your overview",
@@ -558,7 +561,11 @@
     "badge": "Sample",
     "title": "Sample data",
     "text": "Your library holds sample books, shelves, contacts and loans from the tour. Remove them once you want to start for real — your own books stay.",
+    "bannerTitle": "Your library holds samples from the tour",
+    "bannerText": "Remove them once you want to start for real — your own books stay.",
     "remove": "Remove sample data",
+    "removeShort": "Remove samples",
+    "keepForNow": "Keep for now",
     "confirm": "Remove the samples? Loans of sample books and contacts go too.",
     "removed": "The samples are gone. The library is all yours!",
     "conflict": "Samples only go into an empty library."

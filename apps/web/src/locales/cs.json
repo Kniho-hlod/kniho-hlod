@@ -183,9 +183,12 @@
       "reading": "Začít číst",
       "read": "Dočteno"
     },
+    "changeReadingStatus": "Změnit stav čtení",
     "readingStatusChanged": {
       "reading": "Hezké čtení!",
-      "read": "Dočteno. Nezapomeňte knihu ohodnotit."
+      "read": "Dočteno. Nezapomeňte knihu ohodnotit.",
+      "want": "Kniha je zpátky mezi těmi, které chcete číst.",
+      "none": "Stav čtení odebrán."
     },
     "filters": {
       "title": "Filtry",
@@ -514,7 +517,7 @@
     "back": "Zpět",
     "next": "Dál",
     "finish": "Hotovo",
-    "samplesNote": "Ukázky smažete v Nastavení účtu, až budete chtít začít naostro.",
+    "samplesNote": "Ukázky smažete tlačítkem nahoře na stránce nebo v Nastavení účtu, až budete chtít začít naostro.",
     "steps": {
       "home": {
         "title": "Tady máte přehled",
@@ -558,7 +561,11 @@
     "badge": "Ukázka",
     "title": "Ukázková data",
     "text": "V knihovně máte ukázkové knihy, poličky, kontakty a výpůjčky z průvodce. Až budete chtít začít naostro, smažte je — vaše vlastní knihy zůstanou.",
+    "bannerTitle": "V knihovně máte ukázky z průvodce",
+    "bannerText": "Až budete chtít začít naostro, smažte je — vaše vlastní knihy zůstanou.",
     "remove": "Smazat ukázková data",
+    "removeShort": "Smazat ukázky",
+    "keepForNow": "Zatím nechat",
     "confirm": "Opravdu smazat ukázky? Zmizí i výpůjčky ukázkových knih a kontaktů.",
     "removed": "Ukázky jsou pryč. Knihovna je celá vaše!",
     "conflict": "Ukázky jdou jen do prázdné knihovny."
