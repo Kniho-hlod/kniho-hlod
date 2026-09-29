@@ -71,6 +71,12 @@ export interface Friend extends PersonSummary {
   readingNow: FriendBookSummary[];
 }
 
+/** The reader's contact for a friend, which a loan to the friend goes to. */
+export interface FriendContact {
+  id: string;
+  name: string;
+}
+
 /** A friendship one reader asked for and the other hasn't answered yet. */
 export interface FriendRequest {
   id: string;
@@ -192,6 +198,11 @@ export class FriendsService extends ApiClient {
 
   unfriend(userId: string): Promise<void> {
     return this.httpDelete(friendPath(userId));
+  }
+
+  /** The reader's contact for the friend — linked, found by e-mail or made — to lend to. */
+  contact(userId: string): Promise<FriendContact> {
+    return this.post<FriendContact>(`${friendPath(userId)}/contact`, {});
   }
 
   books(userId: string, request: FriendBookListRequest): Promise<PaginatedResponse<FriendBook>> {

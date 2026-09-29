@@ -91,6 +91,8 @@ test('readers become friends by link and by e-mail, and browse a shared library'
     await expect(cyril.getByRole('heading', { name: 'Žádosti o přátelství' })).toBeVisible();
     await cyril.getByRole('button', { name: 'Přijmout' }).click();
     await expect(cyril.getByText('Vy a Pavel jste teď přátelé.', { exact: true })).toBeVisible();
+    // The friends page opens on the news; the friends themselves are on the next tab.
+    await cyril.getByRole('tab', { name: 'Vaši přátelé' }).click();
     await expect(cyril.getByRole('link', { name: /Pavel/ })).toBeVisible();
     await expect(cyril.getByRole('button', { name: 'Upozornění' })).toBeVisible();
   });

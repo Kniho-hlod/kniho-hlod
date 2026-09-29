@@ -63,9 +63,10 @@ export function useLoan(id: Ref<string | undefined>) {
   });
 }
 
-/** The chosen contact's id — a new name becomes a contact first. */
+/** The chosen contact's id — a friend's contact is found or made, a new name becomes one. */
 async function resolveContactId(choice: ContactChoice): Promise<string> {
   if (choice.kind === 'existing') return choice.id;
+  if (choice.kind === 'friend') return (await services.friends.contact(choice.friendId)).id;
   const contact = await services.contacts.create({ name: choice.name.trim() });
   return contact.id;
 }

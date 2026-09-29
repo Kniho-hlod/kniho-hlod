@@ -18,6 +18,23 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.13',
+    date: '2026-09-30',
+    title: { cs: 'Opravy podle vašich hlášení', en: 'Fixes from your reports' },
+    notes: {
+      cs: [
+        'Když na přehledu klepnete na „Právě čtu“, uvidíte jen knihy, které právě čtete.',
+        'Při půjčování knihy teď v poli „Komu“ najdete i své přátele z Kniho-hlodu. Výpůjčku pak uvidí u sebe v „Mám půjčené“.',
+        'Na mobilu jsme srovnali tlačítka v Knihách, na přehledu a u vyhledávání podle ISBN, aby se nemačkala. Dlouhé jméno přítele se už neusekává.',
+      ],
+      en: [
+        'Tapping “Reading now” on the overview shows just the books you are reading.',
+        'When you lend a book, the “To” field now offers your friends on Kniho-hlod too. They then see the loan under “Borrowed”.',
+        "On phones, the buttons in Books, on the overview and by the ISBN search are lined up so they don't squeeze. A friend's long name is no longer cut off.",
+      ],
+    },
+  },
+  {
     version: '1.12',
     date: '2026-09-29',
     title: { cs: 'Obálky českých knih', en: 'Covers of Czech books' },

@@ -57,6 +57,7 @@ export {
   type FriendBook,
   type FriendBookListRequest,
   type FriendBookSummary,
+  type FriendContact,
   type FriendCopy,
   type FriendInvitationRequest,
   type FriendRequest,

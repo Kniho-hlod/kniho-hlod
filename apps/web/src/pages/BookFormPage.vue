@@ -304,12 +304,13 @@ function cancel(): void {
 
         <div class="flex flex-col gap-3">
           <UFormField :label="t('books.fields.isbn')" name="isbn">
-            <div class="flex gap-2">
+            <!-- On a phone the ISBN gets the whole width; scanning and searching go below. -->
+            <div class="flex flex-wrap gap-2 sm:flex-nowrap">
               <UInput
                 v-model.nullable="state.isbn"
                 inputmode="numeric"
                 autocomplete="off"
-                class="min-w-0 flex-1"
+                class="w-full min-w-0 sm:flex-1"
                 @keydown.enter.prevent="fillFromCatalogue"
               />
               <UButton
@@ -325,6 +326,7 @@ function cancel(): void {
                 icon="i-lucide-search"
                 :loading="isLookingUp"
                 :disabled="!hasIsbnText"
+                class="flex-1 justify-center sm:flex-none"
                 @click="fillFromCatalogue"
               >
                 {{ t('books.isbnSearch') }}

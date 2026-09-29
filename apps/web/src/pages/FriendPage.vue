@@ -146,7 +146,7 @@ async function confirmUnfriend(): Promise<void> {
       <header class="flex items-center gap-4">
         <PersonAvatar :name="friend.displayName" :src="fileUrl(friend.avatar)" size="3xl" />
         <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-          <h1 class="truncate text-3xl font-extrabold text-highlighted">
+          <h1 class="text-2xl font-extrabold break-words text-highlighted sm:text-3xl">
             {{ friend.displayName }}
           </h1>
           <p class="text-sm text-muted">

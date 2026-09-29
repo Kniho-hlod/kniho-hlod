@@ -279,9 +279,10 @@
     "pickBook": "Choose a book",
     "pickBookHint": "Showing the books you have at home.",
     "noBooksAtHome": "There is no book at home to lend right now.",
-    "pickContact": "Choose a contact or type a new name",
+    "pickContact": "Choose a contact or a friend, or type a new name",
     "searchContacts": "Search or type a name",
     "newContact": "New contact: {name}",
+    "friendInApp": "Friend on Kniho-hlod",
     "contactHint": "Just type a new name — the contact is created with the loan.",
     "noHistory": "No returned loans yet.",
     "due": {
