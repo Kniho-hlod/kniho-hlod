@@ -120,9 +120,9 @@ export function useBook(id: Ref<string | undefined>) {
 }
 
 /** The reader's book with this ISBN-13, if they have one already. */
-export async function findBookByIsbn(isbn: string): Promise<Book | null> {
+export async function findBookByIsbn(isbn: string): Promise<BookWithDetails | null> {
   const found = await services.books.getAll({ limit: 1, filter: { isbn } });
-  return found.data[0] ?? null;
+  return (found.data[0] as BookWithDetails | undefined) ?? null;
 }
 
 export interface SaveBookRequest {

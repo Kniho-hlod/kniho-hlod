@@ -5,6 +5,11 @@ import BookCover from './BookCover.vue';
 /** Photos straight from a phone are fine: they are scaled down before uploading. */
 const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 const ACCEPTED_TYPES = 'image/jpeg,image/png,image/webp';
+/**
+ * Phones and tablets open the camera straight away for "Vyfotit obálku": the quickest cover for a
+ * book the catalogues have none for. Elsewhere the attribute does nothing, so the button stays out.
+ */
+const canPhotograph = window.matchMedia?.('(pointer: coarse)').matches ?? false;
 
 defineProps<{
   previewUrl: string | undefined;
@@ -45,6 +50,18 @@ function selectImage(event: Event): void {
         <input type="file" class="sr-only" :accept="ACCEPTED_TYPES" @change="selectImage" />
         <UButton as="span" icon="i-lucide-image-up" color="neutral" variant="subtle">
           {{ previewUrl ? t('books.changeCover') : t('books.addCover') }}
+        </UButton>
+      </label>
+      <label v-if="canPhotograph">
+        <input
+          type="file"
+          class="sr-only"
+          :accept="ACCEPTED_TYPES"
+          capture="environment"
+          @change="selectImage"
+        />
+        <UButton as="span" icon="i-lucide-camera" color="neutral" variant="subtle">
+          {{ t('books.photographCover') }}
         </UButton>
       </label>
       <UButton

@@ -128,11 +128,13 @@
     "cover": "Cover",
     "coverOf": "Cover of {title}",
     "addCover": "Upload a cover",
+    "photographCover": "Photograph the cover",
     "changeCover": "Change cover",
     "removeCover": "Remove cover",
     "coverHint": "JPG, PNG or WebP. We scale it down to at most 1000 px.",
     "coverTooLarge": "That image is too large, please pick one under 20 MB.",
     "coverFromCatalogue": "Cover from the catalogue — saved together with the book.",
+    "noCatalogueCover": "The catalogues have no cover for this book. Take a photo of it or upload a picture.",
     "untitled": "Untitled",
     "fields": {
       "title": "Title",
@@ -197,6 +199,20 @@
     },
     "hideFromFriends": "Hide from friends",
     "hideFromFriendsHint": "Friends won't see this book, even when you share your library."
+  },
+  "bookCheck": {
+    "button": "Do I have it?",
+    "title": "Do I have it?",
+    "description": "Scan the barcode on the back of a book to see at once whether it is in your library.",
+    "checking": "Looking in your library…",
+    "owned": "You have this book already.",
+    "missing": "You don't have this book yet.",
+    "failed": "Your library couldn't be searched. Please try again.",
+    "lookingUp": "Finding out which book it is…",
+    "isbn": "ISBN {isbn}",
+    "open": "Open the book",
+    "add": "Add to library",
+    "scanAgain": "Scan another"
   },
   "validation": {
     "required": "This field is required.",

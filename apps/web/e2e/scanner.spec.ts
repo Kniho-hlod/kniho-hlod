@@ -81,3 +81,41 @@ test("a reader adds a book by scanning its barcode, and is warned when it's ther
     await expect(page.getByRole('heading', { name: 'Hobit' })).toBeVisible();
   });
 });
+
+test('a reader checks by scanning whether a book is in the library', async ({ page }) => {
+  await page.route(`**/api/isbn/${ISBN}`, (route) => route.fulfill({ json: FOUND }));
+  await answerFromCzechLibraries(page);
+
+  await test.step('register', async () => {
+    await page.goto('/register');
+    await page.getByLabel('Jméno').fill('Checker');
+    await page.getByLabel('E-mail').fill(uniqueEmail());
+    await page.getByLabel('Heslo', { exact: true }).fill(PASSWORD);
+    await page.getByRole('button', { name: 'Založit účet' }).click();
+    await skipTour(page);
+    await expect(page.getByRole('heading', { name: /Ahoj/ })).toBeVisible();
+  });
+
+  await test.step('a book not in the library can go straight into the form', async () => {
+    await page.goto('/books');
+    await page.getByRole('button', { name: 'Mám ji už?' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Mám ji už?' });
+    await expect(dialog.getByText('Tuhle knihu zatím nemáte.')).toBeVisible({ timeout: 15_000 });
+    await expect(dialog.getByText('Hobit')).toBeVisible();
+
+    await dialog.getByRole('button', { name: 'Přidat do knihovny' }).click();
+    await expect(page.getByLabel('ISBN')).toHaveValue(ISBN);
+    await expect(page.getByLabel('Název')).toHaveValue('Hobit');
+    await page.getByRole('button', { name: 'Uložit' }).click();
+    await expect(page.getByRole('heading', { name: 'Hobit' })).toBeVisible();
+  });
+
+  await test.step('a book in the library opens from the answer', async () => {
+    await page.goto('/books');
+    await page.getByRole('button', { name: 'Mám ji už?' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Mám ji už?' });
+    await expect(dialog.getByText('Tuhle knihu už máte.')).toBeVisible({ timeout: 15_000 });
+    await dialog.getByRole('button', { name: 'Otevřít knihu' }).click();
+    await expect(page.getByRole('heading', { name: 'Hobit' })).toBeVisible();
+  });
+});

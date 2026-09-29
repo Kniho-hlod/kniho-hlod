@@ -18,6 +18,21 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.11',
+    date: '2026-09-29',
+    title: { cs: 'Mám ji už?', en: 'Do I have it?' },
+    notes: {
+      cs: [
+        'V knihkupectví nebo antikvariátu naskenujete čárový kód a hned víte, jestli knihu už máte. Tlačítko „Mám ji už?“ najdete v Knihách na mobilu. Když ji nemáte, jedním klepnutím ji přidáte.',
+        'Na mobilu obálku rovnou vyfotíte. Hodí se hlavně u českých knih, ke kterým katalogy obálku nemají, a formulář vám to řekne.',
+      ],
+      en: [
+        "In a bookshop or a second-hand shop, scan the barcode and see at once whether you have the book. Find “Do I have it?” in Books on your phone. If you don't have it, add it with one tap.",
+        "On a phone, photograph the cover right away. It helps most with Czech books the catalogues have no cover for, and the form tells you when that's the case.",
+      ],
+    },
+  },
+  {
     version: '1.10',
     date: '2026-09-29',
     title: { cs: 'Co čtou přátelé', en: 'What friends read' },
