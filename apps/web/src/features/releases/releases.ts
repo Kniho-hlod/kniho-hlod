@@ -23,10 +23,10 @@ export const RELEASES: readonly Release[] = [
     title: { cs: 'Obálky českých knih', en: 'Covers of Czech books' },
     notes: {
       cs: [
-        'Když přidáte knihu podle ISBN, obálku teď najdeme i u českých vydání, včetně letošních novinek. Bereme ji z katalogu českých knihoven, takže občas uvidíte knihovní štítek.',
+        'Když přidáte českou knihu podle ISBN, obálku teď hledáme i na Trhu knih. Najde se asi u poloviny českých knih, spíš u starších než u úplných novinek. Pro ostatní dál platí „Vyfotit obálku“.',
       ],
       en: [
-        "Adding a book by its ISBN now finds the cover of Czech editions too, this year's new books included. It comes from the Czech libraries' catalogue, so now and then you'll see a library label.",
+        'Adding a Czech book by its ISBN now looks for its cover on Trh knih too. It finds about half of Czech books, older ones more than the very newest. For the rest, “Photograph the cover” is still there.',
       ],
     },
   },
