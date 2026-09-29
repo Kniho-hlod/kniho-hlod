@@ -6,7 +6,6 @@ const OPEN_LIBRARY_EDITION = `https://openlibrary.org/isbn/${ISBN}.json`;
 const OPEN_LIBRARY_AUTHORS = 'https://openlibrary.org/authors/';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
 const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
-const LIBRARIES_COVER = 'https://www.knihovny.cz/Cover/Show?isbn=';
 const PNG_SIGNATURE = Buffer.from('89504e470d0a1a0a', 'hex');
 /** Big enough to count as a cover rather than a catalogue's "no image" placeholder. */
 const COVER_BYTES = Buffer.concat([PNG_SIGNATURE, Buffer.alloc(4096)]);
@@ -239,57 +238,103 @@ describe('ISBN catalogue', () => {
     ).toBeNull();
   });
 
-  describe('a cover for an ISBN', () => {
-    const jpeg = (bytes: Buffer) => () =>
-      new Response(bytes, { headers: { 'content-type': 'image/jpeg' } });
-    /** The libraries' "no cover" answer. */
-    const placeholder = () =>
-      new Response(COVER_BYTES, { headers: { 'content-type': 'image/png' } });
+  describe('Trh knih, for Czech and Slovak ISBNs', () => {
+    const CZECH_ISBN = '9788075775955';
+    const SEARCH = `https://www.trhknih.cz/hledat?q=${CZECH_ISBN}`;
+    const BOOK_PAGE = 'https://www.trhknih.cz/kniha/1fomrfu1or';
+    const LARGE_COVER = 'https://www.trhknih.cz/cover/large/f/l/1dat80lblf.jpg';
+    const OPEN_LIBRARY_CZECH = `https://openlibrary.org/isbn/${CZECH_ISBN}.json`;
 
-    it("takes the catalogues' cover first", async () => {
+    /** The book page's schema.org data as Trh knih writes it: slashes escaped, some fields numbers. */
+    const bookPage =
+      (isbn = CZECH_ISBN) =>
+      () =>
+        new Response(
+          `<html><head><script type="application/ld+json">${JSON.stringify({
+            '@context': 'http://schema.org/',
+            '@type': 'Book',
+            name: 'Temný les',
+            image: 'https://www.trhknih.cz/cover/medium/f/l/1dat80lblf.jpg',
+            numberOfPages: 600,
+            datePublished: 2018,
+            isbn,
+            publisher: [{ '@type': 'Organization', name: 'Host' }],
+            author: [{ '@type': 'Person', name: "Liou Cch'-sin" }],
+            description: 'Pokračování světového fenoménu.\r\n',
+            offers: { '@type': 'AggregateOffer', lowPrice: 250 },
+          }).replaceAll('/', '\\/')}</script></head></html>`,
+          { headers: { 'content-type': 'text/html; charset=UTF-8' } }
+        );
+    const redirectToBook = () =>
+      new Response('', { status: 302, headers: { location: '/kniha/1fomrfu1or' } });
+    const noResults = () => new Response('<h4>Nic jsme nenašli.</h4>', { status: 200 });
+    const jpeg = () => new Response(COVER_BYTES, { headers: { 'content-type': 'image/jpeg' } });
+
+    it('reads the book page the search leads to, and its large cover', async () => {
       const fetch = fakeFetch({
-        [OPEN_LIBRARY_EDITION]: openLibraryEdition,
-        [OPEN_LIBRARY_AUTHORS]: openLibraryAuthor,
-        [COVER_URL]: () => new Response(COVER_BYTES, { headers: { 'content-type': 'image/png' } }),
+        [SEARCH]: redirectToBook,
+        [BOOK_PAGE]: bookPage(),
+        [LARGE_COVER]: jpeg,
       });
+      const catalogue = createIsbnCatalogue({ fetch });
 
-      expect(await createIsbnCatalogue({ fetch }).findCover(ISBN)).toEqual({
-        mimeType: 'image/png',
-        bytes: COVER_BYTES,
+      expect(await catalogue.find(CZECH_ISBN)).toEqual({
+        details: {
+          title: 'Temný les',
+          author: "Liou Cch'-sin",
+          publisher: 'Host',
+          publishedYear: 2018,
+          pageCount: 600,
+          language: null,
+          description: 'Pokračování světového fenoménu.',
+        },
+        coverUrl: LARGE_COVER,
       });
-    });
-
-    it("falls back on the Czech libraries' cover, for a book the catalogues don't know too", async () => {
-      const fetch = fakeFetch({
-        [OPEN_LIBRARY_EDITION]: notFound,
-        [GOOGLE_BOOKS]: quotaUsedUp,
-        [LIBRARIES_COVER]: jpeg(COVER_BYTES),
-      });
-
-      expect(await createIsbnCatalogue({ fetch }).findCover(ISBN)).toEqual({
+      expect(await catalogue.findCover(CZECH_ISBN)).toEqual({
         mimeType: 'image/jpeg',
         bytes: COVER_BYTES,
       });
-      expect(fetch).toHaveBeenCalledWith(
-        `${LIBRARIES_COVER}${ISBN}&size=medium`,
-        expect.anything()
-      );
+      // Not asked: Trh knih had a cover. The search is asked once, the answer is cached.
+      expect(fetch).toHaveBeenCalledTimes(3);
+      expect(fetch).toHaveBeenCalledWith(SEARCH, expect.objectContaining({ redirect: 'manual' }));
     });
 
-    it("counts the libraries' placeholder and refusals as no cover", async () => {
-      const placeholderFetch = fakeFetch({
-        [OPEN_LIBRARY_EDITION]: notFound,
+    it('goes on to the other catalogues when Trh knih doesn’t know the ISBN', async () => {
+      const fetch = fakeFetch({
+        [SEARCH]: noResults,
+        [OPEN_LIBRARY_CZECH]: notFound,
         [GOOGLE_BOOKS]: noVolumes,
-        [LIBRARIES_COVER]: placeholder,
-      });
-      const refusingFetch = fakeFetch({
-        [OPEN_LIBRARY_EDITION]: outage,
-        [GOOGLE_BOOKS]: outage,
-        [LIBRARIES_COVER]: () => new Response("I'm a teapot", { status: 418 }),
       });
 
-      expect(await createIsbnCatalogue({ fetch: placeholderFetch }).findCover(ISBN)).toBeNull();
-      expect(await createIsbnCatalogue({ fetch: refusingFetch }).findCover(ISBN)).toBeNull();
+      expect(await createIsbnCatalogue({ fetch }).find(CZECH_ISBN)).toBeNull();
+    });
+
+    it('ignores a page about another ISBN', async () => {
+      const fetch = fakeFetch({
+        [SEARCH]: redirectToBook,
+        [BOOK_PAGE]: bookPage('9788000045092'),
+        [OPEN_LIBRARY_CZECH]: notFound,
+        [GOOGLE_BOOKS]: noVolumes,
+      });
+
+      expect(await createIsbnCatalogue({ fetch }).find(CZECH_ISBN)).toBeNull();
+    });
+
+    it('counts an error page as an outage, and asks the others', async () => {
+      const fetch = fakeFetch({
+        [SEARCH]: () => new Response('Service Unavailable', { status: 503 }),
+        [OPEN_LIBRARY_CZECH]: notFound,
+        [GOOGLE_BOOKS]: googleBooksHit,
+      });
+
+      expect((await createIsbnCatalogue({ fetch }).find(CZECH_ISBN))?.details.title).toBe('Hobit');
+      expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('answered 503'));
+    });
+
+    it('is not asked about other ISBNs', async () => {
+      const fetch = fakeFetch({ [OPEN_LIBRARY_EDITION]: notFound, [GOOGLE_BOOKS]: noVolumes });
+
+      expect(await createIsbnCatalogue({ fetch }).find(ISBN)).toBeNull();
     });
   });
 });

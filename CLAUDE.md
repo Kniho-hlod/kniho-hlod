@@ -139,11 +139,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   deleted book takes its cover with it.
 - `GET /api/isbn/:isbn` (`src/isbn/`, one file per catalogue) asks Open Library
   (`/isbn/{isbn}.json`, author names from `/authors/…`), then Google Books: the details from the
-  first that knows the ISBN, the cover from the first that has one. Answers are cached.
-  `…/cover` falls back on knihovny.cz's `/Cover/Show` image (Obálky knih scans; JPEG, a PNG
-  placeholder when there is none) — also for books only the libraries know, so the form always
-  asks for a cover. knihovny.cz answers cloud addresses 418 there too, so in production this
-  finds nothing until they let us in; the way to Czech covers is registering with Obálky knih. A 404
+  first that knows the ISBN, the cover from the first that has one. Answers are cached. Czech and
+  Slovak ISBNs ask Trh knih first (`trh-knih.ts`), the second-hand market, which knows about half
+  of Czech books (few new ones) with sellers' photos of the covers: it has no public API, so its
+  search (`/hledat?q=`, a 302 to the book when known) and the book page's schema.org JSON-LD are
+  read, once per lookup. knihovny.cz refuses cloud addresses its covers too (418), and Obálky
+  knih's API is for libraries only. The form asks `…/cover` after every lookup. A 404
   means "unknown", not an outage. Google's anonymous quota is shared and usually used up (429):
   set `GOOGLE_BOOKS_API_KEY` for a quota of our own. `…/cover` hands the cover over as base64
   JSON, which the app imports like an upload. Covers are only downloaded from the catalogues' own
@@ -152,7 +153,7 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   lets any web page read its API, so the **app** asks it, from the reader's browser
   (`findInKnihovnyCz` in the domain package: search type `ISN`, records merged and stripped of
   cataloguing punctuation and life dates, the language from MARC field 008). Its covers can't be
-  read by other pages, so the API fetches them (`/api/isbn/:isbn/cover`).
+  read by other pages, so they are never imported.
 - Loans (`src/loans/`): a partial unique index allows one open loan per book (a race answers 409).
   Every book carries `activeLoan`, every contact `activeLoans`, every loan its `book` and
   `contact`. `?lent=true|false` on books is a custom list filter (`query.customFilters` in the

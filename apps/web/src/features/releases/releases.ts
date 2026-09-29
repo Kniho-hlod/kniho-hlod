@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.12',
+    date: '2026-09-29',
+    title: { cs: 'Obálky českých knih', en: 'Covers of Czech books' },
+    notes: {
+      cs: [
+        'Když přidáte českou knihu podle ISBN, obálku teď hledáme i na Trhu knih. Najde se asi u poloviny českých knih, spíš u starších než u úplných novinek. Pro ostatní dál platí „Vyfotit obálku“.',
+      ],
+      en: [
+        'Adding a Czech book by its ISBN now looks for its cover on Trh knih too. It finds about half of Czech books, older ones more than the very newest. For the rest, “Photograph the cover” is still there.',
+      ],
+    },
+  },
+  {
     version: '1.11',
     date: '2026-09-29',
     title: { cs: 'Mám ji už?', en: 'Do I have it?' },

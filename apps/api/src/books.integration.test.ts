@@ -8,15 +8,17 @@ const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
 const OPEN_LIBRARY_ISBN = 'https://openlibrary.org/isbn/';
 const OPEN_LIBRARY_AUTHOR = 'https://openlibrary.org/authors/OL1A.json';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
-/** Known only to the Czech libraries, which have its cover. */
+/** Known to Trh knih only. */
 const CZECH_ISBN = '9788075775955';
-const LIBRARIES_COVER = 'https://www.knihovny.cz/Cover/Show?isbn=';
+const TRH_KNIH_SEARCH = 'https://www.trhknih.cz/hledat?q=';
+const TRH_KNIH_BOOK = 'https://www.trhknih.cz/kniha/1fomrfu1or';
+const TRH_KNIH_COVER = 'https://www.trhknih.cz/cover/large/f/l/1dat80lblf.jpg';
 /** Big enough to count as a cover rather than a catalogue's "no image" placeholder. */
 const CATALOGUE_COVER = Buffer.concat([PNG_SIGNATURE, Buffer.alloc(4096)]);
 
 /**
- * Open Library knows one book; Google Books knows none; the Czech libraries have a cover of another
- * (and a placeholder for the rest). Set `down` to make them all unreachable.
+ * Open Library knows one book; Google Books knows none; Trh knih knows a Czech one, with its
+ * cover. Set `down` to make them all unreachable.
  */
 function createFakeCatalogues() {
   const state = { down: false };
@@ -30,10 +32,22 @@ function createFakeCatalogues() {
     }
     if (url === OPEN_LIBRARY_AUTHOR) return Response.json({ name: 'J. R. R. Tolkien' });
     if (url.startsWith(GOOGLE_BOOKS)) return Response.json({ totalItems: 0 });
-    if (url.startsWith(LIBRARIES_COVER)) {
-      return url.includes(CZECH_ISBN)
-        ? new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/jpeg' } })
-        : new Response(PNG_SIGNATURE, { headers: { 'content-type': 'image/png' } });
+    if (url.startsWith(TRH_KNIH_SEARCH)) {
+      return url.endsWith(CZECH_ISBN)
+        ? new Response('', { status: 302, headers: { location: '/kniha/1fomrfu1or' } })
+        : new Response('Nic jsme nenašli.', { status: 200 });
+    }
+    if (url === TRH_KNIH_BOOK) {
+      const book = {
+        '@type': 'Book',
+        name: 'Temný les',
+        image: 'https://www.trhknih.cz/cover/medium/f/l/1dat80lblf.jpg',
+        isbn: CZECH_ISBN,
+      };
+      return new Response(`<script type="application/ld+json">${JSON.stringify(book)}</script>`);
+    }
+    if (url === TRH_KNIH_COVER) {
+      return new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/jpeg' } });
     }
     if (url === COVER_URL) {
       return new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/png' } });
@@ -237,7 +251,7 @@ describe('Books', () => {
       });
     });
 
-    it("hands over the Czech libraries' cover of a book only they know", async () => {
+    it("hands over Trh knih's cover of a Czech book", async () => {
       const { token } = await signIn('lookup-czech-cover@test.cz');
       const coverOf = (isbn: string) =>
         app.api().get(`/api/isbn/${isbn}/cover`).set('Authorization', bearer(token));
