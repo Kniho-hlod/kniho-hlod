@@ -18,6 +18,27 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.8',
+    date: '2026-09-29',
+    title: { cs: 'Co čtou přátelé', en: 'What friends read' },
+    notes: {
+      cs: [
+        'Na stránce Přátelé je nová záložka Novinky: kdo co čte, dočetl nebo si chce přečíst, s hodnocením.',
+        'K hodnocení knihy můžete napsat recenzi pro přátele. Poznámky zůstávají jen vaše.',
+        'U knihy uvidíte, kdo z přátel ji má taky a jak se mu líbila.',
+        'Knihu přítele si jedním tlačítkem přidáte do své knihovny mezi knihy, které chcete číst.',
+        'Svou knihu můžete doporučit přátelům se vzkazem (v nabídce „…“ u knihy). Doporučení od přátel čekají na přehledu.',
+      ],
+      en: [
+        'The Friends page has a new News tab: who is reading, has finished or wants to read what, with their ratings.',
+        'Next to your rating you can write a review for friends. Your notes stay yours.',
+        'A book shows which friends have it too and how they liked it.',
+        "One button puts a friend's book in your library, among the books you want to read.",
+        'Recommend your books to friends with a message (in the “…” menu of a book). Recommendations from friends wait on the overview.',
+      ],
+    },
+  },
+  {
     version: '1.7',
     date: '2026-09-27',
     title: { cs: 'Komentáře', en: 'Comments' },

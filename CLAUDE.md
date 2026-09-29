@@ -10,11 +10,11 @@ version is archived in `projekty/_archiv/kniho-hlod-legacy/`.
 
 pnpm workspace, three packages:
 
-| Package | What it holds |
-|---|---|
+| Package                                  | What it holds                                                                                                                                       |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/domain` (`@kniho-hlod/domain`) | Entity definitions, DTO types, domain rules. Shared by both apps; ships TypeScript source, no build step. No Node or DOM APIs (enforced by ESLint). |
-| `apps/api` (`@kniho-hlod/api`) | The REST API: `createCore` from `@eleansphere/be-core`, plus this project's configuration, file authorization, email templates and scripts. |
-| `apps/web` (`@kniho-hlod/web`) | Vue 3 + Nuxt UI SPA, installable as a PWA. |
+| `apps/api` (`@kniho-hlod/api`)           | The REST API: `createCore` from `@eleansphere/be-core`, plus this project's configuration, file authorization, email templates and scripts.         |
+| `apps/web` (`@kniho-hlod/web`)           | Vue 3 + Nuxt UI SPA, installable as a PWA.                                                                                                          |
 
 The shared foundation lives in [`Eleansphere/core`](https://github.com/Eleansphere/core):
 `@eleansphere/schema` (field vocabulary + validation), `@eleansphere/be-core` (Express/Sequelize
@@ -35,7 +35,7 @@ changing `fields.ts` — never the API and the app separately.
 - `entities/index.ts` exports `allEntities`; the API turns it into `modelConfigs` with
   `toModelConfigs(allEntities, { custom: ENTITIES_WITHOUT_CRUD_ROUTES })`.
 - Forms validate with `formSchema(fields, mode)` (`apps/web/src/app/validation.ts`), which runs the
-  *same* rules as the server and translates the issue codes.
+  _same_ rules as the server and translates the issue codes.
 - Cross-field rules (e.g. an announcement's date range) live in the domain package as pure
   functions, used by an API hook and by the form's `refine`.
 
@@ -103,6 +103,20 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   sample) — anyone else, an ex-friend included, gets 404. The author edits and deletes; the book's
   owner deletes any under their book (`canEdit`/`canDelete` in each item). A comment by someone
   else rings the owner's bell (in-app only). Rate-limited per reader.
+- What friends read (`src/feed/`, `src/recommendations/`, phase 3d): `GET /api/feed` pages the
+  shared books of the reader's sharing friends that are being read, finished or wanted — one item
+  per book, dated by `finishedAt`/`startedAt` (else the last change) or the day it was added,
+  computed at read time, so hiding a book or turning sharing off takes it out at once. Books carry
+  `review` (for friends, beside the rating; `notes` stay private), which `FriendBook` whitelists.
+  `GET /api/friend-copies?isbn=` lists friends' shared copies of one book (not under
+  `/api/friends`, whose `:userId` route would catch it); `FriendBook.myCopy` is the reader's copy
+  by ISBN. `POST /api/friends/:userId/books/:bookId/copy` puts a shared book in the reader's
+  library as `want` (`books/copy-book.ts`: details and a copied cover file, never the rating,
+  review, notes or dates; 409 when the reader has the ISBN). `recommendation` (no CRUD routes):
+  `POST /api/recommendations` sends the reader's own book (not a sample) to friends with a
+  message, once per waiting book and friend, and rings their bell; `GET` lists the waiting ones,
+  `…/:id/accept` copies the book (or finds the reader's copy), `…/dismiss` sets it aside. Ending a
+  friendship drops the waiting ones.
 - Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
   reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
   `1.3`, the release before the notes. The releases themselves live in the web app.
@@ -247,6 +261,13 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Comments (`src/features/comments/BookComments.vue`): under a friend's book, and under the
   reader's own book — inviting the first comment while friends see the book, otherwise shown only
   when some exist (`whenEmpty: 'invite' | 'hide'`). Edit and delete wait behind "…".
+- What friends read (`src/features/feed/`, `src/features/recommendations/`): the Friends page
+  opens on "Novinky" (`?tab=feed`, `FeedList`) when the reader has friends, else on
+  `?tab=people` (the tour's Friends step asks for that tab); "Přátelé právě čtou" links to it.
+  `FriendsOnBook` ("Přátelé o této knize") sits under the reader's and a friend's book; a friend's
+  book offers "Chci si ji přečíst" (or "Máte ji v knihovně"). The book form has "Recenze pro
+  přátele" (`BookReview` shows it). "Doporučit přátelům" waits in a book's "…" menu
+  (`RecommendModal`); `IncomingRecommendations` on the home page takes or sets them aside.
 - Versions and release notes (`src/features/releases/`): `RELEASES` in `releases.ts` is the one
   source — newest first, each with a version (`1.4`), a date, a title and notes in every language
   (content, so it lives there rather than in the locale files; the types demand both languages).
@@ -341,5 +362,6 @@ installable PWA), phase 5 (loan reminders, administration, migrations) and phase
 visual redesign, the splash screen and the bookworm mark) are in place, with feedback reports,
 the onboarding tour with its sample library, versioned release notes and friends (phase 3a:
 friendships, invites, shared libraries, the bell), lending between friends (3b: requests, linked
-contacts, borrowed books, reminders to borrowers) and comments (3c) since. The plan
+contacts, borrowed books, reminders to borrowers), comments (3c) and what friends read (3d: the
+feed, reviews, friends' copies of a book, copying a friend's book, recommendations) since. The plan
 lives in the user's Obsidian vault (`moje_projekty/Kniho-hlod`).

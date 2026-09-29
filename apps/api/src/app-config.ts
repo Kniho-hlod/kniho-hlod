@@ -36,6 +36,7 @@ import { createFileAuthorizer } from './files/authorize-file-access';
 import { createFeedbackDetails } from './feedback/feedback-details';
 import { createFeedbackPlugin, FEEDBACK_RATE_LIMIT } from './feedback/feedback-plugin';
 import { createBookCovers } from './books/book-covers';
+import { createCopyBook } from './books/copy-book';
 import { createIsbnCatalogue } from './isbn/isbn-catalogue';
 import { createIsbnPlugin, ISBN_RATE_LIMIT } from './isbn/isbn-plugin';
 import { createActiveLoans } from './loans/active-loans';
@@ -59,7 +60,13 @@ import { createPeople } from './friends/people';
 import { createNotificationsPlugin, createNotifier } from './notifications/notifications-plugin';
 import { createBookSummaries } from './lending/book-summaries';
 import { createLendingPlugin } from './lending/lending-plugin';
+import { createCommentCounts } from './comments/comment-counts';
 import { COMMENT_RATE_LIMIT, createCommentsPlugin } from './comments/comments-plugin';
+import { createFeedPlugin } from './feed/feed-plugin';
+import {
+  createRecommendationsPlugin,
+  RECOMMENDATION_RATE_LIMIT,
+} from './recommendations/recommendations-plugin';
 import { passwordResetEmail } from './emails/password-reset';
 import { migrations } from './migrations';
 
@@ -172,6 +179,8 @@ export function buildAppConfig(
   const describeFriends = createFriendDescriber(people, friendships, friendLibrary);
   const inviteCodes = createInviteCodes(models);
   const notify = createNotifier(models);
+  const copyBook = createCopyBook(models, bookCovers);
+  const bookSummaries = createBookSummaries(models, bookCovers);
   const friendsContext = {
     jwtSecret: environment.jwtSecret,
     registry: models,
@@ -267,6 +276,17 @@ export function buildAppConfig(
         registry: models,
         friendships,
         friendLibrary,
+        copyBook,
+        bookDetails,
+      }),
+      createFeedPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        people,
+        friendships,
+        friendLibrary,
+        bookCovers,
+        commentCounts: createCommentCounts(models),
       }),
       createNotificationsPlugin({ jwtSecret: environment.jwtSecret, registry: models, people }),
       createLendingPlugin({
@@ -275,7 +295,7 @@ export function buildAppConfig(
         people,
         friendships,
         friendLibrary,
-        bookSummaries: createBookSummaries(models, bookCovers),
+        bookSummaries,
         readerToday,
         notify,
         appBaseUrl: environment.appBaseUrl,
@@ -287,6 +307,17 @@ export function buildAppConfig(
         friendships,
         notify,
         rateLimit: rateLimitsOff ? 'off' : COMMENT_RATE_LIMIT,
+      }),
+      createRecommendationsPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        people,
+        friendships,
+        bookSummaries,
+        copyBook,
+        bookDetails,
+        notify,
+        rateLimit: rateLimitsOff ? 'off' : RECOMMENDATION_RATE_LIMIT,
       }),
       createSampleLibraryPlugin({
         jwtSecret: environment.jwtSecret,

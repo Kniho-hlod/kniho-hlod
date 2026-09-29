@@ -72,6 +72,9 @@ test('readers become friends by link and by e-mail, and browse a shared library'
 
   await test.step('Pavel invites Cyril by e-mail', async () => {
     await pavel.getByRole('link', { name: 'Přátelé' }).first().click();
+    // With a friend already, the page opens on what friends read.
+    await expect(pavel.getByText('Olga čte')).toBeVisible();
+    await pavel.getByRole('tab', { name: 'Vaši přátelé' }).click();
     await pavel.getByLabel('Pozvat e-mailem').fill(cyrilEmail);
     await pavel.getByRole('button', { name: 'Pozvat', exact: true }).click();
     await expect(

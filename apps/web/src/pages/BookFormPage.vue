@@ -19,6 +19,7 @@ import { describeError } from '@/app/errors';
 import { pickFields } from '@/app/fields';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
 import FormActions from '@/components/FormActions.vue';
+import { useSessionStore } from '@/features/auth/session-store';
 import {
   describeIsbnLookupError,
   fetchCatalogueCover,
@@ -85,6 +86,14 @@ const isHiddenFromFriends = computed({
     state.visibility = hidden ? HIDDEN_BOOK_VISIBILITY : DEFAULT_BOOK_VISIBILITY;
   },
 });
+
+const session = useSessionStore();
+/** Whether friends would read the review: the library is shared and the book isn't hidden. */
+const reviewHint = computed(() =>
+  session.user?.shareLibrary && !isHiddenFromFriends.value
+    ? t('books.reviewHint')
+    : t('books.reviewUnseenHint')
+);
 
 const readingStatusItems = computed(() =>
   READING_STATUSES.map((status) => ({ label: t(`books.readingStatus.${status}`), value: status }))
@@ -430,6 +439,22 @@ function cancel(): void {
               :model-modifiers="{ nullable: true }"
               :rows="3"
               :placeholder="t('books.notesPlaceholder')"
+              autoresize
+              class="w-full"
+            />
+          </UFormField>
+
+          <UFormField
+            :label="t('books.fields.review')"
+            :help="reviewHint"
+            name="review"
+            class="sm:col-span-2"
+          >
+            <UTextarea
+              v-model="state.review"
+              :model-modifiers="{ nullable: true }"
+              :rows="2"
+              :placeholder="t('books.reviewPlaceholder')"
               autoresize
               class="w-full"
             />

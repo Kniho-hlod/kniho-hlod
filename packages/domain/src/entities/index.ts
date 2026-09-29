@@ -10,6 +10,7 @@ import { friendshipEntity } from './friendship';
 import { notificationEntity } from './notification';
 import { loanRequestEntity } from './loan-request';
 import { commentEntity } from './comment';
+import { recommendationEntity } from './recommendation';
 
 export {
   userEntity,
@@ -35,7 +36,7 @@ export {
   type ReadingDates,
   type SetBookShelvesRequest,
 } from './book';
-export { bookFields } from './book/fields';
+export { bookFields, REVIEW_MAX_LENGTH } from './book/fields';
 export { contactEntity, type Contact, type ContactWithLoans } from './contact';
 export { contactFields } from './contact/fields';
 export {
@@ -86,6 +87,8 @@ export { loanRequestEntity } from './loan-request';
 export { loanRequestBodyFields, loanRequestFields } from './loan-request/fields';
 export { commentEntity } from './comment';
 export { commentBodyFields, commentFields } from './comment/fields';
+export { recommendationEntity } from './recommendation';
+export { recommendationBodyFields, recommendationFields } from './recommendation/fields';
 
 /** Every entity, for the API's `toModelConfigs(allEntities)`. */
 export const allEntities = {
@@ -101,12 +104,13 @@ export const allEntities = {
   notification: notificationEntity,
   loanRequest: loanRequestEntity,
   comment: commentEntity,
+  recommendation: recommendationEntity,
 };
 
 /**
  * Entities whose `/api` CRUD routes are not mounted: book–shelf pairs change through the book,
- * friendships, notifications, loan requests and comments through their own routes, which know
- * both sides.
+ * friendships, notifications, loan requests, comments and recommendations through their own
+ * routes, which know both sides.
  */
 export const ENTITIES_WITHOUT_CRUD_ROUTES = [
   bookShelfEntity.config.name,
@@ -114,4 +118,5 @@ export const ENTITIES_WITHOUT_CRUD_ROUTES = [
   notificationEntity.config.name,
   loanRequestEntity.config.name,
   commentEntity.config.name,
+  recommendationEntity.config.name,
 ];

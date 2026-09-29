@@ -34,6 +34,8 @@ const DESTINATIONS: Record<NotificationKind, (item: NotificationItem) => RouteLo
       : { name: 'friend', params: { userId: item.actor.id } },
   comment: (item) =>
     item.book ? { name: 'book', params: { id: item.book.id } } : { name: 'home' },
+  // The recommendations wait on the home page, to take or set aside.
+  recommendation: () => ({ name: 'home' }),
 };
 
 async function open(item: NotificationItem): Promise<void> {

@@ -11,10 +11,12 @@ import {
   userEntity,
 } from './entities';
 import { CommentsService } from './comments';
+import { FeedService } from './feed';
 import { FriendsService } from './friends';
 import { IsbnService } from './isbn-service';
 import { LendingService } from './lending';
 import { NotificationsService } from './notifications';
+import { RecommendationsService } from './recommendations';
 import { SampleLibraryService } from './sample-library';
 import { StatsService } from './stats';
 
@@ -37,6 +39,8 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       notifications: NotificationsService,
       lending: LendingService,
       comments: CommentsService,
+      feed: FeedService,
+      recommendations: RecommendationsService,
     },
     baseUrl,
     tokenSource

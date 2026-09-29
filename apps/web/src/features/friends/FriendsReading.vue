@@ -17,7 +17,18 @@ const reading = computed(() =>
 
 <template>
   <section v-if="reading.length > 0" class="flex flex-col gap-3">
-    <h2 class="text-xl font-bold text-highlighted">{{ t('friends.homeTitle') }}</h2>
+    <header class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-xl font-bold text-highlighted">{{ t('friends.homeTitle') }}</h2>
+      <UButton
+        :to="{ name: 'friends', query: { tab: 'feed' } }"
+        color="neutral"
+        variant="ghost"
+        size="sm"
+        trailing-icon="i-lucide-arrow-right"
+      >
+        {{ t('feed.all') }}
+      </UButton>
+    </header>
     <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="{ friend, book } in reading" :key="book.id">
         <RouterLink

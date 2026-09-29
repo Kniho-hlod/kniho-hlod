@@ -11,6 +11,15 @@ export {
 export { findInKnihovnyCz } from './catalogue/knihovny-cz';
 export { COMMENTS_PATH, CommentsService, type CommentBody, type CommentItem } from './comments';
 export * from './constants';
+export {
+  FEED_ITEM_KINDS,
+  FEED_PATH,
+  FEED_QUERY,
+  FeedService,
+  type FeedItem,
+  type FeedItemKind,
+  type FeedRequest,
+} from './feed';
 export * from './entities';
 export {
   KnihoHlodAuthService,
@@ -34,6 +43,7 @@ export {
 } from './isbn';
 export {
   FRIEND_BOOK_QUERY,
+  FRIEND_COPIES_PATH,
   FRIEND_INVITATIONS_PATH,
   FRIEND_REQUESTS_PATH,
   friendInvitationFields,
@@ -47,6 +57,7 @@ export {
   type FriendBook,
   type FriendBookListRequest,
   type FriendBookSummary,
+  type FriendCopy,
   type FriendInvitationRequest,
   type FriendRequest,
   type FriendRequests,
@@ -76,6 +87,12 @@ export {
   type NotificationItem,
 } from './notifications';
 export { readerToday } from './reader-today';
+export {
+  RECOMMENDATIONS_PATH,
+  RecommendationsService,
+  type RecommendationItem,
+  type RecommendBookRequest,
+} from './recommendations';
 export {
   SAMPLE_FLAG_FIELD,
   SAMPLE_LIBRARY_PATH,

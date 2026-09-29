@@ -147,7 +147,8 @@
       "rating": "Hodnocení",
       "startedAt": "Začátek čtení",
       "finishedAt": "Dočteno dne",
-      "notes": "Poznámky"
+      "notes": "Poznámky",
+      "review": "Recenze pro přátele"
     },
     "readingStatus": {
       "none": "Bez stavu",
@@ -169,6 +170,9 @@
     },
     "reading": "Čtení",
     "notesPlaceholder": "Co se vám líbilo, citát, komu knihu doporučit…",
+    "reviewPlaceholder": "Pár slov o knize, která si přečtou vaši přátelé…",
+    "reviewHint": "Přátelé ji uvidí u knihy a v Novinkách. Poznámky zůstávají jen vaše.",
+    "reviewUnseenHint": "Přátelé teď recenzi neuvidí: knihu skrýváte, nebo knihovnu nesdílíte.",
     "savedWithoutShelves": "Kniha je uložená, ale poličky se nepodařilo změnit.",
     "duplicate": "Tuhle knihu už v knihovně máte: „{title}“.",
     "openDuplicate": "Otevřít",
@@ -573,7 +577,8 @@
       "loanRequest": "{name} si chce půjčit „{book}“",
       "loanRequestAccepted": "{name} vám půjčí „{book}“",
       "loanRequestDeclined": "{name} teď nemůže půjčit „{book}“",
-      "comment": "{name} komentuje „{book}“"
+      "comment": "{name} komentuje „{book}“",
+      "recommendation": "{name} vám doporučuje „{book}“"
     }
   },
   "friends": {
@@ -630,7 +635,7 @@
       "shareLibrary": "Sdílet knihovnu s přáteli",
       "shareLibraryHint": "Přátelé uvidí vaše knihy a co právě čtete. Jednotlivé knihy jde skrýt.",
       "seenTitle": "Přátelé uvidí",
-      "seen": "Knihy (obálku, název, autora), poličky, stav čtení a hodnocení, co čtete a jestli je kniha doma.",
+      "seen": "Knihy (obálku, název, autora), poličky, stav čtení, hodnocení a recenze, co čtete a jestli je kniha doma.",
       "privateTitle": "Nikdy neuvidí",
       "private": "Vaše poznámky, komu jste co půjčili, kontakty, e-mail a knihy skryté před přáteli.",
       "emailNotifications": "E-maily o žádostech",
@@ -729,5 +734,42 @@
     "deleted": "Komentář je smazaný.",
     "edited": "upraveno",
     "actions": "Akce s komentářem ({name})"
+  },
+  "feed": {
+    "tab": "Novinky",
+    "all": "Všechny novinky",
+    "emptyTitle": "Zatím žádné novinky",
+    "empty": "Až přátelé se sdílenou knihovnou začnou něco číst, dočtou nebo si knihu přidají mezi ty, které chtějí číst, uvidíte to tady.",
+    "kinds": {
+      "started": "{name} čte",
+      "finished": "{name} má dočteno",
+      "wantsToRead": "{name} si chce přečíst"
+    },
+    "comments": "žádný komentář | {count} komentář | {count} komentáře | {count} komentářů",
+    "friendsOnBook": "Přátelé o této knize",
+    "reviewBy": "— {name}",
+    "wantToRead": "Chci si ji přečíst",
+    "inYourLibrary": "Máte ji v knihovně",
+    "copied": "„{title}“ je ve vaší knihovně mezi knihami, které chcete číst.",
+    "alreadyYours": "Tuhle knihu už v knihovně máte."
+  },
+  "recommendations": {
+    "action": "Doporučit přátelům",
+    "title": "Doporučit knihu",
+    "hint": "Komu doporučíte „{title}“? Dozví se to ve zvonečku.",
+    "to": "Komu",
+    "toPlaceholder": "Vyberte přátele",
+    "pickFriends": "Vyberte aspoň jednoho přítele.",
+    "message": "Vzkaz",
+    "messagePlaceholder": "Proč by si ji měli přečíst?",
+    "send": "Doporučit",
+    "sent": "Doporučení je na cestě.",
+    "incoming": "Doporučili vám",
+    "from": "{name} vám doporučuje",
+    "quoted": "„{message}“",
+    "take": "Chci si ji přečíst",
+    "dismiss": "Teď ne",
+    "taken": "„{title}“ je ve vaší knihovně.",
+    "openBook": "Otevřít"
   }
 }

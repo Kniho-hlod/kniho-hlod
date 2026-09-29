@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
 import type { FriendRequest } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
@@ -9,6 +10,7 @@ import { describeError } from '@/app/errors';
 import EmptyState from '@/components/EmptyState.vue';
 import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useSessionStore } from '@/features/auth/session-store';
+import FeedList from '@/features/feed/FeedList.vue';
 import {
   useAcceptFriendRequest,
   useFriendRequests,
@@ -19,12 +21,35 @@ import FriendCard from '@/features/friends/FriendCard.vue';
 import InviteCard from '@/features/friends/InviteCard.vue';
 
 const SKELETON_COUNT = 3;
+const FEED_TAB = 'feed';
+const PEOPLE_TAB = 'people';
+type FriendsTab = typeof FEED_TAB | typeof PEOPLE_TAB;
+const TABS: readonly FriendsTab[] = [FEED_TAB, PEOPLE_TAB];
 
 const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const toast = useToast();
 const session = useSessionStore();
 
 const { data: friends, error, isPending } = useFriends();
+
+/**
+ * The open tab lives in the URL (`?tab=people`), so going back returns to it. Without one, a
+ * reader with friends sees what they read, and anyone else how to find some.
+ */
+const tab = computed<FriendsTab>({
+  get: () =>
+    TABS.find((other) => other === route.query.tab) ??
+    ((friends.value ?? []).length > 0 ? FEED_TAB : PEOPLE_TAB),
+  set: (value) => {
+    void router.replace({ query: { tab: value } });
+  },
+});
+const tabs = computed(() => [
+  { label: t('feed.tab'), value: FEED_TAB, icon: 'i-lucide-newspaper' },
+  { label: t('friends.listTitle'), value: PEOPLE_TAB, icon: 'i-lucide-users-round' },
+]);
 const { data: requests } = useFriendRequests();
 const incoming = computed(() => requests.value?.incoming ?? []);
 const outgoing = computed(() => requests.value?.outgoing ?? []);
@@ -140,8 +165,12 @@ async function startSharing(): Promise<void> {
       </ul>
     </section>
 
-    <section class="flex flex-col gap-3">
-      <h2 class="text-xl font-bold text-highlighted">{{ t('friends.listTitle') }}</h2>
+    <UTabs v-model="tab" :items="tabs" :content="false" class="w-full" />
+
+    <FeedList v-if="tab === FEED_TAB" />
+
+    <section v-else class="flex flex-col gap-3">
+      <h2 class="sr-only">{{ t('friends.listTitle') }}</h2>
       <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
       <ul v-else-if="isPending" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="index in SKELETON_COUNT" :key="index">
@@ -162,9 +191,9 @@ async function startSharing(): Promise<void> {
       </ul>
     </section>
 
-    <InviteCard />
+    <InviteCard v-if="tab === PEOPLE_TAB" />
 
-    <section v-if="outgoing.length > 0" class="flex flex-col gap-3">
+    <section v-if="tab === PEOPLE_TAB && outgoing.length > 0" class="flex flex-col gap-3">
       <h2 class="text-xl font-bold text-highlighted">{{ t('friends.requests.outgoing') }}</h2>
       <ul class="flex flex-col gap-2">
         <li

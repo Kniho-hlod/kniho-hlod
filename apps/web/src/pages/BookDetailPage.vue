@@ -16,10 +16,14 @@ import { useBook, useChangeReadingStatus, useDeleteBook } from '@/features/books
 import BookComments from '@/features/comments/BookComments.vue';
 import BookCover from '@/features/books/BookCover.vue';
 import BookLoanCard from '@/features/books/BookLoanCard.vue';
+import BookReview from '@/features/books/BookReview.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
+import FriendsOnBook from '@/features/feed/FriendsOnBook.vue';
+import { useFriends } from '@/features/friends/api';
 import LoanList from '@/features/loans/LoanList.vue';
 import { useToday } from '@/features/loans/use-today';
+import RecommendModal from '@/features/recommendations/RecommendModal.vue';
 import ShelfChips from '@/features/shelves/ShelfChips.vue';
 
 const NOT_FOUND = 404;
@@ -105,9 +109,24 @@ async function moveToNextReadingStatus(): Promise<void> {
 }
 
 const isConfirmingDelete = ref(false);
+const isRecommending = ref(false);
+const { data: friends } = useFriends();
+/** A book can go to friends once there are some; the tour's samples stay out of it. */
+const canRecommend = computed(() => (friends.value ?? []).length > 0 && !book.value?.isSample);
 
 /** The rarely wanted actions wait behind the “…” button, away from a stray tap. */
 const moreActions = computed<DropdownMenuItem[]>(() => [
+  ...(canRecommend.value
+    ? [
+        {
+          label: t('recommendations.action'),
+          icon: 'i-lucide-send',
+          onSelect: () => {
+            isRecommending.value = true;
+          },
+        },
+      ]
+    : []),
   {
     label: t('books.delete'),
     icon: 'i-lucide-trash-2',
@@ -187,6 +206,11 @@ async function confirmDelete(): Promise<void> {
 
         <ShelfChips v-if="book.shelves.length > 0" :shelves="book.shelves" />
 
+        <section v-if="book.review" class="flex flex-col gap-1">
+          <h2 class="text-sm font-bold text-highlighted">{{ t('books.fields.review') }}</h2>
+          <BookReview :text="book.review" />
+        </section>
+
         <div class="flex flex-wrap gap-2">
           <UButton :to="{ name: 'book-edit', params: { id: book.id } }" icon="i-lucide-pencil">
             {{ t('books.edit') }}
@@ -246,6 +270,15 @@ async function confirmDelete(): Promise<void> {
       v-if="book"
       :book-id="book.id"
       :when-empty="isSeenByFriends ? 'invite' : 'hide'"
+    />
+
+    <FriendsOnBook v-if="book" :isbn="book.isbn ?? null" />
+
+    <RecommendModal
+      v-if="book && canRecommend"
+      v-model:open="isRecommending"
+      :book-id="book.id"
+      :title="book.title"
     />
 
     <section v-if="book" class="flex flex-col gap-3">

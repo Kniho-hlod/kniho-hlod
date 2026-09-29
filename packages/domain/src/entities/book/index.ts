@@ -25,6 +25,11 @@ export const bookEntity = defineEntity({
   basePath: BOOKS_PATH,
   access: { read: 'owner', write: 'owner' },
   fields: bookFields,
+  indexes: [
+    { fields: ['ownerId', 'finishedAt'] },
+    { fields: ['ownerId', 'startedAt'] },
+    { fields: ['isbn'] },
+  ],
   query: {
     filter: { readingStatus: 'in', rating: 'range', isbn: 'eq' },
     customFilters: {

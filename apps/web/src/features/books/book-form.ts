@@ -16,6 +16,7 @@ export const BOOK_FORM_FIELDS = [
   'startedAt',
   'finishedAt',
   'notes',
+  'review',
   'visibility',
 ] as const;
 
@@ -33,6 +34,8 @@ export interface BookFormState {
   startedAt: string | null;
   finishedAt: string | null;
   notes: string | null;
+  /** What friends read next to the rating; `notes` stay the reader's own. */
+  review: string | null;
   /** Hidden from friends (`private`) or shown to them once the library is shared. */
   visibility: BookVisibility;
 }
@@ -70,6 +73,7 @@ export function emptyBookForm(): BookFormState {
     startedAt: null,
     finishedAt: null,
     notes: null,
+    review: null,
     visibility: DEFAULT_BOOK_VISIBILITY,
   };
 }
@@ -89,13 +93,14 @@ export function bookFormFrom(book: Book): BookFormState {
     startedAt: book.startedAt ?? null,
     finishedAt: book.finishedAt ?? null,
     notes: book.notes ?? null,
+    review: book.review ?? null,
     visibility: book.visibility ?? DEFAULT_BOOK_VISIBILITY,
   };
 }
 
 /**
  * The catalogue's answer filled into the form. What the catalogue doesn't know keeps what the reader
- * already typed; the reader's own fields (reading, rating, notes) never change.
+ * already typed; the reader's own fields (reading, rating, notes, review) never change.
  */
 export function withCatalogueDetails(form: BookFormState, found: IsbnLookupResult): BookFormState {
   return {
@@ -129,5 +134,6 @@ export function toBookPayload(form: BookFormState): BookFormState {
     startedAt: form.startedAt || null,
     finishedAt: form.finishedAt || null,
     notes: trimmedOrNull(form.notes),
+    review: trimmedOrNull(form.review),
   };
 }
