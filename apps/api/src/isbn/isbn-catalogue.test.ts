@@ -6,6 +6,7 @@ const OPEN_LIBRARY_EDITION = `https://openlibrary.org/isbn/${ISBN}.json`;
 const OPEN_LIBRARY_AUTHORS = 'https://openlibrary.org/authors/';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
 const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
+const LIBRARIES_COVER = 'https://www.knihovny.cz/Cover/Show?isbn=';
 const PNG_SIGNATURE = Buffer.from('89504e470d0a1a0a', 'hex');
 /** Big enough to count as a cover rather than a catalogue's "no image" placeholder. */
 const COVER_BYTES = Buffer.concat([PNG_SIGNATURE, Buffer.alloc(4096)]);
@@ -236,5 +237,59 @@ describe('ISBN catalogue', () => {
     expect(
       await createIsbnCatalogue({ fetch: imageFetch }).fetchCover({ ...entry, coverUrl: null })
     ).toBeNull();
+  });
+
+  describe('a cover for an ISBN', () => {
+    const jpeg = (bytes: Buffer) => () =>
+      new Response(bytes, { headers: { 'content-type': 'image/jpeg' } });
+    /** The libraries' "no cover" answer. */
+    const placeholder = () =>
+      new Response(COVER_BYTES, { headers: { 'content-type': 'image/png' } });
+
+    it("takes the catalogues' cover first", async () => {
+      const fetch = fakeFetch({
+        [OPEN_LIBRARY_EDITION]: openLibraryEdition,
+        [OPEN_LIBRARY_AUTHORS]: openLibraryAuthor,
+        [COVER_URL]: () => new Response(COVER_BYTES, { headers: { 'content-type': 'image/png' } }),
+      });
+
+      expect(await createIsbnCatalogue({ fetch }).findCover(ISBN)).toEqual({
+        mimeType: 'image/png',
+        bytes: COVER_BYTES,
+      });
+    });
+
+    it("falls back on the Czech libraries' cover, for a book the catalogues don't know too", async () => {
+      const fetch = fakeFetch({
+        [OPEN_LIBRARY_EDITION]: notFound,
+        [GOOGLE_BOOKS]: quotaUsedUp,
+        [LIBRARIES_COVER]: jpeg(COVER_BYTES),
+      });
+
+      expect(await createIsbnCatalogue({ fetch }).findCover(ISBN)).toEqual({
+        mimeType: 'image/jpeg',
+        bytes: COVER_BYTES,
+      });
+      expect(fetch).toHaveBeenCalledWith(
+        `${LIBRARIES_COVER}${ISBN}&size=medium`,
+        expect.anything()
+      );
+    });
+
+    it("counts the libraries' placeholder and refusals as no cover", async () => {
+      const placeholderFetch = fakeFetch({
+        [OPEN_LIBRARY_EDITION]: notFound,
+        [GOOGLE_BOOKS]: noVolumes,
+        [LIBRARIES_COVER]: placeholder,
+      });
+      const refusingFetch = fakeFetch({
+        [OPEN_LIBRARY_EDITION]: outage,
+        [GOOGLE_BOOKS]: outage,
+        [LIBRARIES_COVER]: () => new Response("I'm a teapot", { status: 418 }),
+      });
+
+      expect(await createIsbnCatalogue({ fetch: placeholderFetch }).findCover(ISBN)).toBeNull();
+      expect(await createIsbnCatalogue({ fetch: refusingFetch }).findCover(ISBN)).toBeNull();
+    });
   });
 });
