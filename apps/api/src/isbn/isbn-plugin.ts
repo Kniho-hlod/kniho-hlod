@@ -49,8 +49,9 @@ async function findOrThrow(catalogue: IsbnCatalogue, isbn: string): Promise<Cata
 
 /**
  * `GET /api/isbn/:isbn` — book details from the catalogues, for the book form.
- * `GET /api/isbn/:isbn/cover` — the catalogue's cover as base64 JSON, so the app can import it as
- * the book's own cover (the API never serves someone else's image host to the browser).
+ * `GET /api/isbn/:isbn/cover` — a catalogue's or the Czech libraries' cover as base64 JSON, so the
+ * app can import it as the book's own cover (the API never serves someone else's image host to
+ * the browser). Answers for books only the libraries know, too.
  * Both need a signed-in reader and are rate-limited per reader.
  */
 export function createIsbnPlugin({
@@ -80,9 +81,8 @@ export function createIsbnPlugin({
         `${ISBN_ROUTE}/:isbn/cover`,
         ...guards,
         asyncHandler(async (req, res) => {
-          const entry = await findOrThrow(catalogue, parseIsbn(req.params.isbn));
-          const cover = await catalogue.fetchCover(entry);
-          if (!cover) throw new HttpError(NOT_FOUND, 'The catalogue has no cover for this ISBN');
+          const cover = await catalogue.findCover(parseIsbn(req.params.isbn));
+          if (!cover) throw new HttpError(NOT_FOUND, 'No catalogue has a cover for this ISBN');
           const result: IsbnCover = {
             mimeType: cover.mimeType,
             base64: cover.bytes.toString('base64'),

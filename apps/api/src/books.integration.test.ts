@@ -8,11 +8,15 @@ const COVER_URL = 'https://covers.openlibrary.org/b/id/42-L.jpg';
 const OPEN_LIBRARY_ISBN = 'https://openlibrary.org/isbn/';
 const OPEN_LIBRARY_AUTHOR = 'https://openlibrary.org/authors/OL1A.json';
 const GOOGLE_BOOKS = 'https://www.googleapis.com/books/v1/volumes';
+/** Known only to the Czech libraries, which have its cover. */
+const CZECH_ISBN = '9788075775955';
+const LIBRARIES_COVER = 'https://www.knihovny.cz/Cover/Show?isbn=';
 /** Big enough to count as a cover rather than a catalogue's "no image" placeholder. */
 const CATALOGUE_COVER = Buffer.concat([PNG_SIGNATURE, Buffer.alloc(4096)]);
 
 /**
- * Open Library knows one book; Google Books knows none. Set `down` to make them both unreachable.
+ * Open Library knows one book; Google Books knows none; the Czech libraries have a cover of another
+ * (and a placeholder for the rest). Set `down` to make them all unreachable.
  */
 function createFakeCatalogues() {
   const state = { down: false };
@@ -26,6 +30,11 @@ function createFakeCatalogues() {
     }
     if (url === OPEN_LIBRARY_AUTHOR) return Response.json({ name: 'J. R. R. Tolkien' });
     if (url.startsWith(GOOGLE_BOOKS)) return Response.json({ totalItems: 0 });
+    if (url.startsWith(LIBRARIES_COVER)) {
+      return url.includes(CZECH_ISBN)
+        ? new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/jpeg' } })
+        : new Response(PNG_SIGNATURE, { headers: { 'content-type': 'image/png' } });
+    }
     if (url === COVER_URL) {
       return new Response(CATALOGUE_COVER, { headers: { 'content-type': 'image/png' } });
     }
@@ -226,6 +235,21 @@ describe('Books', () => {
         mimeType: 'image/png',
         base64: CATALOGUE_COVER.toString('base64'),
       });
+    });
+
+    it("hands over the Czech libraries' cover of a book only they know", async () => {
+      const { token } = await signIn('lookup-czech-cover@test.cz');
+      const coverOf = (isbn: string) =>
+        app.api().get(`/api/isbn/${isbn}/cover`).set('Authorization', bearer(token));
+
+      const res = await coverOf(CZECH_ISBN);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        mimeType: 'image/jpeg',
+        base64: CATALOGUE_COVER.toString('base64'),
+      });
+      expect((await coverOf(UNKNOWN_ISBN)).status).toBe(404);
     });
   });
 });

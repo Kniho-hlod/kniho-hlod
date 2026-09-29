@@ -146,7 +146,7 @@ const coverPreviewUrl = computed(() => {
   return undefined;
 });
 
-/** The catalogues knew the book but had no cover for it: common for Czech editions. */
+/** The catalogues knew the book but nobody had a cover for it. */
 const hasNoCatalogueCover = ref(false);
 
 const coverNote = computed(() => {
@@ -177,11 +177,13 @@ const lookupIsbn = computed(() => (state.isbn ? toIsbn13(state.isbn) : null));
 const hasIsbnText = computed(() => Boolean(state.isbn?.trim()));
 const { mutateAsync: lookUp, isPending: isLookingUp } = useIsbnLookup();
 
-async function importCatalogueCover(isbn: string): Promise<void> {
+/** Whether a cover came: the details are filled in already, a missing cover is no error. */
+async function importCatalogueCover(isbn: string): Promise<boolean> {
   try {
     cover.value = { kind: 'replace', image: await fetchCatalogueCover(isbn), source: 'catalogue' };
+    return true;
   } catch {
-    // The details are filled in already; a cover that won't download is not worth an error.
+    return false;
   }
 }
 
@@ -209,8 +211,10 @@ async function fillFromCatalogue(): Promise<void> {
     const found = await lookUp(isbn);
     Object.assign(state, withCatalogueDetails(state, found));
     lookupNotice.value = { color: 'success', text: t('books.isbnFilled') };
-    hasNoCatalogueCover.value = !found.hasCover;
-    if (found.hasCover && !hasCover()) await importCatalogueCover(found.isbn);
+    hasNoCatalogueCover.value = false;
+    // Asked even when the catalogues have no cover: the Czech libraries' covers are only
+    // found by asking for them.
+    if (!hasCover()) hasNoCatalogueCover.value = !(await importCatalogueCover(found.isbn));
   } catch (err) {
     lookupNotice.value = { color: 'warning', text: describeIsbnLookupError(err) };
   }
