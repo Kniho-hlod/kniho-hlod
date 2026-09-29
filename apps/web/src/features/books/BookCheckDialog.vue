@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import type { Book, IsbnLookupResult } from '@kniho-hlod/domain';
+import type { BookWithDetails, IsbnLookupResult } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import ScannerViewfinder from '@/features/scanner/ScannerViewfinder.vue';
 import { findBookByIsbn, useIsbnLookup } from './api';
@@ -15,7 +15,7 @@ import BookThumbnail from './BookThumbnail.vue';
 type Check =
   | { phase: 'scanning' }
   | { phase: 'checking'; isbn: string }
-  | { phase: 'owned'; isbn: string; book: Book }
+  | { phase: 'owned'; isbn: string; book: BookWithDetails }
   /** `found` is what the catalogues say about the scanned book, when they know it. */
   | { phase: 'missing'; isbn: string; found: IsbnLookupResult | null }
   | { phase: 'failed'; isbn: string };
