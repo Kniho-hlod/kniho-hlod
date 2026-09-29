@@ -1,29 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useToast } from '@nuxt/ui/composables';
-import { describeError } from '@/app/errors';
-import { useRemoveSampleLibrary, useSampleLibrary } from './api';
+import { useSampleLibrary } from './api';
+import { useSampleRemoval } from './use-sample-removal';
 
 /**
  * On the account page while the tour's samples are in the library: removes them all at once,
  * after a second click. The reader's own books stay.
  */
 const { t } = useI18n();
-const toast = useToast();
 const { data: sampleLibrary } = useSampleLibrary();
-const { mutateAsync: removeSamples, isPending: isRemoving } = useRemoveSampleLibrary();
-const isConfirming = ref(false);
-
-async function remove(): Promise<void> {
-  try {
-    await removeSamples();
-    isConfirming.value = false;
-    toast.add({ title: t('samples.removed'), color: 'success' });
-  } catch (err) {
-    toast.add({ title: describeError(err), color: 'error' });
-  }
-}
+const { isConfirming, isRemoving, remove } = useSampleRemoval();
 </script>
 
 <template>

@@ -5,7 +5,11 @@ import { useRouter } from 'vue-router';
 import { useToast } from '@nuxt/ui/composables';
 import type { DropdownMenuItem } from '@nuxt/ui';
 import { ApiError } from '@eleansphere/entity-core';
-import { DEFAULT_BOOK_VISIBILITY, DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
+import {
+  DEFAULT_BOOK_VISIBILITY,
+  DEFAULT_READING_STATUS,
+  READING_STATUSES,
+} from '@kniho-hlod/domain';
 import type { ReadingStatus } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
 import { formatDate } from '@/app/dates';
@@ -93,9 +97,8 @@ const nextReadingStatus = computed(() =>
 );
 const { mutateAsync: changeReadingStatus, isPending: isChangingStatus } = useChangeReadingStatus();
 
-async function moveToNextReadingStatus(): Promise<void> {
-  const status = nextReadingStatus.value;
-  if (!book.value || !status) return;
+async function changeReadingStatusTo(status: ReadingStatus): Promise<void> {
+  if (!book.value) return;
   try {
     await changeReadingStatus({ book: book.value, status, today: today.value });
     toast.add({ title: t(`books.readingStatusChanged.${status}`), color: 'success' });
@@ -104,19 +107,38 @@ async function moveToNextReadingStatus(): Promise<void> {
   }
 }
 
+async function moveToNextReadingStatus(): Promise<void> {
+  if (nextReadingStatus.value) await changeReadingStatusTo(nextReadingStatus.value);
+}
+
 const isConfirmingDelete = ref(false);
 
-/** The rarely wanted actions wait behind the “…” button, away from a stray tap. */
-const moreActions = computed<DropdownMenuItem[]>(() => [
-  {
-    label: t('books.delete'),
-    icon: 'i-lucide-trash-2',
-    color: 'error',
-    onSelect: () => {
-      isConfirmingDelete.value = true;
-    },
-  },
-]);
+/**
+ * The rarely wanted actions wait behind the “…” button, away from a stray tap: any other reading
+ * status (a finished book can go back, which the one-tap button never does), then deleting.
+ */
+const moreActions = computed<DropdownMenuItem[][]>(() => {
+  const current = book.value?.readingStatus ?? DEFAULT_READING_STATUS;
+  const statusItems: DropdownMenuItem[] = READING_STATUSES.filter(
+    (status) => status !== current
+  ).map((status) => ({
+    label: t(`books.readingStatus.${status}`),
+    onSelect: () => changeReadingStatusTo(status),
+  }));
+  return [
+    [{ type: 'label', label: t('books.changeReadingStatus') }, ...statusItems],
+    [
+      {
+        label: t('books.delete'),
+        icon: 'i-lucide-trash-2',
+        color: 'error',
+        onSelect: () => {
+          isConfirmingDelete.value = true;
+        },
+      },
+    ],
+  ];
+});
 const { mutateAsync: deleteBook, isPending: isDeleting } = useDeleteBook();
 
 async function confirmDelete(): Promise<void> {

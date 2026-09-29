@@ -45,4 +45,20 @@ describe('readingDatesForStatus', () => {
     expect(readingDatesForStatus('want', {}, TODAY)).toEqual({});
     expect(readingDatesForStatus('none', {}, TODAY)).toEqual({});
   });
+
+  it('clears the dates that no longer hold when a book moves back', () => {
+    const finished = { startedAt: '2026-09-01', finishedAt: '2026-09-20' };
+    expect(readingDatesForStatus('reading', finished, TODAY)).toEqual({ finishedAt: null });
+    expect(readingDatesForStatus('want', finished, TODAY)).toEqual({
+      startedAt: null,
+      finishedAt: null,
+    });
+    expect(readingDatesForStatus('none', { startedAt: '2026-09-01' }, TODAY)).toEqual({
+      startedAt: null,
+    });
+    expect(readingDatesForStatus('reading', { finishedAt: '2026-09-20' }, TODAY)).toEqual({
+      startedAt: TODAY,
+      finishedAt: null,
+    });
+  });
 });
