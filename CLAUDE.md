@@ -142,7 +142,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   first that knows the ISBN, the cover from the first that has one. Answers are cached.
   `…/cover` falls back on knihovny.cz's `/Cover/Show` image (Obálky knih scans; JPEG, a PNG
   placeholder when there is none) — also for books only the libraries know, so the form always
-  asks for a cover. A 404
+  asks for a cover. knihovny.cz answers cloud addresses 418 there too, so in production this
+  finds nothing until they let us in; the way to Czech covers is registering with Obálky knih. A 404
   means "unknown", not an outage. Google's anonymous quota is shared and usually used up (429):
   set `GOOGLE_BOOKS_API_KEY` for a quota of our own. `…/cover` hands the cover over as base64
   JSON, which the app imports like an upload. Covers are only downloaded from the catalogues' own
