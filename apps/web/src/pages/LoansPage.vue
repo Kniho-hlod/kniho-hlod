@@ -65,6 +65,7 @@ const tabs = computed(() => [
       :content="false"
       :ui="{ leadingIcon: 'max-sm:hidden' }"
       class="w-full"
+      :data-tour="TOUR_TARGETS.borrow"
     />
 
     <LoanList

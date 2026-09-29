@@ -11,13 +11,24 @@ export const TOUR_TARGETS = {
   shelves: 'shelf-tabs',
   lend: 'lend-book',
   friends: 'invite-friends',
+  comments: 'friends-list',
+  borrow: 'loans-tabs',
   reminders: 'reminder-settings',
   accountMenu: 'account-menu',
 } as const;
 export type TourTarget = (typeof TOUR_TARGETS)[keyof typeof TOUR_TARGETS];
 
 /** Each step's texts live under `onboarding.steps.<key>`. */
-export type TourStepKey = 'home' | 'books' | 'shelves' | 'loans' | 'friends' | 'reminders' | 'done';
+export type TourStepKey =
+  | 'home'
+  | 'books'
+  | 'shelves'
+  | 'loans'
+  | 'friends'
+  | 'comments'
+  | 'borrow'
+  | 'reminders'
+  | 'done';
 
 export interface TourStep {
   key: TourStepKey;
@@ -33,6 +44,13 @@ export const TOUR_STEPS: readonly TourStep[] = [
   { key: 'shelves', route: { name: 'books' }, target: TOUR_TARGETS.shelves, mood: 'watching' },
   { key: 'loans', route: { name: 'loans' }, target: TOUR_TARGETS.lend, mood: 'watching' },
   { key: 'friends', route: { name: 'friends' }, target: TOUR_TARGETS.friends, mood: 'watching' },
+  { key: 'comments', route: { name: 'friends' }, target: TOUR_TARGETS.comments, mood: 'happy' },
+  {
+    key: 'borrow',
+    route: { name: 'loans', query: { tab: 'borrowed' } },
+    target: TOUR_TARGETS.borrow,
+    mood: 'watching',
+  },
   {
     key: 'reminders',
     route: { name: 'account' },
