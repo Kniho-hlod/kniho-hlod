@@ -228,7 +228,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   settled. `TourGuide` is the card with the peeking bookworm, "Ukončit" on every step. The
   account menu starts it again; `SampleLibraryCard` on the account page and
   `SampleLibraryBanner` over every other page (once the tour is closed; "Zatím nechat" hides it
-  until a reload) remove the samples, and sample books wear an "Ukázka" badge. A new element the tour points at needs a `data-tour` mark.
+  until a reload) remove the samples, and sample books wear an "Ukázka" badge. A new element the
+  tour points at needs a `data-tour` mark.
   E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
   registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
 - Friends (`src/features/friends/`, pages `Friends`, `Friend`, `FriendBook`, `Invite`): the
