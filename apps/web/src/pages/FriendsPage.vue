@@ -19,6 +19,7 @@ import {
 } from '@/features/friends/api';
 import FriendCard from '@/features/friends/FriendCard.vue';
 import InviteCard from '@/features/friends/InviteCard.vue';
+import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 
 const SKELETON_COUNT = 3;
 const FEED_TAB = 'feed';
@@ -169,7 +170,7 @@ async function startSharing(): Promise<void> {
 
     <FeedList v-if="tab === FEED_TAB" />
 
-    <section v-else class="flex flex-col gap-3">
+    <section v-else class="flex flex-col gap-3" :data-tour="TOUR_TARGETS.comments">
       <h2 class="sr-only">{{ t('friends.listTitle') }}</h2>
       <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
       <ul v-else-if="isPending" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

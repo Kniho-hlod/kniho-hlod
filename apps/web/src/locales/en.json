@@ -536,6 +536,14 @@
         "title": "Kniho-hlod with friends",
         "text": "Invite friends with a link, a QR code or by e-mail. Once you share your library they see your books and what you are reading — never your notes or loans."
       },
+      "comments": {
+        "title": "Talk about books",
+        "text": "Under any of your friends' books you can say how you liked it or suggest what to read next. Only the book's owner and their friends see the comments."
+      },
+      "borrow": {
+        "title": "Borrow from friends",
+        "text": "Like a book in a friend's library? Ask for it with one button and they can lend it to you. What you've borrowed from friends is here, and I'll remind you before it's due."
+      },
       "reminders": {
         "title": "I keep an eye on due dates",
         "text": "A few days before a book is due I'll e-mail you, and if it doesn't come back, I'll remind you again. Set how many days ahead here."

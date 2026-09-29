@@ -18,7 +18,7 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
-    version: '1.8',
+    version: '1.10',
     date: '2026-09-29',
     title: { cs: 'Co čtou přátelé', en: 'What friends read' },
     notes: {
@@ -35,6 +35,21 @@ export const RELEASES: readonly Release[] = [
         'A book shows which friends have it too and how they liked it.',
         "One button puts a friend's book in your library, among the books you want to read.",
         'Recommend your books to friends with a message (in the “…” menu of a book). Recommendations from friends wait on the overview.',
+      ],
+    },
+  },
+  {
+    version: '1.8',
+    date: '2026-09-29',
+    title: { cs: 'Knihomol ukáže i přátele', en: 'The bookworm shows friends too' },
+    notes: {
+      cs: [
+        'Průvodce aplikací má dva nové kroky: komentáře pod knihami přátel a půjčování od přátel.',
+        'Znovu ho spustíte z menu pod avatarem.',
+      ],
+      en: [
+        "The app tour has two new steps: comments under friends' books and borrowing from friends.",
+        'Take it again from the menu under your avatar.',
       ],
     },
   },

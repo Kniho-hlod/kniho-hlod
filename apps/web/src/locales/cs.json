@@ -536,6 +536,14 @@
         "title": "Kniho-hlod s přáteli",
         "text": "Pozvěte přátele odkazem, QR kódem nebo e-mailem. Když knihovnu nasdílíte, uvidí vaše knihy a co zrovna čtete — poznámky a výpůjčky nikdy."
       },
+      "comments": {
+        "title": "Povídejte si nad knihami",
+        "text": "Pod každou knihou přítele můžete napsat, jak se vám líbila, nebo poradit, co číst dál. Komentáře vidí jen majitel knihy a jeho přátelé."
+      },
+      "borrow": {
+        "title": "Půjčte si od přátel",
+        "text": "Zaujala vás kniha v knihovně přítele? Požádejte o ni jedním tlačítkem a on vám ji půjčí. Co máte od přátel, najdete tady, a před termínem vám to připomenu."
+      },
       "reminders": {
         "title": "Termíny hlídám za vás",
         "text": "Pár dní před termínem vám pošlu e-mail, a když se kniha nevrací, připomenu se znovu. Kolik dní předem, nastavíte tady."
