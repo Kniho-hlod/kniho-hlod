@@ -146,11 +146,15 @@ const coverPreviewUrl = computed(() => {
   return undefined;
 });
 
-const coverNote = computed(() =>
-  cover.value.kind === 'replace' && cover.value.source === 'catalogue'
-    ? t('books.coverFromCatalogue')
-    : undefined
-);
+/** The catalogues knew the book but had no cover for it: common for Czech editions. */
+const hasNoCatalogueCover = ref(false);
+
+const coverNote = computed(() => {
+  if (cover.value.kind === 'replace' && cover.value.source === 'catalogue') {
+    return t('books.coverFromCatalogue');
+  }
+  return hasNoCatalogueCover.value && !hasCover() ? t('books.noCatalogueCover') : undefined;
+});
 
 function hasCover(): boolean {
   return cover.value.kind === 'replace' || (cover.value.kind === 'keep' && !!book.value?.cover);
@@ -205,6 +209,7 @@ async function fillFromCatalogue(): Promise<void> {
     const found = await lookUp(isbn);
     Object.assign(state, withCatalogueDetails(state, found));
     lookupNotice.value = { color: 'success', text: t('books.isbnFilled') };
+    hasNoCatalogueCover.value = !found.hasCover;
     if (found.hasCover && !hasCover()) await importCatalogueCover(found.isbn);
   } catch (err) {
     lookupNotice.value = { color: 'warning', text: describeIsbnLookupError(err) };
@@ -213,6 +218,13 @@ async function fillFromCatalogue(): Promise<void> {
 
 const canScan = canUseCamera();
 const isScanning = ref(!isEditing.value && canScan && route.query.scan === SCAN_QUERY_VALUE);
+
+// `?isbn=` ("Mám ji už?" found a book the reader doesn't have) fills the new book at once.
+const presetIsbn = route.query.isbn;
+if (!isEditing.value && typeof presetIsbn === 'string' && presetIsbn) {
+  state.isbn = presetIsbn;
+  void fillFromCatalogue();
+}
 
 async function fillFromScannedIsbn(isbn: string): Promise<void> {
   state.isbn = isbn;

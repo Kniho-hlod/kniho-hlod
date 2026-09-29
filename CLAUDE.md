@@ -214,7 +214,13 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   The book page moves a book on with one tap; any other status waits in its "…" menu.
 - ISBN scanning (`src/features/scanner/`): the native `BarcodeDetector` where it reads EAN-13,
   else the `barcode-detector` ponyfill, whose `.wasm` is served with the app (not from its default
-  CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away.
+  CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away;
+  `/books/new?isbn=` fills the new book from the catalogues. "Mám ji už?" on the books page
+  (`BookCheckDialog`) scans a book and says whether the reader has it (`?isbn=` on books), with
+  "Přidat do knihovny" for one they don't. `CoverPicker` offers "Vyfotit obálku" (the camera, on
+  touch devices) and the form says when the catalogues know a book but have no cover — common for
+  Czech editions: knihovny.cz's covers come from Obálky knih, whose API is only for registered
+  libraries.
   The e2e test films a generated barcode through Chromium's fake camera (`e2e/barcode-video.ts`).
 - PWA: `UpdatePrompt` registers the service worker and offers a reload once a new version waits;
   `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)

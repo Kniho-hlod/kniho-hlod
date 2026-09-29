@@ -8,6 +8,7 @@ import { NO_BOOK_FILTERS, useBookList } from '@/features/books/api';
 import type { BookListFilters } from '@/features/books/api';
 import BookCard from '@/features/books/BookCard.vue';
 import BookFilters from '@/features/books/BookFilters.vue';
+import BookCheckDialog from '@/features/books/BookCheckDialog.vue';
 import { canUseCamera } from '@/features/scanner/camera-support';
 import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 import ShelfTabs from '@/features/shelves/ShelfTabs.vue';
@@ -18,6 +19,7 @@ const SKELETON_COUNT = 8;
 const { t } = useI18n();
 const route = useRoute();
 const canScan = canUseCamera();
+const isCheckingBook = ref(false);
 
 const filters = ref<BookListFilters>({ ...NO_BOOK_FILTERS });
 /** The shelf lives in the address (`?shelf=`), so a shelf can be linked to and gone back to. */
@@ -54,7 +56,16 @@ useOnVisible(listEnd, loadMore);
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
       <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
+        <UButton
+          v-if="canScan"
+          icon="i-lucide-scan-search"
+          color="neutral"
+          variant="outline"
+          @click="isCheckingBook = true"
+        >
+          {{ t('bookCheck.button') }}
+        </UButton>
         <UButton
           v-if="canScan"
           :to="{ name: 'book-new', query: { scan: '1' } }"
@@ -115,5 +126,7 @@ useOnVisible(listEnd, loadMore);
         {{ t('books.loadMore') }}
       </UButton>
     </template>
+
+    <BookCheckDialog v-if="canScan" v-model:open="isCheckingBook" />
   </section>
 </template>

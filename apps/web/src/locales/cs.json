@@ -128,11 +128,13 @@
     "cover": "Obálka",
     "coverOf": "Obálka knihy {title}",
     "addCover": "Nahrát obálku",
+    "photographCover": "Vyfotit obálku",
     "changeCover": "Změnit obálku",
     "removeCover": "Odebrat obálku",
     "coverHint": "JPG, PNG nebo WebP. Zmenšíme ji na nejvýše 1000 px.",
     "coverTooLarge": "Obrázek je příliš velký, vyberte prosím menší než 20 MB.",
     "coverFromCatalogue": "Obálka z katalogu — uloží se spolu s knihou.",
+    "noCatalogueCover": "Katalogy k téhle knize obálku nemají. Vyfoťte si ji, nebo nahrajte obrázek.",
     "untitled": "Bez názvu",
     "fields": {
       "title": "Název",
@@ -197,6 +199,20 @@
     },
     "hideFromFriends": "Skrýt před přáteli",
     "hideFromFriendsHint": "Tuhle knihu přátelé neuvidí, ani když knihovnu sdílíte."
+  },
+  "bookCheck": {
+    "button": "Mám ji už?",
+    "title": "Mám ji už?",
+    "description": "Naskenujte čárový kód na zadní straně knihy a hned uvidíte, jestli ji máte v knihovně.",
+    "checking": "Hledám ve vaší knihovně…",
+    "owned": "Tuhle knihu už máte.",
+    "missing": "Tuhle knihu zatím nemáte.",
+    "failed": "Knihovnu se nepodařilo prohledat. Zkuste to prosím znovu.",
+    "lookingUp": "Zjišťuji, co je to za knihu…",
+    "isbn": "ISBN {isbn}",
+    "open": "Otevřít knihu",
+    "add": "Přidat do knihovny",
+    "scanAgain": "Skenovat další"
   },
   "validation": {
     "required": "Vyplňte prosím tuto položku.",
