@@ -2,16 +2,14 @@ import { addDays } from '@eleansphere/schema';
 import { generateId, HttpError, Op, ValidationError } from '@eleansphere/be-core';
 import type { Sequelize } from '@eleansphere/be-core';
 import {
-  contactEntity,
   DEFAULT_LOAN_DAYS,
   DEFAULT_LOAN_REQUEST_STATUS,
   findLoanDatesIssues,
   loanEntity,
   loanRequestEntity,
-  userEntity,
 } from '@kniho-hlod/domain';
 import type { LoanRequestStatus } from '@kniho-hlod/domain';
-import type { Transaction } from '../friends/friendships';
+import { createFriendContact } from '../friends/friend-contact';
 import type { ReaderToday } from '../loans/reader-today';
 import type { ModelClass, ModelRegistry } from '../models-registry';
 
@@ -42,44 +40,7 @@ export function createLendToFriend(
   readerToday: ReaderToday
 ) {
   const model = (name: string) => registry.get(name);
-
-  /** The owner's contact for the friend: linked already, found by e-mail, or new. */
-  async function contactFor(ownerId: string, friendId: string, transaction: Transaction) {
-    const contacts = model(contactEntity.config.name);
-    const linked = await contacts.findOne({
-      where: { ownerId, linkedUserId: friendId },
-      transaction,
-    });
-    if (linked) return linked;
-    const friend = await model(userEntity.config.name).findByPk(friendId, {
-      attributes: ['displayName', 'email'],
-      transaction,
-    });
-    if (!friend) throw new HttpError(NOT_FOUND, 'friend not found');
-    const sameEmail = await contacts.findOne({
-      where: {
-        ownerId,
-        linkedUserId: null,
-        [Op.and]: [
-          sequelize.where(
-            sequelize.fn('lower', sequelize.col('email')),
-            String(friend.get('email')).toLowerCase()
-          ),
-        ],
-      },
-      transaction,
-    });
-    if (sameEmail) return sameEmail.update({ linkedUserId: friendId }, { transaction });
-    return contacts.create(
-      {
-        id: generateId(contactEntity.config.prefix),
-        ownerId,
-        name: String(friend.get('displayName')),
-        linkedUserId: friendId,
-      },
-      { transaction }
-    );
-  }
+  const contactFor = createFriendContact(registry, sequelize);
 
   return async function lendToFriend(
     requestId: string,

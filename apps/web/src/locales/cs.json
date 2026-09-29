@@ -279,9 +279,10 @@
     "pickBook": "Vyberte knihu",
     "pickBookHint": "Nabízíme knihy, které máte doma.",
     "noBooksAtHome": "Doma teď nemáte žádnou knihu, kterou by šlo půjčit.",
-    "pickContact": "Vyberte kontakt nebo napište nové jméno",
+    "pickContact": "Vyberte kontakt nebo přítele, nebo napište nové jméno",
     "searchContacts": "Hledat nebo napsat jméno",
     "newContact": "Nový kontakt: {name}",
+    "friendInApp": "Přítel v Kniho-hlodu",
     "contactHint": "Nového člověka stačí napsat — kontakt se založí s výpůjčkou.",
     "noHistory": "Zatím žádná vrácená výpůjčka.",
     "due": {

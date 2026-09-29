@@ -90,11 +90,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   unique index allows one waiting request per friend and book) has no CRUD routes.
   `POST /api/friends/:userId/books/:bookId/requests` asks for a shared book at home (409 when
   lent or asked already); `GET /api/loan-requests` lists both ways; accepting
-  (`lend-to-friend.ts`, one transaction) finds the owner's contact for the friend — linked
-  already, or one with the friend's e-mail, which gets linked, or a new one named after them —
-  lends the book from the owner's today (the due date chosen, suggested or a month) and declines
+  (`lend-to-friend.ts`, one transaction) finds the owner's contact for the friend
+  (`friends/friend-contact.ts`) — linked already, or one with the friend's e-mail, which gets
+  linked, or a new one named after them — lends the book from the owner's today (the due date chosen, suggested or a month) and declines
   the other waiting requests for it; decline and cancel answer one side each. Ending a friendship
-  drops the waiting requests, never loans. `GET /api/borrowed` is what the reader has out on
+  drops the waiting requests, never loans. `POST /api/friends/:userId/contact` hands the loan
+  form the same contact for a friend (404 for anyone who isn't one). `GET /api/borrowed` is what the reader has out on
   loans to contacts linked to them. The bell and, with `emailNotifications`, e-mail tell each
   side (`emails/loan-request.ts`, `loan-request-answer.ts`); notifications carry `bookId`.
 - Comments (`src/comments/`, phase 3c): `comment` (book, author, text, `editedAt`; no CRUD
@@ -209,11 +210,13 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   what the other lacks, and the cover always comes through the API. E2E tests answer knihovny.cz
   with `e2e/czech-libraries.ts`.
 - Loans in `src/features/loans/`, contacts in `src/features/contacts/`; their pages sit under
-  `/loans` so the Loans tab stays highlighted. Lending to a new name creates the contact first
-  (`ContactPicker`). Books, contacts, loans and stats show parts of each other, so every mutation
+  `/loans` so the Loans tab stays highlighted. `ContactPicker` offers contacts and friends (a
+  friend becomes their linked contact on saving) and lending to a new name creates the contact
+  first. Books, contacts, loans and stats show parts of each other, so every mutation
   calls `invalidateLibrary` (`src/app/library-queries.ts`).
 - Shelves in `src/features/shelves/`, managed at `/books/shelves`; the books list takes its shelf
-  from `?shelf=`, so a shelf can be linked to. Picking a reading status in the form dates the start
+  from `?shelf=` and its reading status from `?status=` (the overview's reading tile links it), so
+  both can be linked to. Picking a reading status in the form dates the start
   or end today (`readingDatesForStatus` in the domain) and moving a book back clears the dates
   that no longer hold — only on the reader's own choice, never when a stored book fills the form.
   The book page moves a book on with one tap; any other status waits in its "…" menu.

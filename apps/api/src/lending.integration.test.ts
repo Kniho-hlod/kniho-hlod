@@ -213,6 +213,28 @@ describe('Lending between friends', () => {
     expect((await as(reader).get('/api/borrowed')).body).toHaveLength(2);
   });
 
+  it('gives the owner a contact for a friend to lend to from the loan form', async () => {
+    const reader = await signUp('Ivana');
+    await befriend(owner, reader);
+    const contactFor = (who: Account, friendId: string) =>
+      as(who).post(`/api/friends/${friendId}/contact`);
+
+    const made = await contactFor(owner, reader.id);
+    expect(made.status).toBe(200);
+    expect(made.body).toEqual({ id: expect.any(String), name: 'Ivana' });
+    expect((await contactFor(owner, reader.id)).body).toEqual(made.body);
+
+    const bookId = await addBook('Saturnin II');
+    expect(
+      (await as(owner).post('/api/loans', { bookId, contactId: made.body.id, lentAt: TODAY }))
+        .status
+    ).toBe(CREATED);
+    expect((await as(reader).get('/api/borrowed')).body).toHaveLength(1);
+
+    expect((await contactFor(owner, stranger.id)).status).toBe(NOT_FOUND);
+    expect((await contactFor(stranger, reader.id)).status).toBe(NOT_FOUND);
+  });
+
   it('takes the due date the owner picks, the default otherwise, and checks it', async () => {
     const chosen = await addBook('Dune');
     const defaulted = await addBook('Nadace');

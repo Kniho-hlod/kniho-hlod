@@ -83,3 +83,32 @@ test('a friend asks to borrow a book, the owner lends it, and it comes back', as
     await expect(pavel.getByText('Od přátel teď nic půjčeného nemáte')).toBeVisible();
   });
 });
+
+test('the owner lends a book to a friend straight from the loan form', async ({
+  page,
+  browser,
+  request,
+}) => {
+  const olgaEmail = uniqueEmail('form-lender');
+  const pavelEmail = uniqueEmail('form-borrower');
+  const olgaToken = await register(request, olgaEmail, 'Olga');
+  const pavelToken = await register(request, pavelEmail, 'Pavel Přítel');
+  const book = await call(request, olgaToken, 'POST', '/api/books', { title: 'Krakatit' });
+  const { code } = await call(request, olgaToken, 'GET', '/api/me/invite');
+  await call(request, pavelToken, 'POST', `/api/invites/${code}/accept`);
+
+  await signIn(page, olgaEmail);
+  await page.goto(`/loans/new?bookId=${book.id}`);
+  await page.getByLabel('Komu').click();
+  await page.getByPlaceholder('Hledat nebo napsat jméno').fill('pritel');
+  await page.getByRole('option', { name: /Pavel Přítel/ }).click();
+  await page.getByRole('button', { name: 'Půjčit', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: 'Krakatit' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Komu: Pavel Přítel' })).toBeVisible();
+
+  const pavel = await (await browser.newContext({ baseURL: WEB_URL, locale: 'cs-CZ' })).newPage();
+  await signIn(pavel, pavelEmail);
+  await pavel.goto('/loans?tab=borrowed');
+  await expect(pavel.getByRole('link', { name: 'Krakatit' })).toBeVisible();
+});

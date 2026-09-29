@@ -5,9 +5,14 @@ import type { LoanWithDetails } from '@kniho-hlod/domain';
 /** The loan fields the form validates with the API's own rules. */
 export const LOAN_FORM_FIELDS = ['lentAt', 'dueAt', 'returnedAt', 'note'] as const;
 
-/** Who gets the book: a contact the reader has, or a name for a new one. */
+/**
+ * Who gets the book: a contact the reader has, a friend (whose contact is found or made on
+ * saving), or a name for a new contact.
+ */
 export type ContactChoice =
-  { kind: 'existing'; id: string; name: string } | { kind: 'new'; name: string };
+  | { kind: 'existing'; id: string; name: string }
+  | { kind: 'friend'; friendId: string; name: string }
+  | { kind: 'new'; name: string };
 
 export interface LoanFormState {
   bookId: string | null;

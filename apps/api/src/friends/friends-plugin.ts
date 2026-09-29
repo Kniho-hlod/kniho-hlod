@@ -25,7 +25,7 @@ import {
   recommendationEntity,
   userEntity,
 } from '@kniho-hlod/domain';
-import type { FriendRequest, FriendRequests, Locale } from '@kniho-hlod/domain';
+import type { FriendContact, FriendRequest, FriendRequests, Locale } from '@kniho-hlod/domain';
 import type { Request, RequestHandler } from 'express';
 import { friendInvitationEmail } from '../emails/friend-invitation';
 import { friendRequestEmail } from '../emails/friend-request';
@@ -33,6 +33,7 @@ import { asyncHandler } from '../http/async-handler';
 import type { ModelClass, ModelRegistry } from '../models-registry';
 import type { Notify } from '../notifications/notifications-plugin';
 import { acceptFriendship } from './accept-friendship';
+import { createFriendContact } from './friend-contact';
 import type { DescribeFriends } from './describe-friends';
 import type { Friendships } from './friendships';
 import type { InviteCodes } from './invite-codes';
@@ -82,7 +83,9 @@ function readerOf(req: Request): string {
  * Friends and friend requests: `GET /api/friends` (with what each is reading),
  * `GET /api/friends/requests`, `POST /api/friends/invitations` (by e-mail, rate-limited),
  * `POST /api/friends/requests/:id/accept`, `DELETE /api/friends/requests/:id` (decline or take
- * back), `GET /api/friends/:userId` and `DELETE /api/friends/:userId` (end the friendship).
+ * back), `GET /api/friends/:userId` and `DELETE /api/friends/:userId` (end the friendship),
+ * `POST /api/friends/:userId/contact` (the reader's contact for the friend, made or linked if
+ * need be, so the loan form can lend to a friend).
  * Anything between other readers answers 404.
  */
 export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugin {
@@ -275,6 +278,28 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
           if (!link) throw new HttpError(NOT_FOUND, 'friend not found');
           const [friend] = await describeFriends([link]);
           res.json(friend);
+        })
+      );
+
+      const friendContact = createFriendContact(registry, sequelize);
+
+      app.post(
+        `${FRIENDS_PATH}/:userId/contact`,
+        requireUser,
+        asyncHandler(async (req, res) => {
+          const readerId = readerOf(req);
+          const friendId = String(req.params.userId);
+          if (!(await friendships.areFriends(readerId, friendId))) {
+            throw new HttpError(NOT_FOUND, 'friend not found');
+          }
+          const contact = await sequelize.transaction((transaction) =>
+            friendContact(readerId, friendId, transaction)
+          );
+          const result: FriendContact = {
+            id: String(contact.get('id')),
+            name: String(contact.get('name')),
+          };
+          res.json(result);
         })
       );
 

@@ -39,7 +39,11 @@ const ALARM_COLORS = 'bg-rose-500 text-white';
 
 const STAT_TILES: StatTile[] = [
   { key: 'books', icon: 'i-lucide-library', to: { name: 'books' } },
-  { key: 'reading', icon: 'i-lucide-book-open', to: { name: 'books' } },
+  {
+    key: 'reading',
+    icon: 'i-lucide-book-open',
+    to: { name: 'books', query: { status: 'reading' } },
+  },
   { key: 'lent', icon: 'i-lucide-hand-helping', to: { name: 'loans' } },
   { key: 'overdue', icon: 'i-lucide-alarm-clock', to: { name: 'loans' } },
 ];
@@ -137,11 +141,17 @@ function dismissInstallOffer(): void {
         <h2 class="text-xl font-bold text-highlighted">
           {{ t('home.dueBack') }}
         </h2>
-        <div class="flex gap-2">
+        <!-- On a phone the actions get a row of their own instead of squeezing the heading. -->
+        <div class="flex gap-2 max-sm:w-full">
           <UButton :to="{ name: 'loans' }" color="neutral" variant="ghost" size="sm">
             {{ t('home.allLoans') }}
           </UButton>
-          <UButton :to="{ name: 'loan-new' }" icon="i-lucide-hand-helping" size="sm">
+          <UButton
+            :to="{ name: 'loan-new' }"
+            icon="i-lucide-hand-helping"
+            size="sm"
+            class="justify-center max-sm:flex-1"
+          >
             {{ t('loans.lend') }}
           </UButton>
         </div>

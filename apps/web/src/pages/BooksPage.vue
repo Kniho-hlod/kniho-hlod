@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
+import { READING_STATUSES } from '@kniho-hlod/domain';
+import type { ReadingStatus } from '@kniho-hlod/domain';
 import { describeError } from '@/app/errors';
 import EmptyState from '@/components/EmptyState.vue';
 import { NO_BOOK_FILTERS, useBookList } from '@/features/books/api';
@@ -21,7 +23,21 @@ const route = useRoute();
 const canScan = canUseCamera();
 const isCheckingBook = ref(false);
 
-const filters = ref<BookListFilters>({ ...NO_BOOK_FILTERS });
+/** `?status=reading` opens the list filtered, as the dashboard's "reading" tile links it. */
+function statusFromQuery(value: unknown): ReadingStatus | null {
+  return READING_STATUSES.find((status) => status === value) ?? null;
+}
+
+const filters = ref<BookListFilters>({
+  ...NO_BOOK_FILTERS,
+  readingStatus: statusFromQuery(route.query.status),
+});
+watch(
+  () => route.query.status,
+  (status) => {
+    filters.value = { ...filters.value, readingStatus: statusFromQuery(status) };
+  }
+);
 /** The shelf lives in the address (`?shelf=`), so a shelf can be linked to and gone back to. */
 const shelfId = computed(() => (typeof route.query.shelf === 'string' ? route.query.shelf : null));
 const listFilters = computed<BookListFilters>(() => ({ ...filters.value, shelfId: shelfId.value }));
@@ -56,12 +72,14 @@ useOnVisible(listEnd, loadMore);
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
       <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
-      <div class="flex flex-wrap gap-2">
+      <!-- On a phone the actions line up in a grid: the two scans side by side, adding below. -->
+      <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
         <UButton
           v-if="canScan"
           icon="i-lucide-scan-search"
           color="neutral"
           variant="outline"
+          class="justify-center"
           @click="isCheckingBook = true"
         >
           {{ t('bookCheck.button') }}
@@ -72,10 +90,16 @@ useOnVisible(listEnd, loadMore);
           icon="i-lucide-scan-barcode"
           color="neutral"
           variant="outline"
+          class="justify-center"
         >
           {{ t('scanner.scan') }}
         </UButton>
-        <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus" :data-tour="TOUR_TARGETS.addBook">
+        <UButton
+          :to="{ name: 'book-new' }"
+          icon="i-lucide-plus"
+          class="col-span-2 justify-center"
+          :data-tour="TOUR_TARGETS.addBook"
+        >
           {{ t('books.add') }}
         </UButton>
       </div>
