@@ -2,10 +2,16 @@ import { ApiClient, toListQueryParams } from '@eleansphere/entity-core';
 import type { Fields, FileDto, PaginatedResponse } from '@eleansphere/entity-core';
 import type { QueryConfig } from '@eleansphere/schema';
 import type { ReadingStatus, ShelfColor } from './constants';
+import type { BookWithDetails } from './entities';
 
 export const FRIENDS_PATH = '/api/friends';
 export const FRIEND_REQUESTS_PATH = `${FRIENDS_PATH}/requests`;
 export const FRIEND_INVITATIONS_PATH = `${FRIENDS_PATH}/invitations`;
+/**
+ * `GET /api/friend-copies?isbn=`: friends' shared copies of one book. Not under `/api/friends`,
+ * where the segment would read as a friend's id.
+ */
+export const FRIEND_COPIES_PATH = '/api/friend-copies';
 /** `GET` the reader's invite code (made on first ask), `POST` replace it. */
 export const MY_INVITE_PATH = '/api/me/invite';
 /** `GET /api/invites/:code` who invites, `POST /api/invites/:code/accept` become friends. */
@@ -99,6 +105,8 @@ export interface FriendBook extends FriendBookSummary {
   description: string | null;
   readingStatus: ReadingStatus;
   rating: number | null;
+  /** What the friend wrote about the book for their friends. */
+  review: string | null;
   startedAt: string | null;
   finishedAt: string | null;
   shelves: Pick<FriendShelf, 'id' | 'name' | 'color'>[];
@@ -106,6 +114,18 @@ export interface FriendBook extends FriendBookSummary {
   lent: { dueAt: string | null } | null;
   /** The reader's own request to borrow it, while it waits for an answer. */
   myRequest: { id: string } | null;
+  /** The reader's own copy — a book of theirs with the same ISBN — or `null`. */
+  myCopy: { id: string } | null;
+}
+
+/** A friend's shared copy of a book the reader looks at (the same ISBN). */
+export interface FriendCopy {
+  friend: PersonSummary;
+  bookId: string;
+  readingStatus: ReadingStatus;
+  rating: number | null;
+  review: string | null;
+  commentCount: number;
 }
 
 /** The friend's list of books, a page at a time. */
@@ -183,6 +203,19 @@ export class FriendsService extends ApiClient {
 
   book(userId: string, bookId: string): Promise<FriendBook> {
     return this.get<FriendBook>(`${friendPath(userId)}/books/${encodeURIComponent(bookId)}`);
+  }
+
+  /** Friends' shared copies of the book with this ISBN, for "Friends on this book". */
+  copies(isbn: string): Promise<FriendCopy[]> {
+    return this.get<FriendCopy[], Record<string, string>>(FRIEND_COPIES_PATH, { isbn });
+  }
+
+  /** Puts a copy of the friend's book in the reader's library, as one they want to read. */
+  copyBook(userId: string, bookId: string): Promise<BookWithDetails> {
+    return this.post<BookWithDetails>(
+      `${friendPath(userId)}/books/${encodeURIComponent(bookId)}/copy`,
+      {}
+    );
   }
 
   shelves(userId: string): Promise<FriendShelf[]> {

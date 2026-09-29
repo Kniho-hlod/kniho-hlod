@@ -62,11 +62,11 @@ test('a new reader takes the tour with a sample library, then clears it out', as
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
     await expectStep(page, 5);
-    await expect(page).toHaveURL(/\/friends$/);
+    await expect(page).toHaveURL(/\/friends\?tab=people$/);
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
     await expectStep(page, 6);
-    await expect(page).toHaveURL(/\/friends$/);
+    await expect(page).toHaveURL(/\/friends\?tab=people$/);
 
     await tour(page).getByRole('button', { name: 'Dál' }).click();
     await expectStep(page, 7);

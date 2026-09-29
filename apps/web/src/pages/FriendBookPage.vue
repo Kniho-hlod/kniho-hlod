@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useToast } from '@nuxt/ui/composables';
 import { ApiError } from '@eleansphere/entity-core';
 import { DEFAULT_READING_STATUS } from '@kniho-hlod/domain';
 import type { ShelfSummary } from '@kniho-hlod/domain';
@@ -9,8 +10,11 @@ import { formatDate } from '@/app/dates';
 import { describeError } from '@/app/errors';
 import EmptyState from '@/components/EmptyState.vue';
 import BookCover from '@/features/books/BookCover.vue';
+import BookReview from '@/features/books/BookReview.vue';
 import RatingStars from '@/features/books/RatingStars.vue';
 import ReadingStatusBadge from '@/features/books/ReadingStatusBadge.vue';
+import { useCopyFriendBook } from '@/features/feed/api';
+import FriendsOnBook from '@/features/feed/FriendsOnBook.vue';
 import { useFriend, useFriendBook } from '@/features/friends/api';
 import RequestBookPanel from '@/features/lending/RequestBookPanel.vue';
 import BookComments from '@/features/comments/BookComments.vue';
@@ -22,6 +26,7 @@ const NOT_FOUND = 404;
 const props = defineProps<{ userId: string; bookId: string }>();
 
 const { t, locale } = useI18n();
+const toast = useToast();
 const userId = toRef(props, 'userId');
 const { data: friend } = useFriend(userId);
 const { data: book, error, isPending } = useFriendBook(userId, toRef(props, 'bookId'));
@@ -59,6 +64,21 @@ const whereabouts = computed(() => {
     ? t('friends.library.lentUntil', { date: formatDate(lent.dueAt) })
     : t('friends.library.lent');
 });
+
+const { mutateAsync: copyBook, isPending: isCopying } = useCopyFriendBook();
+/** The copy just made: a book without an ISBN can't be matched to it otherwise. */
+const copiedId = ref<string | null>(null);
+const myCopyId = computed(() => book.value?.myCopy?.id ?? copiedId.value);
+
+async function wantToRead(): Promise<void> {
+  try {
+    const copy = await copyBook({ friendId: props.userId, bookId: props.bookId });
+    copiedId.value = copy.id;
+    toast.add({ title: t('feed.copied', { title: copy.title }), color: 'success' });
+  } catch (err) {
+    toast.add({ title: describeError(err, { conflict: t('feed.alreadyYours') }), color: 'error' });
+  }
+}
 
 const shelfLink = (shelf: ShelfSummary) => ({
   name: 'friend',
@@ -121,6 +141,12 @@ const shelfLink = (shelf: ShelfSummary) => ({
           <RatingStars v-if="book.rating" :rating="book.rating" />
         </div>
 
+        <BookReview
+          v-if="book.review && friend"
+          :text="book.review"
+          :by="t('feed.reviewBy', { name: friend.displayName })"
+        />
+
         <ShelfChips v-if="book.shelves.length > 0" :shelves="book.shelves" :link-to="shelfLink" />
 
         <p
@@ -142,6 +168,28 @@ const shelfLink = (shelf: ShelfSummary) => ({
           :friend-name="friend.displayName"
         />
 
+        <UButton
+          v-if="myCopyId"
+          :to="{ name: 'book', params: { id: myCopyId } }"
+          icon="i-lucide-library"
+          color="neutral"
+          variant="outline"
+          class="self-start"
+        >
+          {{ t('feed.inYourLibrary') }}
+        </UButton>
+        <UButton
+          v-else
+          icon="i-lucide-bookmark-plus"
+          color="neutral"
+          variant="outline"
+          class="self-start"
+          :loading="isCopying"
+          @click="wantToRead"
+        >
+          {{ t('feed.wantToRead') }}
+        </UButton>
+
         <dl v-if="details.length > 0" class="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <div
             v-for="detail in details"
@@ -160,5 +208,7 @@ const shelfLink = (shelf: ShelfSummary) => ({
     </article>
 
     <BookComments v-if="book" :book-id="book.id" when-empty="invite" />
+
+    <FriendsOnBook v-if="book" :isbn="book.isbn" :except-book-id="book.id" />
   </section>
 </template>

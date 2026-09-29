@@ -6,6 +6,7 @@ import { releaseNotes } from './2026-09-26-release-notes';
 import { friends } from './2026-09-27-friends';
 import { loanRequests } from './2026-09-27-loan-requests';
 import { comments } from './2026-09-27-comments';
+import { readingFeed } from './2026-09-29-reading-feed';
 
 /**
  * Every change to the database schema, in the order it was made; the API applies the pending ones
@@ -20,4 +21,5 @@ export const migrations: Migration[] = [
   friends,
   loanRequests,
   comments,
+  readingFeed,
 ];

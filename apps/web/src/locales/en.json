@@ -147,7 +147,8 @@
       "rating": "Rating",
       "startedAt": "Started on",
       "finishedAt": "Finished on",
-      "notes": "Notes"
+      "notes": "Notes",
+      "review": "Review for friends"
     },
     "readingStatus": {
       "none": "No status",
@@ -169,6 +170,9 @@
     },
     "reading": "Reading",
     "notesPlaceholder": "What you liked, a quote, who to recommend it to…",
+    "reviewPlaceholder": "A few words about the book for your friends…",
+    "reviewHint": "Friends see it with the book and in News. Your notes stay yours.",
+    "reviewUnseenHint": "Friends won't see the review now: the book is hidden, or your library isn't shared.",
     "savedWithoutShelves": "The book is saved, but its shelves could not be changed.",
     "duplicate": "This book is in your library already: “{title}”.",
     "openDuplicate": "Open",
@@ -588,7 +592,8 @@
       "loanRequest": "{name} would like to borrow “{book}”",
       "loanRequestAccepted": "{name} will lend you “{book}”",
       "loanRequestDeclined": "{name} can't lend you “{book}” right now",
-      "comment": "{name} commented on “{book}”"
+      "comment": "{name} commented on “{book}”",
+      "recommendation": "{name} recommends “{book}”"
     }
   },
   "friends": {
@@ -645,7 +650,7 @@
       "shareLibrary": "Share my library with friends",
       "shareLibraryHint": "Friends see your books and what you're reading. Single books can be hidden.",
       "seenTitle": "Friends see",
-      "seen": "Your books (cover, title, author), shelves, reading status and ratings, what you read and whether a book is at home.",
+      "seen": "Books (cover, title, author), shelves, reading status, ratings and reviews, what you are reading and whether a book is at home.",
       "privateTitle": "They never see",
       "private": "Your notes, who has which book, your contacts, your e-mail and books hidden from friends.",
       "emailNotifications": "E-mails about requests",
@@ -744,5 +749,42 @@
     "deleted": "The comment is deleted.",
     "edited": "edited",
     "actions": "Comment actions ({name})"
+  },
+  "feed": {
+    "tab": "News",
+    "all": "All news",
+    "emptyTitle": "No news yet",
+    "empty": "When friends who share their library start a book, finish one or add one they want to read, you will see it here.",
+    "kinds": {
+      "started": "{name} is reading",
+      "finished": "{name} finished",
+      "wantsToRead": "{name} wants to read"
+    },
+    "comments": "no comments | {count} comment | {count} comments",
+    "friendsOnBook": "Friends on this book",
+    "reviewBy": "— {name}",
+    "wantToRead": "I want to read it",
+    "inYourLibrary": "It is in your library",
+    "copied": "“{title}” is in your library, among the books you want to read.",
+    "alreadyYours": "You have this book already."
+  },
+  "recommendations": {
+    "action": "Recommend to friends",
+    "title": "Recommend a book",
+    "hint": "Who should read “{title}”? They will hear through the bell.",
+    "to": "To",
+    "toPlaceholder": "Pick friends",
+    "pickFriends": "Pick at least one friend.",
+    "message": "Message",
+    "messagePlaceholder": "Why should they read it?",
+    "send": "Recommend",
+    "sent": "Your recommendation is on its way.",
+    "incoming": "Recommended to you",
+    "from": "{name} recommends",
+    "quoted": "“{message}”",
+    "take": "I want to read it",
+    "dismiss": "Not now",
+    "taken": "“{title}” is in your library.",
+    "openBook": "Open"
   }
 }

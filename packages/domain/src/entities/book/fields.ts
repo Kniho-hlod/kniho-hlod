@@ -16,6 +16,7 @@ const PUBLISHER_MAX_LENGTH = 200;
 /** Room for any BCP 47 language tag; catalogues send ISO 639-1 codes such as `cs`. */
 const LANGUAGE_MAX_LENGTH = 35;
 const LONG_TEXT_MAX_LENGTH = 5000;
+export const REVIEW_MAX_LENGTH = 2000;
 const PUBLISHED_YEAR_MIN = 1000;
 const PUBLISHED_YEAR_MAX = 2100;
 const PAGE_COUNT_MIN = 1;
@@ -40,6 +41,8 @@ export const bookFields = {
   startedAt: { type: 'DATEONLY' },
   finishedAt: { type: 'DATEONLY' },
   notes: { type: 'TEXT', maxLength: LONG_TEXT_MAX_LENGTH },
+  /** A few words for friends next to the rating; `notes` stay the reader's own. */
+  review: { type: 'TEXT', maxLength: REVIEW_MAX_LENGTH },
   visibility: { type: 'ENUM', values: BOOK_VISIBILITIES, default: DEFAULT_BOOK_VISIBILITY },
   isSample: SAMPLE_FLAG_FIELD,
 } as const satisfies Fields;

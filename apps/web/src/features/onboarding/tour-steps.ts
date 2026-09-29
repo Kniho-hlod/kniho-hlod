@@ -43,8 +43,20 @@ export const TOUR_STEPS: readonly TourStep[] = [
   { key: 'books', route: { name: 'books' }, target: TOUR_TARGETS.addBook, mood: 'watching' },
   { key: 'shelves', route: { name: 'books' }, target: TOUR_TARGETS.shelves, mood: 'watching' },
   { key: 'loans', route: { name: 'loans' }, target: TOUR_TARGETS.lend, mood: 'watching' },
-  { key: 'friends', route: { name: 'friends' }, target: TOUR_TARGETS.friends, mood: 'watching' },
-  { key: 'comments', route: { name: 'friends' }, target: TOUR_TARGETS.comments, mood: 'happy' },
+  // The invitation and the friends' list sit on the friends tab; a reader with friends would
+  // otherwise open on news.
+  {
+    key: 'friends',
+    route: { name: 'friends', query: { tab: 'people' } },
+    target: TOUR_TARGETS.friends,
+    mood: 'watching',
+  },
+  {
+    key: 'comments',
+    route: { name: 'friends', query: { tab: 'people' } },
+    target: TOUR_TARGETS.comments,
+    mood: 'happy',
+  },
   {
     key: 'borrow',
     route: { name: 'loans', query: { tab: 'borrowed' } },

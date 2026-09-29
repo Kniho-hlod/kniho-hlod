@@ -12,6 +12,7 @@ import {
   DEFAULT_FRIENDSHIP_STATUS,
   DEFAULT_LOAN_REQUEST_STATUS,
   DEFAULT_LOCALE,
+  DEFAULT_RECOMMENDATION_STATUS,
   FRIEND_INVITATIONS_PATH,
   FRIEND_REQUESTS_PATH,
   friendInvitationFields,
@@ -21,6 +22,7 @@ import {
   INVITE_PAGE_PATH,
   loanRequestEntity,
   LOCALES,
+  recommendationEntity,
   userEntity,
 } from '@kniho-hlod/domain';
 import type { FriendRequest, FriendRequests, Locale } from '@kniho-hlod/domain';
@@ -293,6 +295,16 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
               [Op.or]: [
                 { requesterId: readerId, lenderId: friendId },
                 { requesterId: friendId, lenderId: readerId },
+              ],
+            },
+          });
+          // So do waiting recommendations; a book already taken into a library stays there.
+          await registry.get(recommendationEntity.config.name).destroy({
+            where: {
+              status: DEFAULT_RECOMMENDATION_STATUS,
+              [Op.or]: [
+                { senderId: readerId, recipientId: friendId },
+                { senderId: friendId, recipientId: readerId },
               ],
             },
           });

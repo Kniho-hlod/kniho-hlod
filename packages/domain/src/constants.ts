@@ -83,6 +83,14 @@ export const LOAN_REQUEST_STATUSES = ['pending', 'accepted', 'declined', 'cancel
 export type LoanRequestStatus = (typeof LOAN_REQUEST_STATUSES)[number];
 export const DEFAULT_LOAN_REQUEST_STATUS: LoanRequestStatus = 'pending';
 
+/**
+ * A book one reader recommended to a friend: waiting, `accepted` (the friend put it in their
+ * library) or `dismissed`.
+ */
+export const RECOMMENDATION_STATUSES = ['pending', 'accepted', 'dismissed'] as const;
+export type RecommendationStatus = (typeof RECOMMENDATION_STATUSES)[number];
+export const DEFAULT_RECOMMENDATION_STATUS: RecommendationStatus = 'pending';
+
 /** What a notification in the bell tells the reader. */
 export const NOTIFICATION_KINDS = [
   'friendRequest',
@@ -91,6 +99,7 @@ export const NOTIFICATION_KINDS = [
   'loanRequestAccepted',
   'loanRequestDeclined',
   'comment',
+  'recommendation',
 ] as const;
 export type NotificationKind = (typeof NOTIFICATION_KINDS)[number];
 

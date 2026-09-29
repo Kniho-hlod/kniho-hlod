@@ -44,8 +44,8 @@ export interface FriendLibrary {
   /** The friend's books their friends may see: not hidden and not the tour's samples. */
   sharedBooks(friendId: string): SharedBooksWhere;
   /**
-   * Books as a friend (`readerId`) sees them: details, cover, shelves, at home or not, and the
-   * reader's own waiting request — nothing private.
+   * Books as a friend (`readerId`) sees them: details, cover, shelves, at home or not, the
+   * reader's own waiting request and own copy — nothing private.
    */
   toFriendBooks(books: Row[], readerId: string): Promise<FriendBook[]>;
   /** What each of these (sharing) friends is reading now, a few books each. */
@@ -68,15 +68,18 @@ function numberOrNull(value: unknown): number | null {
 function toFriendBook(
   book: Plain,
   lentUntil: Map<string, string | null>,
-  myRequests: Map<string, string>
+  myRequests: Map<string, string>,
+  myCopies: Map<string, string>
 ): FriendBook {
   const id = String(book.id);
+  const isbn = stringOrNull(book.isbn);
+  const myCopyId = isbn === null ? undefined : myCopies.get(isbn);
   return {
     id,
     title: String(book.title),
     author: stringOrNull(book.author),
     cover: (book.cover as FileDto | null) ?? null,
-    isbn: stringOrNull(book.isbn),
+    isbn,
     publisher: stringOrNull(book.publisher),
     publishedYear: numberOrNull(book.publishedYear),
     pageCount: numberOrNull(book.pageCount),
@@ -84,6 +87,7 @@ function toFriendBook(
     description: stringOrNull(book.description),
     readingStatus: book.readingStatus as ReadingStatus,
     rating: numberOrNull(book.rating),
+    review: stringOrNull(book.review),
     startedAt: stringOrNull(book.startedAt),
     finishedAt: stringOrNull(book.finishedAt),
     shelves: (book.shelves as FriendShelf[]).map(({ id: shelfId, name, color }) => ({
@@ -93,6 +97,7 @@ function toFriendBook(
     })),
     lent: lentUntil.has(id) ? { dueAt: lentUntil.get(id) ?? null } : null,
     myRequest: myRequests.has(id) ? { id: myRequests.get(id) ?? '' } : null,
+    myCopy: myCopyId === undefined ? null : { id: myCopyId },
   };
 }
 
@@ -132,6 +137,22 @@ export function createFriendLibrary(
     );
   }
 
+  /** The reader's own books with these ISBNs: the book id by ISBN. */
+  async function copiesByIsbn(isbns: string[], readerId: string): Promise<Map<string, string>> {
+    if (isbns.length === 0) return new Map();
+    const own = await books().findAll({
+      where: { ownerId: readerId, isbn: isbns },
+      attributes: ['id', 'isbn'],
+      order: [['createdAt', 'ASC']],
+    });
+    const byIsbn = new Map<string, string>();
+    for (const book of own) {
+      const isbn = String(book.get('isbn'));
+      if (!byIsbn.has(isbn)) byIsbn.set(isbn, String(book.get('id')));
+    }
+    return byIsbn;
+  }
+
   async function sharedBookIds(friendId: string): Promise<string[]> {
     const shared = await books().findAll({ where: sharedBooks(friendId), attributes: ['id'] });
     return shared.map((book) => String(book.get('id')));
@@ -144,11 +165,13 @@ export function createFriendLibrary(
       if (rows.length === 0) return [];
       const bookIds = rows.map((book) => String(book.get('id')));
       const withShelves = await bookShelves.attachToBooks(await bookCovers.attach(rows));
-      const [lent, myRequests] = await Promise.all([
+      const isbns = rows.flatMap((book) => (book.get('isbn') as string | null) ?? []);
+      const [lent, myRequests, myCopies] = await Promise.all([
         lentUntil(bookIds),
         waitingRequests(bookIds, readerId),
+        copiesByIsbn([...new Set(isbns)], readerId),
       ]);
-      return withShelves.map((book) => toFriendBook(book, lent, myRequests));
+      return withShelves.map((book) => toFriendBook(book, lent, myRequests, myCopies));
     },
 
     async readingNow(friendIds) {
