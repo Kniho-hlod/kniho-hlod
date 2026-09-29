@@ -18,6 +18,21 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.8',
+    date: '2026-09-29',
+    title: { cs: 'Knihomol ukáže i přátele', en: 'The bookworm shows friends too' },
+    notes: {
+      cs: [
+        'Průvodce aplikací má dva nové kroky: komentáře pod knihami přátel a půjčování od přátel.',
+        'Znovu ho spustíte z menu pod avatarem.',
+      ],
+      en: [
+        "The app tour has two new steps: comments under friends' books and borrowing from friends.",
+        'Take it again from the menu under your avatar.',
+      ],
+    },
+  },
+  {
     version: '1.7',
     date: '2026-09-27',
     title: { cs: 'Komentáře', en: 'Comments' },
