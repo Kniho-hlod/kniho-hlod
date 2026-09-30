@@ -212,7 +212,9 @@
     "isbn": "ISBN {isbn}",
     "open": "Otevřít knihu",
     "add": "Přidat do knihovny",
-    "scanAgain": "Skenovat další"
+    "scanAgain": "Skenovat další",
+    "friendsHave": "Mají ji přátelé",
+    "friendAtHome": "Doma, můžete si ji půjčit"
   },
   "validation": {
     "required": "Vyplňte prosím tuto položku.",

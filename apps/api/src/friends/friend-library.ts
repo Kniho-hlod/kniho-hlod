@@ -48,6 +48,8 @@ export interface FriendLibrary {
    * reader's own waiting request and own copy — nothing private.
    */
   toFriendBooks(books: Row[], readerId: string): Promise<FriendBook[]>;
+  /** Due dates of the books out on a loan, by book; a book at home isn't in it. */
+  lentUntil(bookIds: string[]): Promise<Map<string, string | null>>;
   /** What each of these (sharing) friends is reading now, a few books each. */
   readingNow(friendIds: string[]): Promise<Map<string, FriendBookSummary[]>>;
   /** The friend's shelves that hold shared books, in the friend's order. */
@@ -160,6 +162,7 @@ export function createFriendLibrary(
 
   return {
     sharedBooks,
+    lentUntil,
 
     async toFriendBooks(rows, readerId) {
       if (rows.length === 0) return [];

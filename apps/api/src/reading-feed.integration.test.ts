@@ -155,8 +155,28 @@ describe('What friends read', () => {
         rating: 4,
         review: 'Klasika.',
         commentCount: 0,
+        lent: null,
       },
     ]);
+
+    // Lent out, the copy says until when — the reader sees whom to ask and when.
+    const contact = (await as(friend).post('/api/contacts', { name: 'Soused' })).body;
+    const loan = (
+      await as(friend).post('/api/loans', {
+        bookId: friendsCopy,
+        contactId: contact.id,
+        lentAt: '2026-09-01',
+        dueAt: '2026-10-01',
+      })
+    ).body;
+    expect((await as(reader).get(`/api/friend-copies?isbn=${ISBN}`)).body).toMatchObject([
+      { bookId: friendsCopy, lent: { dueAt: '2026-10-01' } },
+    ]);
+    await as(friend).post(`/api/loans/${loan.id}/return`);
+    expect((await as(reader).get(`/api/friend-copies?isbn=${ISBN}`)).body).toMatchObject([
+      { bookId: friendsCopy, lent: null },
+    ]);
+
     expect((await as(reader).get(`/api/friend-copies?isbn=${OTHER_ISBN}`)).body).toEqual([]);
     expect((await as(reader).get('/api/friend-copies?isbn=nonsense')).body).toEqual([]);
 
