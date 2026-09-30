@@ -18,7 +18,7 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
-    version: '1.14',
+    version: '1.15',
     date: '2026-09-30',
     title: { cs: 'Mají ji přátelé?', en: 'Do my friends have it?' },
     notes: {
