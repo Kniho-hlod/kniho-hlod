@@ -212,7 +212,9 @@
     "isbn": "ISBN {isbn}",
     "open": "Open the book",
     "add": "Add to library",
-    "scanAgain": "Scan another"
+    "scanAgain": "Scan another",
+    "friendsHave": "Friends who have it",
+    "friendAtHome": "At home, you can borrow it"
   },
   "validation": {
     "required": "This field is required.",

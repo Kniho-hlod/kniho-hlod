@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.14',
+    date: '2026-09-30',
+    title: { cs: 'Mají ji přátelé?', en: 'Do my friends have it?' },
+    notes: {
+      cs: [
+        '„Mám ji už?“ teď u knihy, kterou nemáte, ukáže i přátele, kteří ji mají, a jestli je u nich doma. Klepnutím otevřete jejich výtisk a rovnou si o něj řeknete.',
+      ],
+      en: [
+        "“Do I have it?” now also shows, for a book you don't have, the friends who do and whether it's at home with them. Tap to open their copy and ask to borrow it.",
+      ],
+    },
+  },
+  {
     version: '1.13',
     date: '2026-09-30',
     title: { cs: 'Opravy podle vašich hlášení', en: 'Fixes from your reports' },

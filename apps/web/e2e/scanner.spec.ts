@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
 import type { IsbnLookupResult } from '@kniho-hlod/domain';
 import { writeBarcodeVideo } from './barcode-video';
-import { skipTour } from './accounts';
+import { API_URL, register, signIn, skipTour, uniqueEmail as accountEmail } from './accounts';
 import { answerFromCzechLibraries } from './czech-libraries';
 
 const PASSWORD = 'correct-horse-battery';
@@ -118,4 +118,47 @@ test('a reader checks by scanning whether a book is in the library', async ({ pa
     await dialog.getByRole('button', { name: 'Otevřít knihu' }).click();
     await expect(page.getByRole('heading', { name: 'Hobit' })).toBeVisible();
   });
+});
+
+test('a scanned book the reader lacks shows the friends who have it to borrow', async ({
+  page,
+  request,
+}) => {
+  await page.route(`**/api/isbn/${ISBN}`, (route) => route.fulfill({ json: FOUND }));
+  await answerFromCzechLibraries(page);
+  const readerEmail = accountEmail('check-reader');
+  const readerToken = await register(request, readerEmail, 'Věra');
+  const janaToken = await register(request, accountEmail('check-friend'), 'Jana Půjčovatelka');
+  const as = (token: string) => ({ Authorization: `Bearer ${token}` });
+  await request.patch(`${API_URL}/api/auth/me`, {
+    headers: as(janaToken),
+    data: { shareLibrary: true },
+  });
+  const created = await request.post(`${API_URL}/api/books`, {
+    headers: as(janaToken),
+    data: { title: 'Hobit', isbn: ISBN },
+  });
+  expect(created.ok()).toBe(true);
+  const invite = await (
+    await request.get(`${API_URL}/api/me/invite`, { headers: as(janaToken) })
+  ).json();
+  expect(
+    (
+      await request.post(`${API_URL}/api/invites/${invite.code}/accept`, {
+        headers: as(readerToken),
+      })
+    ).ok()
+  ).toBe(true);
+
+  await signIn(page, readerEmail);
+  await page.goto('/books');
+  await page.getByRole('button', { name: 'Mám ji už?' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Mám ji už?' });
+  await expect(dialog.getByText('Tuhle knihu zatím nemáte.')).toBeVisible({ timeout: 15_000 });
+  await expect(dialog.getByRole('heading', { name: 'Mají ji přátelé' })).toBeVisible();
+  const janasCopy = dialog.getByRole('button', { name: /Jana Půjčovatelka/ });
+  await expect(janasCopy).toContainText('Doma, můžete si ji půjčit');
+
+  await janasCopy.click();
+  await expect(page.getByRole('button', { name: 'Požádat o vypůjčení' })).toBeVisible();
 });

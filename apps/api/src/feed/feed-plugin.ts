@@ -192,9 +192,11 @@ export function createFeedPlugin({
             attributes: ['id', 'ownerId', 'readingStatus', 'rating', 'review'],
             order: [['updatedAt', 'DESC']],
           });
-          const [friends, comments] = await Promise.all([
+          const copyIds = copies.map((book) => String(book.get('id')));
+          const [friends, comments, lent] = await Promise.all([
             people.summaries(copies.map((book) => String(book.get('ownerId')))),
-            commentCounts(copies.map((book) => String(book.get('id')))),
+            commentCounts(copyIds),
+            friendLibrary.lentUntil(copyIds),
           ]);
           const byFriend = new Map<string, FriendCopy>();
           for (const book of copies) {
@@ -209,6 +211,7 @@ export function createFeedPlugin({
               rating: numberOrNull(book.get('rating')),
               review: stringOrNull(book.get('review')),
               commentCount: comments.get(bookId) ?? 0,
+              lent: lent.has(bookId) ? { dueAt: lent.get(bookId) ?? null } : null,
             });
           }
           res.json([...byFriend.values()]);

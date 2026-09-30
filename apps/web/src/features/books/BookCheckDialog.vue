@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import type { BookWithDetails, IsbnLookupResult } from '@kniho-hlod/domain';
+import type { BookWithDetails, FriendCopy, IsbnLookupResult } from '@kniho-hlod/domain';
 import { fileUrl } from '@/app/api';
+import { formatDate } from '@/app/dates';
+import PersonAvatar from '@/components/PersonAvatar.vue';
+import { useFriendCopies } from '@/features/feed/api';
 import ScannerViewfinder from '@/features/scanner/ScannerViewfinder.vue';
 import { findBookByIsbn, useIsbnLookup } from './api';
 import BookThumbnail from './BookThumbnail.vue';
 
 /**
  * "Mám ji už?" — in a bookshop or a second-hand shop: scan a book's barcode and see at once
- * whether it is in the library already. A book that isn't can go straight into the form.
+ * whether it is in the library already. A book that isn't can go straight into the form, and
+ * friends who share a copy show up, those with it at home first, to borrow it from instead.
  */
 type Check =
   | { phase: 'scanning' }
@@ -32,6 +36,29 @@ const check = ref<Check>({ phase: 'scanning' });
 watch(open, (isOpen) => {
   if (isOpen) check.value = { phase: 'scanning' };
 });
+
+/** Friends are asked only about a book the reader doesn't have. */
+const missingIsbn = computed(() => (check.value.phase === 'missing' ? check.value.isbn : null));
+const { data: friendCopies } = useFriendCopies(missingIsbn);
+const friendsWithCopy = computed(() =>
+  [...(friendCopies.value ?? [])].sort((a, b) => Number(a.lent !== null) - Number(b.lent !== null))
+);
+
+function whereabouts(copy: FriendCopy): string {
+  if (!copy.lent) return t('bookCheck.friendAtHome');
+  return copy.lent.dueAt
+    ? t('friends.library.lentUntil', { date: formatDate(copy.lent.dueAt) })
+    : t('friends.library.lent');
+}
+
+/** The friend's copy, where the reader can ask to borrow it. */
+async function openFriendCopy(copy: FriendCopy): Promise<void> {
+  open.value = false;
+  await router.push({
+    name: 'friend-book',
+    params: { userId: copy.friend.id, bookId: copy.bookId },
+  });
+}
 
 async function describeMissing(isbn: string): Promise<void> {
   try {
@@ -130,6 +157,38 @@ async function addMissingBook(): Promise<void> {
           <p v-else-if="isLookingUp" class="text-sm text-muted">{{ t('bookCheck.lookingUp') }}</p>
           <p class="text-sm text-muted">{{ t('bookCheck.isbn', { isbn: check.isbn }) }}</p>
         </div>
+
+        <section
+          v-if="check.phase === 'missing' && friendsWithCopy.length > 0"
+          class="flex flex-col gap-2"
+        >
+          <h3 class="font-bold text-highlighted">{{ t('bookCheck.friendsHave') }}</h3>
+          <ul class="flex flex-col gap-2">
+            <li v-for="copy in friendsWithCopy" :key="copy.bookId">
+              <button
+                type="button"
+                class="flex w-full items-center gap-3 rounded-xl bg-default p-2 text-left ring-2 ring-line/15 hover:ring-line focus-visible:outline-2 focus-visible:outline-primary"
+                @click="openFriendCopy(copy)"
+              >
+                <PersonAvatar
+                  :name="copy.friend.displayName"
+                  :src="fileUrl(copy.friend.avatar)"
+                  size="sm"
+                />
+                <span class="min-w-0 flex-1 font-semibold break-words text-highlighted">
+                  {{ copy.friend.displayName }}
+                </span>
+                <UBadge
+                  :color="copy.lent ? 'neutral' : 'success'"
+                  variant="subtle"
+                  class="shrink-0"
+                >
+                  {{ whereabouts(copy) }}
+                </UBadge>
+              </button>
+            </li>
+          </ul>
+        </section>
 
         <div class="flex flex-wrap gap-2">
           <UButton v-if="check.phase === 'owned'" icon="i-lucide-book-open" @click="openOwnedBook">

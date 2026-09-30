@@ -132,6 +132,8 @@ export interface FriendCopy {
   rating: number | null;
   review: string | null;
   commentCount: number;
+  /** Out on a loan, due back then (`null`: no date agreed); `null` when at home to borrow. */
+  lent: { dueAt: string | null } | null;
 }
 
 /** The friend's list of books, a page at a time. */

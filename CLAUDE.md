@@ -109,8 +109,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   per book, dated by `finishedAt`/`startedAt` (else the last change) or the day it was added,
   computed at read time, so hiding a book or turning sharing off takes it out at once. Books carry
   `review` (for friends, beside the rating; `notes` stay private), which `FriendBook` whitelists.
-  `GET /api/friend-copies?isbn=` lists friends' shared copies of one book (not under
-  `/api/friends`, whose `:userId` route would catch it); `FriendBook.myCopy` is the reader's copy
+  `GET /api/friend-copies?isbn=` lists friends' shared copies of one book, each with `lent`
+  (`FriendLibrary.lentUntil`; not under `/api/friends`, whose `:userId` route would catch it); `FriendBook.myCopy` is the reader's copy
   by ISBN. `POST /api/friends/:userId/books/:bookId/copy` puts a shared book in the reader's
   library as `want` (`books/copy-book.ts`: details and a copied cover file, never the rating,
   review, notes or dates; 409 when the reader has the ISBN). `recommendation` (no CRUD routes):
@@ -225,7 +225,8 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away;
   `/books/new?isbn=` fills the new book from the catalogues. "Mám ji už?" on the books page
   (`BookCheckDialog`) scans a book and says whether the reader has it (`?isbn=` on books), with
-  "Přidat do knihovny" for one they don't. `CoverPicker` offers "Vyfotit obálku" (the camera, on
+  "Přidat do knihovny" for one they don't, and the friends who share a copy, those with it at
+  home first, each opening their copy to ask for it. `CoverPicker` offers "Vyfotit obálku" (the camera, on
   touch devices) and the form says when the catalogues know a book but have no cover — common for
   Czech editions: knihovny.cz's covers come from Obálky knih, whose API is only for registered
   libraries.
