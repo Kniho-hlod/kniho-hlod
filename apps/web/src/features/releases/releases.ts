@@ -31,6 +31,19 @@ export const RELEASES: readonly Release[] = [
     },
   },
   {
+    version: '1.14',
+    date: '2026-09-30',
+    title: { cs: 'Profilový obrázek z jakékoli fotky', en: 'A profile picture from any photo' },
+    notes: {
+      cs: [
+        'Profilový obrázek teď nahrajete z jakékoli fotky, i té velké z mobilu. Ořízneme ji na čtverec a zmenšíme, takže se rychle načte vám i přátelům.',
+      ],
+      en: [
+        'You can now use any photo as your profile picture, even a large one from your phone. We crop it to a square and shrink it, so it loads quickly for you and your friends.',
+      ],
+    },
+  },
+  {
     version: '1.13',
     date: '2026-09-30',
     title: { cs: 'Opravy podle vašich hlášení', en: 'Fixes from your reports' },

@@ -71,7 +71,7 @@
     "emailReminders": "Email reminders",
     "reminderDaysBefore": "Remind me days before the due date",
     "avatar": "Profile picture",
-    "avatarHint": "JPG, PNG or WebP up to 5 MB.",
+    "avatarHint": "JPG, PNG or WebP. We crop the photo to a square and shrink it.",
     "changePassword": "Change password",
     "passwordChanged": "Your password has been changed.",
     "dangerZone": "Delete account",
