@@ -71,7 +71,7 @@
     "emailReminders": "Upomínky e-mailem",
     "reminderDaysBefore": "Upozornit dní před vrácením",
     "avatar": "Profilový obrázek",
-    "avatarHint": "JPG, PNG nebo WebP do 5 MB.",
+    "avatarHint": "JPG, PNG nebo WebP. Fotku ořízneme na čtverec a zmenšíme.",
     "changePassword": "Změna hesla",
     "passwordChanged": "Heslo je změněné.",
     "dangerZone": "Smazání účtu",

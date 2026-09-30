@@ -6,7 +6,6 @@ import PersonAvatar from '@/components/PersonAvatar.vue';
 import { useSessionStore } from '@/features/auth/session-store';
 import { useAvatar } from './use-avatar';
 
-const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = 'image/jpeg,image/png,image/webp';
 
 const { t } = useI18n();
@@ -16,13 +15,11 @@ const { avatarUrl, uploadAvatar, isUploading } = useAvatar();
 const errorMessage = ref('');
 
 async function selectAvatar(event: Event): Promise<void> {
-  const file = (event.target as HTMLInputElement).files?.[0];
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = '';
   if (!file) return;
   errorMessage.value = '';
-  if (file.size > MAX_AVATAR_BYTES) {
-    errorMessage.value = t('account.avatarHint');
-    return;
-  }
   try {
     await uploadAvatar(file);
   } catch (err) {
