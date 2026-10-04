@@ -61,7 +61,8 @@
     "sessionExpired": "Přihlášení vypršelo, přihlaste se prosím znovu.",
     "send": "Odeslat",
     "showPassword": "Zobrazit heslo",
-    "hidePassword": "Skrýt heslo"
+    "hidePassword": "Skrýt heslo",
+    "privacyNotice": "Jak zacházíme s vašimi údaji"
   },
   "account": {
     "title": "Účet",
@@ -382,10 +383,10 @@
   "admin": {
     "title": "Správa",
     "stats": {
-      "users": "Uživatelé",
+      "users": "Uživatelé celkem",
       "newUsers": "Noví za 30 dní",
       "books": "Knihy",
-      "lent": "Půjčené",
+      "lent": "Půjčené teď",
       "overdue": "Po termínu",
       "remindersOn": "S upomínkami",
       "activeUsers": "Aktivní za 7 dní",
@@ -394,16 +395,22 @@
       "inviters": "S odkazem k pozvání",
       "friendships": "Přátelství",
       "newLoans": "Výpůjčky za 30 dní",
-      "loanRequests": "Žádosti o půjčení"
+      "loanRequests": "Žádosti o půjčení",
+      "admins": "Správci",
+      "contacts": "Lidé, kterým se půjčuje"
+    },
+    "usage": {
+      "title": "Používání",
+      "hint": "Aktivní jsou čtenáři, kteří aplikaci otevřeli v posledních 7 dnech. Vracejí se ti z nich, kteří mají účet déle."
     },
     "groups": {
-      "usage": {
-        "title": "Používání",
-        "hint": "Aktivní jsou čtenáři, kteří aplikaci otevřeli v posledních 7 dnech. Vracejí se ti z nich, kteří mají účet déle."
-      },
-      "library": {
-        "title": "Celkem"
-      }
+      "readers": "Čtenáři",
+      "library": "Knihovny a výpůjčky",
+      "friends": "Přátelé"
+    },
+    "shareOf": {
+      "users": "{percent} % všech čtenářů",
+      "activeUsers": "{percent} % aktivních"
     },
     "sections": {
       "users": {
@@ -821,5 +828,10 @@
     "dismiss": "Teď ne",
     "taken": "„{title}“ je ve vaší knihovně.",
     "openBook": "Otevřít"
+  },
+  "privacy": {
+    "title": "Ochrana soukromí",
+    "updated": "Naposledy upraveno {date}",
+    "link": "Ochrana soukromí"
   }
 }

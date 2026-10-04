@@ -63,6 +63,11 @@ async function signUp(): Promise<void> {
       </UFormField>
 
       <UButton type="submit" :loading="isSubmitting" block>{{ t('auth.signUp') }}</UButton>
+      <p class="text-center text-sm text-muted">
+        <ULink :to="{ name: 'privacy' }">
+          {{ t('auth.privacyNotice') }}
+        </ULink>
+      </p>
     </UForm>
 
     <template #footer>

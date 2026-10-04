@@ -171,6 +171,12 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    // For visitors and readers alike, linked from sign-up and the account page.
+    path: '/privacy',
+    name: 'privacy',
+    component: () => import('@/pages/PrivacyPage.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/pages/NotFoundPage.vue'),
