@@ -64,6 +64,10 @@ export const userFields = {
   shareLibrary: { type: 'BOOLEAN', default: false },
   /** E-mails about friend requests; the bell shows everything either way. */
   emailNotifications: { type: 'BOOLEAN', default: true },
+  /** A weekly e-mail about what friends read and what waits for the reader's answer. */
+  weeklyDigest: { type: 'BOOLEAN', default: true },
+  /** When the last weekly e-mail went out; the job's own, never in a response. */
+  lastDigestSentAt: { type: 'DATE', readOnly: true, writeOnly: true },
   /**
    * The reader's invite link (`/invite/<code>`): whoever opens it can become their friend. Made
    * by the server when first asked for, replaced on request; never in a response of its own.

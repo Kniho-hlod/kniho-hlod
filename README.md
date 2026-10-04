@@ -63,7 +63,9 @@ pnpm --filter @kniho-hlod/api job loan-reminders   # locally; in production: nod
 ```
 
 `loan-reminders` e-mails every reader who wants reminders about the books they lent that are due
-soon or overdue, once a day at most. It uses the API's image and variables and never migrates.
+soon or overdue, once a day at most, then sends the Sunday e-mail about friends to the readers
+whose Sunday it is (`weekly-digest` runs that part alone). It uses the API's image and variables
+and never migrates.
 
 ## Deployment
 
