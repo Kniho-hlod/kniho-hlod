@@ -61,7 +61,8 @@
     "sessionExpired": "Your session expired, please sign in again.",
     "send": "Send",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "privacyNotice": "How we handle your data"
   },
   "account": {
     "title": "Account",
@@ -821,5 +822,10 @@
     "dismiss": "Not now",
     "taken": "“{title}” is in your library.",
     "openBook": "Open"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "updated": "Last updated {date}",
+    "link": "Privacy"
   }
 }

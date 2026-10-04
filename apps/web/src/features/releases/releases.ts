@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.16',
+    date: '2026-10-04',
+    title: { cs: 'Jak zacházíme s vašimi údaji', en: 'How we handle your data' },
+    notes: {
+      cs: [
+        'Nová stránka „Ochrana soukromí“ popisuje, co o vás Kniho-hlod ukládá, kdo co vidí a jaká máte práva. Najdete ji dole na stránce Účet a u registrace.',
+      ],
+      en: [
+        'A new “Privacy” page explains what Kniho-hlod stores about you, who sees what and what your rights are. You will find it at the foot of the Account page and when signing up.',
+      ],
+    },
+  },
+  {
     version: '1.15',
     date: '2026-09-30',
     title: { cs: 'Mají ji přátelé?', en: 'Do my friends have it?' },

@@ -61,7 +61,8 @@
     "sessionExpired": "Přihlášení vypršelo, přihlaste se prosím znovu.",
     "send": "Odeslat",
     "showPassword": "Zobrazit heslo",
-    "hidePassword": "Skrýt heslo"
+    "hidePassword": "Skrýt heslo",
+    "privacyNotice": "Jak zacházíme s vašimi údaji"
   },
   "account": {
     "title": "Účet",
@@ -821,5 +822,10 @@
     "dismiss": "Teď ne",
     "taken": "„{title}“ je ve vaší knihovně.",
     "openBook": "Otevřít"
+  },
+  "privacy": {
+    "title": "Ochrana soukromí",
+    "updated": "Naposledy upraveno {date}",
+    "link": "Ochrana soukromí"
   }
 }

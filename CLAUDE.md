@@ -300,6 +300,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   **A change readers notice adds a release on top of `RELEASES`** — the next number, today's
   date, notes written for readers in Czech and English; `releases.test.ts` checks the order and
   the languages. A fix readers wouldn't notice deploys without one.
+- Privacy (`/privacy`, `PrivacyPage`, for visitors and readers alike, linked from sign-up and
+  `AppVersion`): the text is content in `src/features/privacy/privacy-policy.ts`, per language.
+  **A change to what the app stores or whom it sends data to updates it** and
+  `PRIVACY_POLICY_DATE`.
 - The look ("playful and bold": indigo and orange on warm paper, ink outlines, stuck-on shadows)
   lives in two places: `ui.config.ts` themes Nuxt UI's components (colours, 2px rings on cards
   and fields, solid buttons that press flat) and `src/assets/main.css` holds the tokens — the
