@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.19',
+    date: '2026-10-04',
+    title: { cs: 'Týdenní e-mail od přátel', en: 'A weekly e-mail about friends' },
+    notes: {
+      cs: [
+        'V neděli ráno vám pošleme krátký e-mail, co přátelé se sdílenou knihovnou ten týden začali číst, dočetli nebo si chtějí přečíst. Připomene i žádosti o přátelství, o půjčení knihy a doporučení, které na vás čekají. Když není co říct, nepřijde nic. Vypnout ho můžete v Účtu u sdílení s přáteli.',
+      ],
+      en: [
+        'On Sunday morning we send you a short e-mail about what your friends with a shared library started, finished or want to read that week. It also mentions the friend requests, borrow requests and recommendations waiting for you. With nothing to tell, nothing arrives. You can turn it off in Account, under sharing with friends.',
+      ],
+    },
+  },
+  {
     version: '1.18',
     date: '2026-10-04',
     title: { cs: 'Celá polička najednou', en: 'A whole shelf at once' },

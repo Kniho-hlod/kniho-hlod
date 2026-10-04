@@ -698,6 +698,8 @@
       "private": "Vaše poznámky, komu jste co půjčili, kontakty, e-mail a knihy skryté před přáteli.",
       "emailNotifications": "E-maily o žádostech",
       "emailNotificationsHint": "Pošleme e-mail, když vás někdo požádá o přátelství.",
+      "weeklyDigest": "Týdenní e-mail od přátel",
+      "weeklyDigestHint": "V neděli ráno pošleme, co přátelé čtou a co na vás v aplikaci čeká. Když není co říct, nepošleme nic.",
       "offTitle": "Vaši knihovnu přátelé zatím nevidí",
       "offHint": "Zapněte sdílení, ať přátelé vidí vaše knihy a co čtete.",
       "turnOn": "Sdílet knihovnu",
@@ -709,6 +711,10 @@
         "emailNotifications": {
           "true": "E-maily o žádostech zapnuté.",
           "false": "E-maily o žádostech vypnuté."
+        },
+        "weeklyDigest": {
+          "true": "Týdenní e-mail zapnutý.",
+          "false": "Týdenní e-mail vypnutý."
         }
       }
     },

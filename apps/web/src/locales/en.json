@@ -698,6 +698,8 @@
       "private": "Your notes, who has which book, your contacts, your e-mail and books hidden from friends.",
       "emailNotifications": "E-mails about requests",
       "emailNotificationsHint": "We e-mail you when someone sends you a friend request.",
+      "weeklyDigest": "Weekly e-mail about friends",
+      "weeklyDigestHint": "On Sunday morning we send what your friends are reading and what waits for you in the app. With nothing to tell, we send nothing.",
       "offTitle": "Your friends can't see your library yet",
       "offHint": "Turn sharing on, so friends see your books and what you're reading.",
       "turnOn": "Share my library",
@@ -709,6 +711,10 @@
         "emailNotifications": {
           "true": "E-mails about requests are on.",
           "false": "E-mails about requests are off."
+        },
+        "weeklyDigest": {
+          "true": "The weekly e-mail is on.",
+          "false": "The weekly e-mail is off."
         }
       }
     },
