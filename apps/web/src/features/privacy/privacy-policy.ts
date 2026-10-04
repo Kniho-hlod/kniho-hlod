@@ -25,7 +25,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       title: 'Co o vás ukládáme',
       paragraphs: [
         'Účet: e-mail, jméno, heslo (jen jako otisk, který nejde převést zpět), profilový obrázek, jazyk, časové pásmo a vaše nastavení.',
-        'Knihovnu: knihy, obálky, poličky, stav čtení, hodnocení, recenze a poznámky.',
+        'Knihovnu: knihy, obálky, poličky, stav čtení, hodnocení, recenze a poznámky, a seznam přání.',
         'Lidi, kterým půjčujete, a výpůjčky: jméno a kontakt, které zadáte, a kdy a co jste půjčili.',
         'Přátele: komu jste poslali žádost o přátelství, přátelství, komentáře, žádosti o půjčení, doporučení a upozornění. Když někoho pozvete e-mailem, pošleme mu jedinou zprávu s vaším odkazem a jeho adresu si neukládáme.',
         'Hlášení chyb a nápadů: text, případný snímek obrazovky, stránku, velikost okna a typ prohlížeče.',
@@ -45,6 +45,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       paragraphs: [
         'Přátelé vidí vaši knihovnu, jen když zapnete sdílení, a i pak jen knihy, které před nimi neskryjete, s hodnocením a recenzí. Poznámky, lidi, kterým půjčujete, a výpůjčky nevidí nikdy.',
         'Komentáře pod knihou vidí její majitel a jeho přátelé, kteří knihu vidí.',
+        'Seznam přání vidí přátelé, kteří vidí vaši knihovnu. Když vám některý z nich knihu zamluví jako dárek, ukládáme kdo, ale vy to nevidíte. Ostatní přátelé vidí jen, že je zamluvená.',
       ],
     },
     {
@@ -92,7 +93,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       title: 'What we store about you',
       paragraphs: [
         'Your account: e-mail, name, password (only as a hash that cannot be turned back), profile picture, language, time zone and your settings.',
-        'Your library: books, covers, shelves, reading status, ratings, reviews and notes.',
+        'Your library: books, covers, shelves, reading status, ratings, reviews and notes, and your wish list.',
         'The people you lend to and your loans: the name and contact details you enter, and what you lent when.',
         'Friends: whom you sent a friend request, friendships, comments, borrow requests, recommendations and notifications. When you invite someone by e-mail, we send them a single message with your link and don’t keep their address.',
         'Bug reports and ideas: the text, a screenshot if you add one, the page, the window size and the kind of browser.',
@@ -112,6 +113,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       paragraphs: [
         'Friends see your library only when you turn sharing on, and even then only the books you don’t hide from them, with your rating and review. They never see your notes, the people you lend to or your loans.',
         'Comments under a book are seen by its owner and by the owner’s friends who can see the book.',
+        'Your wish list is seen by the friends who see your library. When one of them claims a book as a present for you, we store who, but you don’t see it. Other friends only see that it is taken.',
       ],
     },
     {

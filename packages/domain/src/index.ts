@@ -125,3 +125,4 @@ export {
   type AdminStats,
   type LibraryStats,
 } from './stats';
+export { FriendWishesService, type FriendWish, type WishGift } from './wishes';

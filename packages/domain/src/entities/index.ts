@@ -11,6 +11,8 @@ import { notificationEntity } from './notification';
 import { loanRequestEntity } from './loan-request';
 import { commentEntity } from './comment';
 import { recommendationEntity } from './recommendation';
+import { wishEntity } from './wish';
+import { wishReservationEntity } from './wish-reservation';
 
 export {
   userEntity,
@@ -89,6 +91,10 @@ export { commentEntity } from './comment';
 export { commentBodyFields, commentFields } from './comment/fields';
 export { recommendationEntity } from './recommendation';
 export { recommendationBodyFields, recommendationFields } from './recommendation/fields';
+export { wishEntity, WISHES_PATH, type Wish } from './wish';
+export { WISH_NOTE_MAX_LENGTH, wishFields } from './wish/fields';
+export { wishReservationEntity } from './wish-reservation';
+export { wishReservationFields } from './wish-reservation/fields';
 
 /** Every entity, for the API's `toModelConfigs(allEntities)`. */
 export const allEntities = {
@@ -105,12 +111,14 @@ export const allEntities = {
   loanRequest: loanRequestEntity,
   comment: commentEntity,
   recommendation: recommendationEntity,
+  wish: wishEntity,
+  wishReservation: wishReservationEntity,
 };
 
 /**
  * Entities whose `/api` CRUD routes are not mounted: book–shelf pairs change through the book,
- * friendships, notifications, loan requests, comments and recommendations through their own
- * routes, which know both sides.
+ * friendships, notifications, loan requests, comments, recommendations and promises to give a
+ * wished-for book through their own routes, which know both sides.
  */
 export const ENTITIES_WITHOUT_CRUD_ROUTES = [
   bookShelfEntity.config.name,
@@ -119,4 +127,5 @@ export const ENTITIES_WITHOUT_CRUD_ROUTES = [
   loanRequestEntity.config.name,
   commentEntity.config.name,
   recommendationEntity.config.name,
+  wishReservationEntity.config.name,
 ];
