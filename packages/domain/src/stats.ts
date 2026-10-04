@@ -4,6 +4,10 @@ export const STATS_PATH = '/api/stats';
 export const ADMIN_STATS_PATH = '/api/admin/stats';
 /** Accounts count as new in the administrators' stats for this many days. */
 export const NEW_USER_DAYS = 30;
+/** Readers count as active in the administrators' stats when they opened the app this many days back. */
+export const ACTIVE_USER_DAYS = 7;
+/** A reader with at least this many books of their own has really started using the app. */
+export const ACTIVATED_BOOK_COUNT = 10;
 
 /** The signed-in reader's library in numbers, for the dashboard (`GET /api/stats`). */
 export interface LibraryStats {
@@ -36,6 +40,20 @@ export interface AdminStats {
   overdue: number;
   /** Reports from readers no administrator has resolved yet. */
   newFeedback: number;
+  /** Readers who signed in or came back to the app in the last `ACTIVE_USER_DAYS` days … */
+  activeUsers: number;
+  /** … of which have had their account longer than that: the ones who return. */
+  returningUsers: number;
+  /** Readers with at least `ACTIVATED_BOOK_COUNT` books of their own. */
+  activatedUsers: number;
+  /** Readers who made an invite link. */
+  inviters: number;
+  /** Accepted friendships. */
+  friendships: number;
+  /** Loans lent in the last `NEW_USER_DAYS` days, returned or not. */
+  newLoans: number;
+  /** Requests to borrow a friend's book, ever. */
+  loanRequests: number;
 }
 
 export class StatsService extends ApiClient {

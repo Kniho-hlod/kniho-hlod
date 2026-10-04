@@ -387,7 +387,23 @@
       "books": "Knihy",
       "lent": "Půjčené",
       "overdue": "Po termínu",
-      "remindersOn": "S upomínkami"
+      "remindersOn": "S upomínkami",
+      "activeUsers": "Aktivní za 7 dní",
+      "returningUsers": "Vracejí se",
+      "activatedUsers": "S 10 a více knihami",
+      "inviters": "S odkazem k pozvání",
+      "friendships": "Přátelství",
+      "newLoans": "Výpůjčky za 30 dní",
+      "loanRequests": "Žádosti o půjčení"
+    },
+    "groups": {
+      "usage": {
+        "title": "Používání",
+        "hint": "Aktivní jsou čtenáři, kteří aplikaci otevřeli v posledních 7 dnech. Vracejí se ti z nich, kteří mají účet déle."
+      },
+      "library": {
+        "title": "Celkem"
+      }
     },
     "sections": {
       "users": {

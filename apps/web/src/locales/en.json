@@ -387,7 +387,23 @@
       "books": "Books",
       "lent": "Lent",
       "overdue": "Overdue",
-      "remindersOn": "With reminders"
+      "remindersOn": "With reminders",
+      "activeUsers": "Active in 7 days",
+      "returningUsers": "Returning",
+      "activatedUsers": "With 10+ books",
+      "inviters": "With an invite link",
+      "friendships": "Friendships",
+      "newLoans": "Loans in 30 days",
+      "loanRequests": "Borrow requests"
+    },
+    "groups": {
+      "usage": {
+        "title": "Usage",
+        "hint": "Active readers opened the app in the last 7 days. Returning ones among them have had their account longer than that."
+      },
+      "library": {
+        "title": "Overall"
+      }
     },
     "sections": {
       "users": {

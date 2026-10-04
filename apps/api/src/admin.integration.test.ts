@@ -187,6 +187,33 @@ describe('Administration', () => {
       lent: 1,
       overdue: 1,
       newFeedback: 0,
+      activeUsers: 4,
+      returningUsers: 0,
+      activatedUsers: 0,
+      inviters: 0,
+      friendships: 0,
+      newLoans: 1,
+      loanRequests: 0,
     });
+  });
+
+  it('counts the readers who return, fill their library and invite friends', async () => {
+    const stats = async () => (await as(admin).get('/api/admin/stats')).body;
+    const before = await stats();
+
+    const regular = await signUp('regular@kniho-hlod.test');
+    for (let i = 1; i <= 10; i += 1) await as(regular).post('/api/books', { title: `Kniha ${i}` });
+    await as(regular).get('/api/me/invite');
+    // An account from before the week, signed in again within it.
+    await app.core.sequelize.query(
+      `UPDATE "users" SET "createdAt" = '2026-09-01T10:00:00Z' WHERE "id" = :id`,
+      { replacements: { id: regular.id } }
+    );
+
+    const after = await stats();
+    expect(after.activeUsers).toBe(before.activeUsers + 1);
+    expect(after.returningUsers).toBe(before.returningUsers + 1);
+    expect(after.activatedUsers).toBe(before.activatedUsers + 1);
+    expect(after.inviters).toBe(before.inviters + 1);
   });
 });
