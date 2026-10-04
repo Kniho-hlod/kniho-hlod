@@ -55,7 +55,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `DELETE /api/auth/me` does) and the database cascades to its library.
   `PUT /api/users/:id/role` changes a role. Neither ever touches the caller's own account, so an
   administrator is always left; a changed role reaches the token on its next renewal.
-  `GET /api/admin/stats` counts the whole app (overdue in the default time zone).
+  `GET /api/admin/stats` counts the whole app (overdue in the default time zone) and how it is
+  used: readers active in the last week (a refresh token issued: sign-in or renewal) and the
+  returning ones among them, readers with 10+ books, invite links, friendships, new loans and
+  borrow requests.
 - Feedback (`src/feedback/`): any signed-in reader sends a bug report or idea with
   `POST /api/feedback` (rate-limited per reader); the plugin stores it with `reporterId` and the
   request's `User-Agent`, e-mails every administrator in their language (a failed e-mail is only

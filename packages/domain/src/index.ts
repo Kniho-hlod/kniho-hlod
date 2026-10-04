@@ -102,6 +102,8 @@ export {
 } from './sample-library';
 export {
   ADMIN_STATS_PATH,
+  ACTIVATED_BOOK_COUNT,
+  ACTIVE_USER_DAYS,
   NEW_USER_DAYS,
   STATS_PATH,
   StatsService,

@@ -10,6 +10,13 @@ interface StatTile {
   icon: string;
 }
 
+interface StatGroup {
+  key: 'usage' | 'library';
+  tiles: StatTile[];
+  /** Whether the group has a line explaining its numbers. */
+  hint?: boolean;
+}
+
 interface Section {
   key: 'users' | 'announcements' | 'feedback';
   icon: string;
@@ -18,13 +25,31 @@ interface Section {
   waiting?: keyof AdminStats;
 }
 
-const STAT_TILES: StatTile[] = [
-  { key: 'users', icon: 'i-lucide-users' },
-  { key: 'newUsers', icon: 'i-lucide-user-plus' },
-  { key: 'books', icon: 'i-lucide-library' },
-  { key: 'lent', icon: 'i-lucide-hand-helping' },
-  { key: 'overdue', icon: 'i-lucide-alarm-clock' },
-  { key: 'remindersOn', icon: 'i-lucide-mail' },
+const STAT_GROUPS: StatGroup[] = [
+  {
+    key: 'usage',
+    hint: true,
+    tiles: [
+      { key: 'activeUsers', icon: 'i-lucide-activity' },
+      { key: 'returningUsers', icon: 'i-lucide-repeat' },
+      { key: 'activatedUsers', icon: 'i-lucide-book-check' },
+      { key: 'inviters', icon: 'i-lucide-link' },
+      { key: 'friendships', icon: 'i-lucide-handshake' },
+      { key: 'newLoans', icon: 'i-lucide-calendar-plus' },
+      { key: 'loanRequests', icon: 'i-lucide-inbox' },
+    ],
+  },
+  {
+    key: 'library',
+    tiles: [
+      { key: 'users', icon: 'i-lucide-users' },
+      { key: 'newUsers', icon: 'i-lucide-user-plus' },
+      { key: 'books', icon: 'i-lucide-library' },
+      { key: 'lent', icon: 'i-lucide-hand-helping' },
+      { key: 'overdue', icon: 'i-lucide-alarm-clock' },
+      { key: 'remindersOn', icon: 'i-lucide-mail' },
+    ],
+  },
 ];
 
 const SECTIONS: Section[] = [
@@ -52,22 +77,40 @@ function waitingCount(section: Section): number {
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
-    <ul class="grid grid-cols-2 gap-3 lg:grid-cols-3">
-      <li
-        v-for="tile in STAT_TILES"
-        :key="tile.key"
-        class="flex flex-col justify-between gap-3 rounded-xl bg-default p-4 ring-2 ring-line"
-      >
-        <span class="flex items-start justify-between gap-2 text-sm font-semibold text-toned">
-          {{ t(`admin.stats.${tile.key}`) }}
-          <UIcon :name="tile.icon" class="size-5 shrink-0" />
-        </span>
-        <USkeleton v-if="isPending" class="h-9 w-12" />
-        <span v-else class="font-display text-4xl leading-none font-extrabold text-highlighted">
-          {{ stats?.[tile.key] ?? 0 }}
-        </span>
-      </li>
-    </ul>
+    <section
+      v-for="group in STAT_GROUPS"
+      :key="group.key"
+      class="flex flex-col gap-3"
+      :aria-labelledby="`admin-stats-${group.key}`"
+    >
+      <div class="flex flex-col gap-1">
+        <h2
+          :id="`admin-stats-${group.key}`"
+          class="font-display text-xl font-bold text-highlighted"
+        >
+          {{ t(`admin.groups.${group.key}.title`) }}
+        </h2>
+        <p v-if="group.hint" class="text-sm text-muted">
+          {{ t(`admin.groups.${group.key}.hint`) }}
+        </p>
+      </div>
+      <ul class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+        <li
+          v-for="tile in group.tiles"
+          :key="tile.key"
+          class="flex flex-col justify-between gap-3 rounded-xl bg-default p-4 ring-2 ring-line"
+        >
+          <span class="flex items-start justify-between gap-2 text-sm font-semibold text-toned">
+            {{ t(`admin.stats.${tile.key}`) }}
+            <UIcon :name="tile.icon" class="size-5 shrink-0" />
+          </span>
+          <USkeleton v-if="isPending" class="h-9 w-12" />
+          <span v-else class="font-display text-4xl leading-none font-extrabold text-highlighted">
+            {{ stats?.[tile.key] ?? 0 }}
+          </span>
+        </li>
+      </ul>
+    </section>
 
     <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="section in SECTIONS" :key="section.key">
