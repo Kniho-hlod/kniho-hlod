@@ -199,7 +199,8 @@
       "clear": "Zrušit filtry"
     },
     "hideFromFriends": "Skrýt před přáteli",
-    "hideFromFriendsHint": "Tuhle knihu přátelé neuvidí, ani když knihovnu sdílíte."
+    "hideFromFriendsHint": "Tuhle knihu přátelé neuvidí, ani když knihovnu sdílíte.",
+    "addInBulk": "Hromadně"
   },
   "bookCheck": {
     "button": "Mám ji už?",
@@ -837,7 +838,6 @@
   "libraryImport": {
     "title": "Import knihovny",
     "intro": "Máte knihy v Goodreads nebo v Databázi knih? Stáhněte si z nich export a nahrajte ho sem. Přeneseme názvy, autory, ISBN, hodnocení, stav čtení i poličky.",
-    "link": "Máte knihy jinde? Importujte je z Goodreads nebo Databáze knih.",
     "button": "Importovat",
     "sources": {
       "goodreads": {
@@ -902,5 +902,18 @@
     "toLibrary": "Do knihovny",
     "more": "Skenovat další",
     "fromImport": "Knihy máte jen na poličce? Naskenujte je rovnou z ní."
+  },
+  "libraryQuickStart": {
+    "title": "Rychle naplňte knihovnu",
+    "intro": "Nemusíte knihy přidávat po jedné.",
+    "dismiss": "Skrýt rychlý start",
+    "import": {
+      "title": "Import ze souboru",
+      "text": "Z Goodreads, Databáze knih nebo vlastní tabulky."
+    },
+    "scan": {
+      "title": "Sken celé poličky",
+      "text": "Přikládejte knihy ke kameře jednu po druhé a přidejte je najednou."
+    }
   }
 }

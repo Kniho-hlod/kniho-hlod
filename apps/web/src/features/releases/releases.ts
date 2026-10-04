@@ -23,10 +23,10 @@ export const RELEASES: readonly Release[] = [
     title: { cs: 'Celá polička najednou', en: 'A whole shelf at once' },
     notes: {
       cs: [
-        'V Knihách je nový „Sken poličky“. Berte knihy jednu po druhé a přikládejte ke kameře čárový kód. Kamera zůstane zapnutá, každou knihu hned dohledáme i s obálkou a na konci je přidáte všechny najednou, klidně rovnou na poličku. Knihy, které už máte, přeskočíme.',
+        'V Knihách je nové tlačítko „Hromadně“ s importem ze souboru a novým skenem celé poličky. Při skenu berte knihy jednu po druhé a přikládejte ke kameře čárový kód. Kamera zůstane zapnutá, každou knihu hned dohledáme i s obálkou a na konci je přidáte všechny najednou, klidně rovnou na poličku. Knihy, které už máte, přeskočíme.',
       ],
       en: [
-        'Books has a new “Scan a shelf”. Take the books one by one and hold each barcode up to the camera. The camera stays on, we look every book up with its cover, and at the end you add them all at once, straight onto a shelf if you like. Books you already have are skipped.',
+        'Books has a new “In bulk” button with the import from a file and a new whole-shelf scan. When scanning, take the books one by one and hold each barcode up to the camera. The camera stays on, we look every book up with its cover, and at the end you add them all at once, straight onto a shelf if you like. Books you already have are skipped.',
       ],
     },
   },

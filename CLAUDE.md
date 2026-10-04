@@ -230,7 +230,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   that no longer hold — only on the reader's own choice, never when a stored book fills the form.
   The book page moves a book on with one tap; any other status waits in its "…" menu.
 - Library import at `/books/import` (`BookImportPage`, `src/features/library-import/`), linked
-  from the empty library and the foot of the books list: CSV (UTF-8, else Windows-1250) or
+  with the shelf scan from the empty library, the books page's "Hromadně" menu and
+  `LibraryQuickStart` (over a library under `QUICK_START_UNTIL` books, until hidden; the choice
+  is kept in `localStorage`): CSV (UTF-8, else Windows-1250) or
   `.xlsx`, read by `src/shared/read-xlsx.ts` with the browser's own unzipping, no spreadsheet
   library; a preview, then parts of ≤ 100 books and ~80 kB (`importBatches`, the API reads
   100 kB at most).

@@ -199,7 +199,8 @@
       "clear": "Clear filters"
     },
     "hideFromFriends": "Hide from friends",
-    "hideFromFriendsHint": "Friends won't see this book, even when you share your library."
+    "hideFromFriendsHint": "Friends won't see this book, even when you share your library.",
+    "addInBulk": "In bulk"
   },
   "bookCheck": {
     "button": "Do I have it?",
@@ -837,7 +838,6 @@
   "libraryImport": {
     "title": "Import your library",
     "intro": "Do you keep your books on Goodreads or Databáze knih? Download an export there and upload it here. We bring over titles, authors, ISBNs, ratings, reading status and shelves.",
-    "link": "Have your books elsewhere? Import them from Goodreads or Databáze knih.",
     "button": "Import",
     "sources": {
       "goodreads": {
@@ -902,5 +902,18 @@
     "toLibrary": "To the library",
     "more": "Scan more",
     "fromImport": "Your books are only on the shelf? Scan them right from it."
+  },
+  "libraryQuickStart": {
+    "title": "Fill your library fast",
+    "intro": "No need to add books one at a time.",
+    "dismiss": "Hide the quick start",
+    "import": {
+      "title": "Import from a file",
+      "text": "From Goodreads, Databáze knih or a table of your own."
+    },
+    "scan": {
+      "title": "Scan a whole shelf",
+      "text": "Hold the books up to the camera one by one and add them all at once."
+    }
   }
 }
