@@ -18,7 +18,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
     {
       title: 'Kdo za Kniho-hlodem stojí',
       paragraphs: [
-        'Kniho-hlod provozuje soukromá osoba jako nevýdělečný projekt a je správcem vašich osobních údajů. Ozvat se můžete přes „Nahlásit chybu nebo nápad“ v nabídce účtu.',
+        'Kniho-hlod provozuje jako nevýdělečný projekt Vojtěch Franěk, který je správcem vašich osobních údajů. Napsat mu můžete na franek.vojtech01@gmail.com, nebo přes „Nahlásit chybu nebo nápad“ v nabídce účtu.',
       ],
     },
     {
@@ -85,7 +85,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
     {
       title: 'Who runs Kniho-hlod',
       paragraphs: [
-        'Kniho-hlod is run by a private individual as a non-profit project, who is the controller of your personal data. You can get in touch through “Report a bug or idea” in the account menu.',
+        'Kniho-hlod is run as a non-profit project by Vojtěch Franěk, the controller of your personal data. You can write to franek.vojtech01@gmail.com or use “Report a bug or an idea” in the account menu.',
       ],
     },
     {

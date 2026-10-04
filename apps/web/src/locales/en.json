@@ -383,10 +383,10 @@
   "admin": {
     "title": "Admin",
     "stats": {
-      "users": "Users",
+      "users": "All users",
       "newUsers": "New in 30 days",
       "books": "Books",
-      "lent": "Lent",
+      "lent": "Lent now",
       "overdue": "Overdue",
       "remindersOn": "With reminders",
       "activeUsers": "Active in 7 days",
@@ -395,16 +395,22 @@
       "inviters": "With an invite link",
       "friendships": "Friendships",
       "newLoans": "Loans in 30 days",
-      "loanRequests": "Borrow requests"
+      "loanRequests": "Borrow requests",
+      "admins": "Administrators",
+      "contacts": "People lent to"
+    },
+    "usage": {
+      "title": "Usage",
+      "hint": "Active readers opened the app in the last 7 days. Returning ones among them have had their account longer than that."
     },
     "groups": {
-      "usage": {
-        "title": "Usage",
-        "hint": "Active readers opened the app in the last 7 days. Returning ones among them have had their account longer than that."
-      },
-      "library": {
-        "title": "Overall"
-      }
+      "readers": "Readers",
+      "library": "Libraries and loans",
+      "friends": "Friends"
+    },
+    "shareOf": {
+      "users": "{percent} % of all readers",
+      "activeUsers": "{percent} % of active ones"
     },
     "sections": {
       "users": {

@@ -5,16 +5,21 @@ import type { AdminStats } from '@kniho-hlod/domain';
 import { describeError } from '@/app/errors';
 import { useAdminStats } from '@/features/admin/api';
 
-interface StatTile {
+/** A headline number: big, with what it is out of underneath. */
+interface Highlight {
   key: keyof AdminStats;
   icon: string;
+  /** The total the number is a share of, shown as "x % of …". */
+  outOf?: keyof AdminStats;
 }
 
+/** A card of related numbers, one per row. */
 interface StatGroup {
-  key: 'usage' | 'library';
-  tiles: StatTile[];
-  /** Whether the group has a line explaining its numbers. */
-  hint?: boolean;
+  key: 'readers' | 'library' | 'friends';
+  icon: string;
+  rows: (keyof AdminStats)[];
+  /** A row whose number wants attention when it isn't zero. */
+  alert?: keyof AdminStats;
 }
 
 interface Section {
@@ -25,31 +30,22 @@ interface Section {
   waiting?: keyof AdminStats;
 }
 
+const HIGHLIGHTS: Highlight[] = [
+  { key: 'activeUsers', icon: 'i-lucide-activity', outOf: 'users' },
+  { key: 'returningUsers', icon: 'i-lucide-repeat', outOf: 'activeUsers' },
+  { key: 'activatedUsers', icon: 'i-lucide-book-check', outOf: 'users' },
+  { key: 'newUsers', icon: 'i-lucide-user-plus' },
+];
+
 const STAT_GROUPS: StatGroup[] = [
-  {
-    key: 'usage',
-    hint: true,
-    tiles: [
-      { key: 'activeUsers', icon: 'i-lucide-activity' },
-      { key: 'returningUsers', icon: 'i-lucide-repeat' },
-      { key: 'activatedUsers', icon: 'i-lucide-book-check' },
-      { key: 'inviters', icon: 'i-lucide-link' },
-      { key: 'friendships', icon: 'i-lucide-handshake' },
-      { key: 'newLoans', icon: 'i-lucide-calendar-plus' },
-      { key: 'loanRequests', icon: 'i-lucide-inbox' },
-    ],
-  },
+  { key: 'readers', icon: 'i-lucide-users', rows: ['users', 'admins', 'remindersOn'] },
   {
     key: 'library',
-    tiles: [
-      { key: 'users', icon: 'i-lucide-users' },
-      { key: 'newUsers', icon: 'i-lucide-user-plus' },
-      { key: 'books', icon: 'i-lucide-library' },
-      { key: 'lent', icon: 'i-lucide-hand-helping' },
-      { key: 'overdue', icon: 'i-lucide-alarm-clock' },
-      { key: 'remindersOn', icon: 'i-lucide-mail' },
-    ],
+    icon: 'i-lucide-library',
+    rows: ['books', 'contacts', 'newLoans', 'lent', 'overdue'],
+    alert: 'overdue',
   },
+  { key: 'friends', icon: 'i-lucide-handshake', rows: ['inviters', 'friendships', 'loanRequests'] },
 ];
 
 const SECTIONS: Section[] = [
@@ -66,6 +62,20 @@ const SECTIONS: Section[] = [
 const { t } = useI18n();
 const { data: stats, error, isPending } = useAdminStats();
 
+function count(key: keyof AdminStats): number {
+  return stats.value?.[key] ?? 0;
+}
+
+/** "x % of …" under a headline number; nothing while the total is zero. */
+function share(highlight: Highlight): string | undefined {
+  if (!highlight.outOf) return undefined;
+  const total = count(highlight.outOf);
+  if (total === 0) return undefined;
+  return t(`admin.shareOf.${highlight.outOf}`, {
+    percent: Math.round((count(highlight.key) / total) * 100),
+  });
+}
+
 function waitingCount(section: Section): number {
   return section.waiting ? (stats.value?.[section.waiting] ?? 0) : 0;
 }
@@ -77,40 +87,69 @@ function waitingCount(section: Section): number {
 
     <UAlert v-if="error" color="error" variant="subtle" :description="describeError(error)" />
 
-    <section
-      v-for="group in STAT_GROUPS"
-      :key="group.key"
-      class="flex flex-col gap-3"
-      :aria-labelledby="`admin-stats-${group.key}`"
-    >
+    <section class="flex flex-col gap-3" aria-labelledby="admin-usage">
       <div class="flex flex-col gap-1">
-        <h2
-          :id="`admin-stats-${group.key}`"
-          class="font-display text-xl font-bold text-highlighted"
-        >
-          {{ t(`admin.groups.${group.key}.title`) }}
+        <h2 id="admin-usage" class="font-display text-xl font-bold text-highlighted">
+          {{ t('admin.usage.title') }}
         </h2>
-        <p v-if="group.hint" class="text-sm text-muted">
-          {{ t(`admin.groups.${group.key}.hint`) }}
-        </p>
+        <p class="text-sm text-muted">{{ t('admin.usage.hint') }}</p>
       </div>
-      <ul class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <li
-          v-for="tile in group.tiles"
-          :key="tile.key"
-          class="flex flex-col justify-between gap-3 rounded-xl bg-default p-4 ring-2 ring-line"
+          v-for="highlight in HIGHLIGHTS"
+          :key="highlight.key"
+          class="flex flex-col gap-2 rounded-xl bg-default p-4 ring-2 ring-line"
         >
           <span class="flex items-start justify-between gap-2 text-sm font-semibold text-toned">
-            {{ t(`admin.stats.${tile.key}`) }}
-            <UIcon :name="tile.icon" class="size-5 shrink-0" />
+            {{ t(`admin.stats.${highlight.key}`) }}
+            <UIcon :name="highlight.icon" class="size-5 shrink-0" />
           </span>
           <USkeleton v-if="isPending" class="h-9 w-12" />
           <span v-else class="font-display text-4xl leading-none font-extrabold text-highlighted">
-            {{ stats?.[tile.key] ?? 0 }}
+            {{ count(highlight.key) }}
+          </span>
+          <span v-if="!isPending && share(highlight)" class="text-xs text-muted">
+            {{ share(highlight) }}
           </span>
         </li>
       </ul>
     </section>
+
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <section
+        v-for="group in STAT_GROUPS"
+        :key="group.key"
+        class="flex flex-col gap-2 rounded-xl bg-default p-4 ring-2 ring-line"
+        :aria-labelledby="`admin-stats-${group.key}`"
+      >
+        <h2
+          :id="`admin-stats-${group.key}`"
+          class="flex items-center gap-2 font-display font-bold text-highlighted"
+        >
+          <UIcon :name="group.icon" class="size-5 text-toned" />
+          {{ t(`admin.groups.${group.key}`) }}
+        </h2>
+        <dl class="flex flex-col divide-y-2 divide-line/10">
+          <div
+            v-for="row in group.rows"
+            :key="row"
+            class="flex items-baseline justify-between gap-3 py-1.5"
+          >
+            <dt class="text-sm text-toned">{{ t(`admin.stats.${row}`) }}</dt>
+            <dd>
+              <USkeleton v-if="isPending" class="h-5 w-8" />
+              <span
+                v-else
+                class="font-display text-lg font-bold"
+                :class="row === group.alert && count(row) > 0 ? 'text-error' : 'text-highlighted'"
+              >
+                {{ count(row) }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </div>
 
     <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="section in SECTIONS" :key="section.key">
