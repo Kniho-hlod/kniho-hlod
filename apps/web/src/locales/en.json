@@ -833,5 +833,49 @@
     "title": "Privacy",
     "updated": "Last updated {date}",
     "link": "Privacy"
+  },
+  "libraryImport": {
+    "title": "Import your library",
+    "intro": "Do you keep your books on Goodreads or Databáze knih? Download an export there and upload it here. We bring over titles, authors, ISBNs, ratings, reading status and shelves.",
+    "link": "Have your books elsewhere? Import them from Goodreads or Databáze knih.",
+    "button": "Import",
+    "sources": {
+      "goodreads": {
+        "title": "From Goodreads",
+        "steps": "On goodreads.com open My Books → Import and export (bottom left) → Export Library. Download the CSV file and upload it here."
+      },
+      "databazeKnih": {
+        "title": "From Databáze knih",
+        "steps": "On databazeknih.cz open your library and download it with the export button as an Excel table (.xlsx), then upload it here. Any other table works too if it has a Title column."
+      }
+    },
+    "pick": "Choose a CSV or Excel file",
+    "pickHint": "The file stays on your device. We only send the books we find in it.",
+    "noTitleColumn": "We found no column with book titles. The table should have a heading such as Title or Název.",
+    "unreadable": "We can't read this file. Please upload a CSV file or an Excel table (.xlsx).",
+    "noBooks": "There are no books in the table.",
+    "found": "no books | We found {count} book | We found {count} books | We found {count} books",
+    "format": {
+      "goodreads": "Goodreads export",
+      "table": "Table of books"
+    },
+    "skippedRows": "no rows | {count} row without a title will be left out | {count} rows without a title will be left out | {count} rows without a title will be left out",
+    "summary": {
+      "read": "none read | {count} read | {count} read | {count} read",
+      "reading": "none reading | {count} reading | {count} reading | {count} reading",
+      "want": "none wanted | {count} want to read | {count} want to read | {count} want to read",
+      "withIsbn": "none with ISBN | {count} with ISBN | {count} with ISBN | {count} with ISBN",
+      "shelves": "no shelves | {count} shelf | {count} shelves | {count} shelves"
+    },
+    "more": "no more | and {count} more | and {count} more | and {count} more",
+    "duplicatesNote": "Books already in your library (the same ISBN, or the same title and author) are skipped, so you can safely run the import again.",
+    "start": "Import | Import {count} book | Import {count} books | Import {count} books",
+    "otherFile": "Choose another file",
+    "importing": "Importing… {done} of {total}",
+    "done": "Nothing new to add | We added {count} book | We added {count} books | We added {count} books",
+    "duplicates": "none | You already had {count} book, so we skipped it. | You already had {count} books, so we skipped them. | You already had {count} books, so we skipped them.",
+    "shelvesCreated": "no shelves | We made {count} new shelf. | We made {count} new shelves. | We made {count} new shelves.",
+    "toLibrary": "To the library",
+    "another": "Import another file"
   }
 }

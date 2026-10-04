@@ -833,5 +833,49 @@
     "title": "Ochrana soukromí",
     "updated": "Naposledy upraveno {date}",
     "link": "Ochrana soukromí"
+  },
+  "libraryImport": {
+    "title": "Import knihovny",
+    "intro": "Máte knihy v Goodreads nebo v Databázi knih? Stáhněte si z nich export a nahrajte ho sem. Přeneseme názvy, autory, ISBN, hodnocení, stav čtení i poličky.",
+    "link": "Máte knihy jinde? Importujte je z Goodreads nebo Databáze knih.",
+    "button": "Importovat",
+    "sources": {
+      "goodreads": {
+        "title": "Z Goodreads",
+        "steps": "Na goodreads.com otevřete My Books → Import and export (vlevo dole) → Export Library. Stáhněte soubor CSV a nahrajte ho sem."
+      },
+      "databazeKnih": {
+        "title": "Z Databáze knih",
+        "steps": "Na databazeknih.cz otevřete svou knihovnu a stáhněte ji tlačítkem pro export jako tabulku Excel (.xlsx), tu pak nahrajte sem. Funguje i jiná tabulka, pokud má sloupec Název."
+      }
+    },
+    "pick": "Vyberte soubor CSV nebo Excel",
+    "pickHint": "Soubor zůstane ve vašem zařízení. Posíláme jen knihy, které v něm najdeme.",
+    "noTitleColumn": "V tabulce jsme nenašli sloupec s názvy knih. Mělo by v ní být záhlaví s Title nebo Název.",
+    "unreadable": "Tenhle soubor neumíme přečíst. Nahrajte prosím CSV nebo tabulku Excel (.xlsx).",
+    "noBooks": "V tabulce nejsou žádné knihy.",
+    "found": "žádná kniha | Našli jsme {count} knihu | Našli jsme {count} knihy | Našli jsme {count} knih",
+    "format": {
+      "goodreads": "Export z Goodreads",
+      "table": "Tabulka knih"
+    },
+    "skippedRows": "žádný řádek | {count} řádek bez názvu vynecháme | {count} řádky bez názvu vynecháme | {count} řádků bez názvu vynecháme",
+    "summary": {
+      "read": "žádná přečtená | {count} přečtená | {count} přečtené | {count} přečtených",
+      "reading": "žádná rozečtená | {count} rozečtená | {count} rozečtené | {count} rozečtených",
+      "want": "žádná | {count} chci si přečíst | {count} chci si přečíst | {count} chci si přečíst",
+      "withIsbn": "žádná s ISBN | {count} s ISBN | {count} s ISBN | {count} s ISBN",
+      "shelves": "žádná polička | {count} polička | {count} poličky | {count} poliček"
+    },
+    "more": "žádná další | a {count} další | a {count} další | a {count} dalších",
+    "duplicatesNote": "Knihy, které už v knihovně máte (stejné ISBN, nebo název a autor), přeskočíme. Import tak můžete klidně spustit znovu.",
+    "start": "Importovat | Importovat {count} knihu | Importovat {count} knihy | Importovat {count} knih",
+    "otherFile": "Vybrat jiný soubor",
+    "importing": "Importuji… {done} z {total}",
+    "done": "Nic nového k přidání | Přidali jsme {count} knihu | Přidali jsme {count} knihy | Přidali jsme {count} knih",
+    "duplicates": "žádná | {count} knihu už jste měli, tu jsme přeskočili. | {count} knihy už jste měli, ty jsme přeskočili. | {count} knih už jste měli, ty jsme přeskočili.",
+    "shelvesCreated": "žádná polička | Založili jsme {count} novou poličku. | Založili jsme {count} nové poličky. | Založili jsme {count} nových poliček.",
+    "toLibrary": "Do knihovny",
+    "another": "Importovat další soubor"
   }
 }

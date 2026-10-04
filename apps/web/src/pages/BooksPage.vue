@@ -126,9 +126,19 @@ useOnVisible(listEnd, loadMore);
       :icon="isFiltered ? 'i-lucide-search-x' : 'i-lucide-library'"
       :title="emptyText"
     >
-      <UButton v-if="!isFiltered" :to="{ name: 'book-new' }" icon="i-lucide-plus">
-        {{ t('books.add') }}
-      </UButton>
+      <template v-if="!isFiltered">
+        <UButton :to="{ name: 'book-new' }" icon="i-lucide-plus">
+          {{ t('books.add') }}
+        </UButton>
+        <UButton
+          :to="{ name: 'book-import' }"
+          icon="i-lucide-file-up"
+          color="neutral"
+          variant="outline"
+        >
+          {{ t('libraryImport.button') }}
+        </UButton>
+      </template>
     </EmptyState>
 
     <template v-else>
@@ -149,6 +159,13 @@ useOnVisible(listEnd, loadMore);
       >
         {{ t('books.loadMore') }}
       </UButton>
+      <ULink
+        v-if="!hasNextPage && !isFiltered"
+        :to="{ name: 'book-import' }"
+        class="self-center text-sm"
+      >
+        {{ t('libraryImport.link') }}
+      </ULink>
     </template>
 
     <BookCheckDialog v-if="canScan" v-model:open="isCheckingBook" />

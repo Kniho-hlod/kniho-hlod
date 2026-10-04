@@ -42,6 +42,21 @@ export {
   type IsbnLookupResult,
 } from './isbn';
 export {
+  fitImportedBook,
+  importKeys,
+  LIBRARY_IMPORT_MAX_BOOKS,
+  LIBRARY_IMPORT_PATH,
+  LibraryImportService,
+  plainWords,
+  readLibraryTable,
+  type ImportedBook,
+  type ImportFormat,
+  type LibraryImportRequest,
+  type LibraryImportResult,
+  type ParsedLibrary,
+} from './library-import/library-import';
+export { parseCsv } from './library-import/csv';
+export {
   FRIEND_BOOK_QUERY,
   FRIEND_COPIES_PATH,
   FRIEND_INVITATIONS_PATH,

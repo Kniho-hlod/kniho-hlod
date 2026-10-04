@@ -15,6 +15,7 @@ import { FeedService } from './feed';
 import { FriendsService } from './friends';
 import { IsbnService } from './isbn-service';
 import { LendingService } from './lending';
+import { LibraryImportService } from './library-import/library-import';
 import { NotificationsService } from './notifications';
 import { RecommendationsService } from './recommendations';
 import { SampleLibraryService } from './sample-library';
@@ -41,6 +42,7 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       comments: CommentsService,
       feed: FeedService,
       recommendations: RecommendationsService,
+      libraryImport: LibraryImportService,
     },
     baseUrl,
     tokenSource

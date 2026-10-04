@@ -48,6 +48,7 @@ import { createBookShelves } from './shelves/book-shelves';
 import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
 import { createShelfNameCheck } from './shelves/shelf-names';
 import { createSampleLibraryPlugin } from './sample-library/sample-library-plugin';
+import { createLibraryImportPlugin } from './library-import/library-import-plugin';
 import { createStatsPlugin } from './stats/stats-plugin';
 import { createFriendDescriber } from './friends/describe-friends';
 import { createFriendLibrary } from './friends/friend-library';
@@ -323,6 +324,11 @@ export function buildAppConfig(
         jwtSecret: environment.jwtSecret,
         registry: models,
         bookCovers,
+        now: overrides.now,
+      }),
+      createLibraryImportPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
         now: overrides.now,
       }),
     ],
