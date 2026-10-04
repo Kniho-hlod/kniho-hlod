@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.20',
+    date: '2026-10-04',
+    title: { cs: 'Seznam přání', en: 'A wish list' },
+    notes: {
+      cs: [
+        'V Knihách je nový „Seznam přání“ na knihy, které byste rádi měli. Přátelé, kteří vidí vaši knihovnu, ho najdou na vaší stránce. Uvidí, jestli knihu mají a můžou vám ji půjčit, a tlačítkem „Daruji ji“ si ji zamluví jako dárek. Vy se nedozvíte kdo, ostatní přátelé jen to, že je zamluvená. Když knihu dostanete, klepněte na „Mám ji“ a přesune se do knihovny.',
+      ],
+      en: [
+        'Books has a new “Wish list” for the books you would like to have. Friends who see your library find it on your page. They see whether they have the book to lend you, and with “I’ll give it” they claim it as a present. You won’t find out who, and other friends only see that it is taken. When you get the book, tap “Got it” and it moves into your library.',
+      ],
+    },
+  },
+  {
     version: '1.18',
     date: '2026-10-04',
     title: { cs: 'Celá polička najednou', en: 'A whole shelf at once' },

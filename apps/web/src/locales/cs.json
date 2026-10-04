@@ -915,5 +915,45 @@
       "title": "Sken celé poličky",
       "text": "Přikládejte knihy ke kameře jednu po druhé a přidejte je najednou."
     }
+  },
+  "wishes": {
+    "title": "Seznam přání",
+    "hint": "Knihy, které byste rádi měli. Přátelé, kteří vidí vaši knihovnu, je uvidí taky a můžou vám je půjčit nebo darovat. Kdo vám co daruje, se nedozvíte.",
+    "notSharedTitle": "Přátelé váš seznam zatím nevidí",
+    "notSharedHint": "Seznam přání uvidí přátelé, se kterými sdílíte knihovnu. Sdílení zapnete v Účtu.",
+    "openSharing": "Otevřít Účet",
+    "addTitle": "Přidat přání",
+    "add": "Přidat",
+    "added": "„{title}“ je na seznamu přání.",
+    "saved": "Přání je uložené.",
+    "deleted": "Přání je smazané.",
+    "editTitle": "Upravit přání",
+    "deleteTitle": "Smazat přání",
+    "deleteConfirm": "Opravdu smazat „{title}“ ze seznamu přání?",
+    "fulfil": "Mám ji",
+    "fulfilled": "„{title}“ je ve vaší knihovně. Hezké čtení!",
+    "emptyTitle": "Seznam přání je prázdný",
+    "empty": "Přidejte knihy, které byste rádi měli. Přátelům to usnadní výběr dárku.",
+    "lookUp": "Dohledat",
+    "isbnPlaceholder": "Nepovinné, doplní název a autora",
+    "noteHint": "Třeba vydání, překlad nebo proč ji chcete. Uvidí to přátelé.",
+    "fields": {
+      "isbn": "ISBN",
+      "title": "Název",
+      "author": "Autor",
+      "note": "Poznámka pro přátele"
+    },
+    "friend": {
+      "title": "Seznam přání",
+      "hint": "{name} se nedozví, kdo co daruje. Ostatní přátelé uvidí jen, že je kniha zamluvená.",
+      "give": "Daruji ji",
+      "given": "„{title}“ máte zamluvenou jako dárek.",
+      "youGive": "Darujete vy",
+      "cancel": "Zrušit",
+      "cancelled": "Dárek už nemáte zamluvený.",
+      "someoneGives": "Už ji někdo daruje",
+      "takenMeanwhile": "Tuhle knihu už mezitím daruje někdo jiný.",
+      "youHaveIt": "Máte ji v knihovně a můžete ji půjčit"
+    }
   }
 }

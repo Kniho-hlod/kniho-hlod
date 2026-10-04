@@ -22,6 +22,7 @@ import {
 import type { FriendBookFilters } from '@/features/friends/api';
 import FriendBookCard from '@/features/friends/FriendBookCard.vue';
 import ShelfDot from '@/features/shelves/ShelfDot.vue';
+import FriendWishes from '@/features/wishes/FriendWishes.vue';
 import { useDebounced } from '@/shared/use-debounced';
 import { useOnVisible } from '@/shared/use-on-visible';
 
@@ -171,6 +172,8 @@ async function confirmUnfriend(): Promise<void> {
       />
 
       <template v-else>
+        <FriendWishes :user-id="userId" :friend-name="friend.displayName" />
+
         <nav
           v-if="shelves && shelves.length > 0"
           :aria-label="t('shelves.title')"

@@ -121,6 +121,13 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   message, once per waiting book and friend, and rings their bell; `GET` lists the waiting ones,
   `…/:id/accept` copies the book (or finds the reader's copy), `…/dismiss` sets it aside. Ending a
   friendship drops the waiting ones.
+- Wish lists (`src/wishes/`): `wish` (title, author, ISBN stored as ISBN-13 like a book's, note;
+  `owner` CRUD at `/api/wishes`); `POST /api/wishes/:id/fulfil` moves one into the library (a new
+  book) in one transaction. Friends who see the library (`shareLibrary`) read it at
+  `GET /api/friends/:userId/wishes` (each with `myCopy` by ISBN and `gift`: `mine`,
+  `someoneElse` or `null`) and promise a book with `PUT …/wishes/:wishId/gift` (409 when taken;
+  `DELETE` takes it back). `wishReservation` (no CRUD routes, one giver per wish) is never shown
+  to the wish's owner; ending a friendship drops the promises between the two.
 - Release notes: `user.lastSeenRelease` (a profile field) is the newest release whose notes the
   reader has seen; migration `2026-09-26-release-notes` set readers who already used the app to
   `1.3`, the release before the notes. The releases themselves live in the web app.
@@ -297,6 +304,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `?tab=borrowed` (`BorrowedList`: books from friends and the reader's waiting requests), "Mám
   půjčené od přátel" on the home page. The Loans tab's badge counts overdue loans and waiting
   requests; a contact linked to an account says "Přítel v Kniho-hlodu".
+- Wish list (`src/features/wishes/`): `/books/wishes` (`WishlistPage`, linked beside the Books
+  heading: add with an optional ISBN lookup, "Mám ji", edit and delete behind "…") and
+  `FriendWishes` on a friend's page ("Daruji ji", "Máte ji v knihovně"), hidden while empty.
 - Comments (`src/features/comments/BookComments.vue`): under a friend's book, and under the
   reader's own book — inviting the first comment while friends see the book, otherwise shown only
   when some exist (`whenEmpty: 'invite' | 'hide'`). Edit and delete wait behind "…".

@@ -915,5 +915,45 @@
       "title": "Scan a whole shelf",
       "text": "Hold the books up to the camera one by one and add them all at once."
     }
+  },
+  "wishes": {
+    "title": "Wish list",
+    "hint": "Books you would like to have. Friends who see your library see them too and can lend or give them to you. You won't find out who gives you what.",
+    "notSharedTitle": "Your friends can't see your list yet",
+    "notSharedHint": "Your wish list is seen by the friends you share your library with. Turn sharing on in Account.",
+    "openSharing": "Open Account",
+    "addTitle": "Add a wish",
+    "add": "Add",
+    "added": "“{title}” is on your wish list.",
+    "saved": "The wish is saved.",
+    "deleted": "The wish is deleted.",
+    "editTitle": "Edit the wish",
+    "deleteTitle": "Delete the wish",
+    "deleteConfirm": "Really delete “{title}” from your wish list?",
+    "fulfil": "Got it",
+    "fulfilled": "“{title}” is in your library. Happy reading!",
+    "emptyTitle": "Your wish list is empty",
+    "empty": "Add the books you would like to have. It makes choosing a present easier for your friends.",
+    "lookUp": "Look up",
+    "isbnPlaceholder": "Optional, fills in the title and author",
+    "noteHint": "The edition, the translation or why you want it, say. Friends will see it.",
+    "fields": {
+      "isbn": "ISBN",
+      "title": "Title",
+      "author": "Author",
+      "note": "A note for friends"
+    },
+    "friend": {
+      "title": "Wish list",
+      "hint": "{name} won't find out who gives what. Other friends only see that a book is taken.",
+      "give": "I'll give it",
+      "given": "“{title}” is yours to give.",
+      "youGive": "You give it",
+      "cancel": "Cancel",
+      "cancelled": "You no longer give this book.",
+      "someoneGives": "Someone gives it already",
+      "takenMeanwhile": "Someone else gives this book already.",
+      "youHaveIt": "You have it in your library and can lend it"
+    }
   }
 }
