@@ -18,6 +18,19 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.18',
+    date: '2026-10-04',
+    title: { cs: 'Celá polička najednou', en: 'A whole shelf at once' },
+    notes: {
+      cs: [
+        'V Knihách je nový „Sken poličky“. Berte knihy jednu po druhé a přikládejte ke kameře čárový kód. Kamera zůstane zapnutá, každou knihu hned dohledáme i s obálkou a na konci je přidáte všechny najednou, klidně rovnou na poličku. Knihy, které už máte, přeskočíme.',
+      ],
+      en: [
+        'Books has a new “Scan a shelf”. Take the books one by one and hold each barcode up to the camera. The camera stays on, we look every book up with its cover, and at the end you add them all at once, straight onto a shelf if you like. Books you already have are skipped.',
+      ],
+    },
+  },
+  {
     version: '1.17',
     date: '2026-10-04',
     title: {

@@ -72,7 +72,7 @@ useOnVisible(listEnd, loadMore);
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
       <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
-      <!-- On a phone the actions line up in a grid: the two scans side by side, adding below. -->
+      <!-- On a phone the actions line up in a grid of two columns, the scans first. -->
       <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
         <UButton
           v-if="canScan"
@@ -95,9 +95,20 @@ useOnVisible(listEnd, loadMore);
           {{ t('scanner.scan') }}
         </UButton>
         <UButton
+          v-if="canScan"
+          :to="{ name: 'shelf-scan' }"
+          icon="i-lucide-scan-line"
+          color="neutral"
+          variant="outline"
+          class="justify-center"
+        >
+          {{ t('shelfScan.button') }}
+        </UButton>
+        <UButton
           :to="{ name: 'book-new' }"
           icon="i-lucide-plus"
-          class="col-span-2 justify-center"
+          class="justify-center"
+          :class="{ 'col-span-2': !canScan }"
           :data-tour="TOUR_TARGETS.addBook"
         >
           {{ t('books.add') }}
@@ -137,6 +148,15 @@ useOnVisible(listEnd, loadMore);
           variant="outline"
         >
           {{ t('libraryImport.button') }}
+        </UButton>
+        <UButton
+          v-if="canScan"
+          :to="{ name: 'shelf-scan' }"
+          icon="i-lucide-scan-line"
+          color="neutral"
+          variant="outline"
+        >
+          {{ t('shelfScan.button') }}
         </UButton>
       </template>
     </EmptyState>

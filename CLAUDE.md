@@ -234,6 +234,11 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `.xlsx`, read by `src/shared/read-xlsx.ts` with the browser's own unzipping, no spreadsheet
   library; a preview, then parts of ≤ 100 books and ~80 kB (`importBatches`, the API reads
   100 kB at most).
+- Shelf scan at `/books/scan` (`ShelfScanPage`, `src/features/shelf-scan/`): `ScannerViewfinder`
+  with `continuous` keeps filming and ignores the same barcode for a moment; `createShelfScan`
+  looks each new ISBN up (`lookUpIsbn`) and checks the library (`findBookByIsbn`); unknown books
+  get a typed title, owned ones are left out. "Přidat" creates them one by one through
+  `addScannedBook` (details, the chosen shelves, the catalogue's cover).
 - ISBN scanning (`src/features/scanner/`): the native `BarcodeDetector` where it reads EAN-13,
   else the `barcode-detector` ponyfill, whose `.wasm` is served with the app (not from its default
   CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away;

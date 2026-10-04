@@ -6,6 +6,7 @@ import type { LibraryImportResult, ParsedLibrary } from '@kniho-hlod/domain';
 import { services } from '@/app/api';
 import { describeError } from '@/app/errors';
 import { invalidateLibrary } from '@/app/library-queries';
+import { canUseCamera } from '@/features/scanner/camera-support';
 import { importBatches } from '@/features/library-import/import-batches';
 import {
   LIBRARY_FILE_TYPES,
@@ -16,6 +17,7 @@ import {
 /** How many titles the preview lists before "and N more". */
 const PREVIEW_COUNT = 6;
 const SOURCES = ['goodreads', 'databazeKnih'] as const;
+const canScan = canUseCamera();
 
 const { t } = useI18n();
 const queryClient = useQueryClient();
@@ -204,6 +206,9 @@ function startOver(): void {
         :disabled="isReading"
       />
       <UAlert v-if="readError" color="error" variant="subtle" :description="readError" />
+      <ULink v-if="canScan" :to="{ name: 'shelf-scan' }" class="self-center text-sm">
+        {{ t('shelfScan.fromImport') }}
+      </ULink>
     </template>
   </section>
 </template>

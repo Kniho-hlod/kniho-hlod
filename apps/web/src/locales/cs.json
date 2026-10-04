@@ -877,5 +877,30 @@
     "shelvesCreated": "žádná polička | Založili jsme {count} novou poličku. | Založili jsme {count} nové poličky. | Založili jsme {count} nových poliček.",
     "toLibrary": "Do knihovny",
     "another": "Importovat další soubor"
+  },
+  "shelfScan": {
+    "button": "Sken poličky",
+    "title": "Sken celé poličky",
+    "intro": "Berte knihy z poličky jednu po druhé a přikládejte ke kameře čárový kód ze zadní strany. Na konci je přidáte všechny najednou.",
+    "noCamera": "Na tomhle zařízení kameru nenajdeme. Otevřete Kniho-hlod v telefonu, nebo knihy naimportujte ze souboru.",
+    "empty": "Zatím žádná kniha. Přiložte ke kameře první čárový kód.",
+    "scanned": "Načteno, další knihu!",
+    "scannedAgain": "Tuhle knihu už v seznamu máte.",
+    "shelf": "Dát na poličku (nepovinné)",
+    "looking": "Hledáme v katalozích…",
+    "owned": "Už ji máte v knihovně, nepřidáme ji znovu.",
+    "added": "Přidána do knihovny",
+    "open": "Otevřít",
+    "typeTitle": "Napište název knihy",
+    "typeTitleFor": "Název knihy s ISBN {isbn}",
+    "remove": "Odebrat ze seznamu: {title}",
+    "waiting": "Ještě hledáme…",
+    "addAll": "Přidat knihy | Přidat 1 knihu | Přidat {n} knihy | Přidat {n} knih",
+    "adding": "Přidáváme {done} z {total}…",
+    "done": "Nic jsme nepřidali | Přidali jsme 1 knihu | Přidali jsme {n} knihy | Přidali jsme {n} knih",
+    "failed": "Všechny knihy jsme přidali. | 1 knihu se nepodařilo přidat, zůstala v seznamu. | {n} knihy se nepodařilo přidat, zůstaly v seznamu. | {n} knih se nepodařilo přidat, zůstaly v seznamu.",
+    "toLibrary": "Do knihovny",
+    "more": "Skenovat další",
+    "fromImport": "Knihy máte jen na poličce? Naskenujte je rovnou z ní."
   }
 }
