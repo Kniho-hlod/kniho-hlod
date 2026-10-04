@@ -167,6 +167,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - "Today" is `readerToday(timezone)` from the domain package — the API (return, stats) and the app
   (loan status, default dates) count the same day. `loanStatus(loan, today)` says `active`,
   `dueSoon` (within `DUE_SOON_DAYS`), `overdue` or `returned`.
+- Library import (`src/library-import/`): the app reads another app's export in the browser
+  (`readLibraryTable` in the domain: Goodreads' CSV, Databáze knih's Excel table or any table
+  with a title column, headings matched without accents) and sends `POST /api/library/import`
+  up to `LIBRARY_IMPORT_MAX_BOOKS` books at a time; the server fits each again
+  (`fitImportedBook`), leaves out the reader's books with the same ISBN or title and author
+  (`importKeys`), makes missing shelves and inserts in one transaction.
 - `GET /api/stats` (`src/stats/`) counts books, books being read, contacts and open loans by status.
 - Shelves (`src/shelves/`): `bookShelf` pairs a book with a shelf (both `CASCADE`) and has no CRUD
   routes; `PUT /api/books/:id/shelves { shelfIds }` replaces a book's shelves in one transaction
@@ -223,6 +229,11 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   or end today (`readingDatesForStatus` in the domain) and moving a book back clears the dates
   that no longer hold — only on the reader's own choice, never when a stored book fills the form.
   The book page moves a book on with one tap; any other status waits in its "…" menu.
+- Library import at `/books/import` (`BookImportPage`, `src/features/library-import/`), linked
+  from the empty library and the foot of the books list: CSV (UTF-8, else Windows-1250) or
+  `.xlsx`, read by `src/shared/read-xlsx.ts` with the browser's own unzipping, no spreadsheet
+  library; a preview, then parts of ≤ 100 books and ~80 kB (`importBatches`, the API reads
+  100 kB at most).
 - ISBN scanning (`src/features/scanner/`): the native `BarcodeDetector` where it reads EAN-13,
   else the `barcode-detector` ponyfill, whose `.wasm` is served with the app (not from its default
   CDN) and loads only when a scan starts. `/books/new?scan=1` opens the scanner straight away;

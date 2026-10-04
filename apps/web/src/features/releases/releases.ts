@@ -18,6 +18,22 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.17',
+    date: '2026-10-04',
+    title: {
+      cs: 'Knihovna z Goodreads a Databáze knih',
+      en: 'Your library from Goodreads and Databáze knih',
+    },
+    notes: {
+      cs: [
+        'Knihy už nemusíte přepisovat ručně. V Knihách klepněte na „Importovat“ a nahrajte export z Goodreads (CSV) nebo z Databáze knih (Excel). Přeneseme názvy, autory, ISBN, hodnocení, stav čtení i poličky a knihy, které už máte, přeskočíme.',
+      ],
+      en: [
+        'No more typing your books in by hand. In Books, tap “Import” and upload an export from Goodreads (CSV) or Databáze knih (Excel). We bring over titles, authors, ISBNs, ratings, reading status and shelves, and skip the books you already have.',
+      ],
+    },
+  },
+  {
     version: '1.16',
     date: '2026-10-04',
     title: { cs: 'Jak zacházíme s vašimi údaji', en: 'How we handle your data' },
