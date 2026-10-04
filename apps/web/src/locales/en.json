@@ -199,7 +199,8 @@
       "clear": "Clear filters"
     },
     "hideFromFriends": "Hide from friends",
-    "hideFromFriendsHint": "Friends won't see this book, even when you share your library."
+    "hideFromFriendsHint": "Friends won't see this book, even when you share your library.",
+    "addInBulk": "In bulk"
   },
   "bookCheck": {
     "button": "Do I have it?",
@@ -837,7 +838,6 @@
   "libraryImport": {
     "title": "Import your library",
     "intro": "Do you keep your books on Goodreads or Databáze knih? Download an export there and upload it here. We bring over titles, authors, ISBNs, ratings, reading status and shelves.",
-    "link": "Have your books elsewhere? Import them from Goodreads or Databáze knih.",
     "button": "Import",
     "sources": {
       "goodreads": {
@@ -877,5 +877,43 @@
     "shelvesCreated": "no shelves | We made {count} new shelf. | We made {count} new shelves. | We made {count} new shelves.",
     "toLibrary": "To the library",
     "another": "Import another file"
+  },
+  "shelfScan": {
+    "button": "Scan a shelf",
+    "title": "Scan a whole shelf",
+    "intro": "Take the books off the shelf one by one and hold the barcode on the back up to the camera. At the end you add them all at once.",
+    "noCamera": "We can't find a camera on this device. Open Kniho-hlod on your phone, or import your books from a file.",
+    "empty": "No books yet. Hold the first barcode up to the camera.",
+    "scanned": "Got it, next book!",
+    "scannedAgain": "This book is on the list already.",
+    "shelf": "Put on a shelf (optional)",
+    "looking": "Searching the catalogues…",
+    "owned": "Already in your library, it won't be added again.",
+    "added": "Added to the library",
+    "open": "Open",
+    "typeTitle": "Type the book's title",
+    "typeTitleFor": "Title of the book with ISBN {isbn}",
+    "remove": "Remove from the list: {title}",
+    "waiting": "Still searching…",
+    "addAll": "Add books | Add 1 book | Add {n} books",
+    "adding": "Adding {done} of {total}…",
+    "done": "Nothing was added | Added 1 book | Added {n} books",
+    "failed": "Every book was added. | 1 book couldn't be added and stays on the list. | {n} books couldn't be added and stay on the list.",
+    "toLibrary": "To the library",
+    "more": "Scan more",
+    "fromImport": "Your books are only on the shelf? Scan them right from it."
+  },
+  "libraryQuickStart": {
+    "title": "Fill your library fast",
+    "intro": "No need to add books one at a time.",
+    "dismiss": "Hide the quick start",
+    "import": {
+      "title": "Import from a file",
+      "text": "From Goodreads, Databáze knih or a table of your own."
+    },
+    "scan": {
+      "title": "Scan a whole shelf",
+      "text": "Hold the books up to the camera one by one and add them all at once."
+    }
   }
 }

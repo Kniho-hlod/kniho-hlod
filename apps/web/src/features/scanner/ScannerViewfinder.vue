@@ -22,6 +22,11 @@ const CAMERA_PROBLEMS: Record<string, string> = {
   NotReadableError: 'scanner.cameraBusy',
 };
 
+/** In continuous mode the same barcode is ignored this long: the book is still being held up. */
+const REPEAT_PAUSE_MS = 2_500;
+
+/** `continuous` keeps filming after a barcode is read, for scanning one book after another. */
+const props = defineProps<{ continuous?: boolean }>();
 const emit = defineEmits<{ detected: [isbn: string] }>();
 
 const { t } = useI18n();
@@ -33,6 +38,17 @@ const isStarting = ref(true);
 let stream: MediaStream | undefined;
 let scanTimer: ReturnType<typeof setTimeout> | undefined;
 let isStopped = false;
+let lastIsbn: string | undefined;
+let lastIsbnAt = 0;
+
+/** The same book read again within the pause is the one still held up, not a new scan. */
+function isRepeat(isbn: string): boolean {
+  const now = Date.now();
+  const repeat = isbn === lastIsbn && now - lastIsbnAt < REPEAT_PAUSE_MS;
+  lastIsbn = isbn;
+  lastIsbnAt = now;
+  return repeat;
+}
 
 function describeProblem(err: unknown): string {
   if (err instanceof BarcodeReaderUnavailableError) return t('scanner.readerFailed');
@@ -52,7 +68,9 @@ function scanFrames(reader: BarcodeReader, source: HTMLVideoElement): void {
     if (isStopped) return;
     try {
       const isbn = findIsbn(await reader.detect(source));
-      if (isbn && !isStopped) {
+      if (isbn && !isStopped && props.continuous) {
+        if (!isRepeat(isbn)) emit('detected', isbn);
+      } else if (isbn && !isStopped) {
         stop();
         emit('detected', isbn);
         return;

@@ -7,7 +7,10 @@ const GOODREADS_EXPORT = [
   '2,Krakatit,Karel Čapek,"Čapek, Karel",,"=""""","=""""",0,4.0,,,,,1924,,2024/01/02,"klasika, to-read","klasika (#2), to-read (#1)",to-read,,,,0,1',
 ].join('\n');
 
-test('a Goodreads export goes into the library, on its shelves, once', async ({ page, request }) => {
+test('a Goodreads export goes into the library, on its shelves, once', async ({
+  page,
+  request,
+}) => {
   const email = uniqueEmail('import');
   await register(request, email, 'Importér');
   await signIn(page, email);
@@ -37,4 +40,13 @@ test('a Goodreads export goes into the library, on its shelves, once', async ({ 
   await expect(page.getByRole('link', { name: /^Válka s mloky/ })).toBeVisible();
   await expect(page.getByRole('link', { name: /^Krakatit/ })).toBeVisible();
   await expect(page.getByText('Celkem: 2')).toBeVisible();
+
+  // A small library offers the quick start until the reader hides it.
+  const quickStart = page.getByRole('heading', { name: 'Rychle naplňte knihovnu' });
+  await expect(quickStart).toBeVisible();
+  await page.getByRole('button', { name: 'Skrýt rychlý start' }).click();
+  await expect(quickStart).toBeHidden();
+  await page.reload();
+  await expect(page.getByText('Celkem: 2')).toBeVisible();
+  await expect(quickStart).toBeHidden();
 });

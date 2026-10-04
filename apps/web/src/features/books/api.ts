@@ -187,6 +187,49 @@ export function useSaveBook() {
   });
 }
 
+export interface ScannedBookToAdd {
+  isbn: string;
+  title: string;
+  /** What a catalogue knows about the book; `null` when the reader typed the title. */
+  details: IsbnLookupResult | null;
+  shelfIds: string[];
+}
+
+/**
+ * Adds a scanned book with the catalogue's details, then its shelves and the catalogue's cover.
+ * A cover or shelves that fail don't undo the book. The caller refreshes the library queries.
+ */
+export async function addScannedBook({
+  isbn,
+  title,
+  details,
+  shelfIds,
+}: ScannedBookToAdd): Promise<Book> {
+  const book = await services.books.create({
+    title: title.trim(),
+    isbn,
+    author: details?.author ?? null,
+    publisher: details?.publisher ?? null,
+    publishedYear: details?.publishedYear ?? null,
+    pageCount: details?.pageCount ?? null,
+    language: details?.language ?? null,
+    description: details?.description ?? null,
+  });
+  await Promise.all([
+    shelfIds.length > 0 &&
+      saveExtra('shelves', () => applyShelvesChange(book.id, { kind: 'set', shelfIds })),
+    details?.hasCover &&
+      saveExtra('cover', async () =>
+        applyCoverChange(book.id, {
+          kind: 'replace',
+          image: await fetchCatalogueCover(isbn),
+          source: 'catalogue',
+        })
+      ),
+  ]);
+  return book;
+}
+
 export interface ReadingStatusChange {
   book: BookWithDetails;
   status: ReadingStatus;
@@ -219,7 +262,7 @@ export function useDeleteBook() {
 }
 
 /** Asks the Czech libraries (from the browser) and the API's catalogues at once. */
-async function lookUpIsbn(isbn: string): Promise<IsbnLookupResult> {
+export async function lookUpIsbn(isbn: string): Promise<IsbnLookupResult> {
   const [libraries, catalogues] = await Promise.allSettled([
     findInCzechLibraries(isbn),
     services.isbn.lookup(isbn),

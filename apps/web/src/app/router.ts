@@ -34,6 +34,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/pages/BookImportPage.vue'),
           },
           {
+            path: 'scan',
+            name: 'shelf-scan',
+            component: () => import('@/pages/ShelfScanPage.vue'),
+          },
+          {
             path: 'shelves',
             name: 'shelves',
             component: () => import('@/pages/ShelvesPage.vue'),

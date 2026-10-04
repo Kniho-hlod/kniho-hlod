@@ -11,17 +11,57 @@ import type { BookListFilters } from '@/features/books/api';
 import BookCard from '@/features/books/BookCard.vue';
 import BookFilters from '@/features/books/BookFilters.vue';
 import BookCheckDialog from '@/features/books/BookCheckDialog.vue';
+import LibraryQuickStart from '@/features/library-import/LibraryQuickStart.vue';
 import { canUseCamera } from '@/features/scanner/camera-support';
 import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
 import ShelfTabs from '@/features/shelves/ShelfTabs.vue';
 import { useOnVisible } from '@/shared/use-on-visible';
 
 const SKELETON_COUNT = 8;
+/** The quick start (import, shelf scan) shows while the library is smaller than this. */
+const QUICK_START_UNTIL = 30;
+const QUICK_START_DISMISSED_KEY = 'kniho-hlod:quick-start-dismissed';
 
 const { t } = useI18n();
 const route = useRoute();
 const canScan = canUseCamera();
 const isCheckingBook = ref(false);
+
+/** Several books at once: from a file, or the shelf scan where there is a camera. */
+const bulkItems = computed(() => [
+  {
+    label: t('libraryQuickStart.import.title'),
+    icon: 'i-lucide-file-spreadsheet',
+    to: { name: 'book-import' },
+  },
+  ...(canScan
+    ? [
+        {
+          label: t('libraryQuickStart.scan.title'),
+          icon: 'i-lucide-scan-line',
+          to: { name: 'shelf-scan' },
+        },
+      ]
+    : []),
+]);
+
+function readQuickStartDismissed(): boolean {
+  try {
+    return localStorage.getItem(QUICK_START_DISMISSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+const isQuickStartDismissed = ref(readQuickStartDismissed());
+
+function dismissQuickStart(): void {
+  isQuickStartDismissed.value = true;
+  try {
+    localStorage.setItem(QUICK_START_DISMISSED_KEY, '1');
+  } catch {
+    // Without storage the card stays hidden until the next visit.
+  }
+}
 
 /** `?status=reading` opens the list filtered, as the dashboard's "reading" tile links it. */
 function statusFromQuery(value: unknown): ReadingStatus | null {
@@ -55,6 +95,9 @@ const isSearched = computed(
     filters.value.availability !== null
 );
 const isFiltered = computed(() => isSearched.value || shelfId.value !== null);
+const showsQuickStart = computed(
+  () => !isQuickStartDismissed.value && !isFiltered.value && total.value < QUICK_START_UNTIL
+);
 const emptyText = computed(() => {
   if (shelfId.value !== null && !isSearched.value) return t('shelves.emptyShelf');
   return isFiltered.value ? t('books.emptyFiltered') : t('books.empty');
@@ -72,7 +115,7 @@ useOnVisible(listEnd, loadMore);
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
       <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
-      <!-- On a phone the actions line up in a grid: the two scans side by side, adding below. -->
+      <!-- On a phone the actions line up in a grid of two columns, the scans first. -->
       <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
         <UButton
           v-if="canScan"
@@ -94,10 +137,21 @@ useOnVisible(listEnd, loadMore);
         >
           {{ t('scanner.scan') }}
         </UButton>
+        <UDropdownMenu :items="bulkItems">
+          <UButton
+            icon="i-lucide-layers"
+            trailing-icon="i-lucide-chevron-down"
+            color="neutral"
+            variant="outline"
+            class="w-full justify-center sm:w-auto"
+          >
+            {{ t('books.addInBulk') }}
+          </UButton>
+        </UDropdownMenu>
         <UButton
           :to="{ name: 'book-new' }"
           icon="i-lucide-plus"
-          class="col-span-2 justify-center"
+          class="justify-center"
           :data-tour="TOUR_TARGETS.addBook"
         >
           {{ t('books.add') }}
@@ -138,10 +192,20 @@ useOnVisible(listEnd, loadMore);
         >
           {{ t('libraryImport.button') }}
         </UButton>
+        <UButton
+          v-if="canScan"
+          :to="{ name: 'shelf-scan' }"
+          icon="i-lucide-scan-line"
+          color="neutral"
+          variant="outline"
+        >
+          {{ t('shelfScan.button') }}
+        </UButton>
       </template>
     </EmptyState>
 
     <template v-else>
+      <LibraryQuickStart v-if="showsQuickStart" :can-scan="canScan" @dismiss="dismissQuickStart" />
       <p class="text-sm text-muted">{{ t('books.total', { count: total }) }}</p>
       <ul class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
         <li v-for="book in books" :key="book.id">
@@ -159,13 +223,6 @@ useOnVisible(listEnd, loadMore);
       >
         {{ t('books.loadMore') }}
       </UButton>
-      <ULink
-        v-if="!hasNextPage && !isFiltered"
-        :to="{ name: 'book-import' }"
-        class="self-center text-sm"
-      >
-        {{ t('libraryImport.link') }}
-      </ULink>
     </template>
 
     <BookCheckDialog v-if="canScan" v-model:open="isCheckingBook" />
