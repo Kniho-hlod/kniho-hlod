@@ -45,6 +45,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       paragraphs: [
         'Přátelé vidí vaši knihovnu, jen když zapnete sdílení, a i pak jen knihy, které před nimi neskryjete, s hodnocením a recenzí. Poznámky, lidi, kterým půjčujete, a výpůjčky nevidí nikdy.',
         'Komentáře pod knihou vidí její majitel a jeho přátelé, kteří knihu vidí.',
+        'Přátelům, kteří si nechávají posílat týdenní e-mail, v něm napíšeme, co ze sdílené knihovny tento týden čtete, dočetli nebo chcete číst, a u dočtené knihy vaše hodnocení.',
       ],
     },
     {
@@ -112,6 +113,7 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
       paragraphs: [
         'Friends see your library only when you turn sharing on, and even then only the books you don’t hide from them, with your rating and review. They never see your notes, the people you lend to or your loans.',
         'Comments under a book are seen by its owner and by the owner’s friends who can see the book.',
+        'Friends who keep the weekly e-mail on read in it what from your shared library you started, finished or want to read that week, with your rating of a finished book.',
       ],
     },
     {

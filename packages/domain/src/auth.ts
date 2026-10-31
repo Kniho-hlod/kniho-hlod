@@ -20,6 +20,7 @@ export const PROFILE_FIELDS = [
   'lastSeenRelease',
   'shareLibrary',
   'emailNotifications',
+  'weeklyDigest',
 ] as const satisfies readonly (keyof User)[];
 
 export interface RegisterRequest extends CredentialsRequest {

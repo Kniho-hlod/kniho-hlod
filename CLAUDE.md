@@ -138,6 +138,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   job then reminds friends who borrowed a book (a loan to a contact linked to their account) by
   their own settings (`jobs/borrower-reminders.ts`, `emails/borrowed-reminder.ts`, stamping
   `lastBorrowerReminderSentAt`); nobody else a book was lent to is ever e-mailed.
+  Last, the weekly e-mail (`jobs/weekly-digest.ts`, `emails/weekly-digest.ts`; also alone as the
+  `weekly-digest` job): on Sunday in the reader's zone, readers with `weeklyDigest` (on by default,
+  a switch in `SharingCard`) hear what their sharing friends started, finished or want to read
+  since the last one (the feed's rules, a week at most) and how many friend requests, borrow
+  requests and recommendations wait; nothing to say, no e-mail. `lastDigestSentAt` (`readOnly` +
+  `writeOnly`) keeps it weekly.
 - Books: the route hooks reject an invalid ISBN and reading dates out of order, and store the ISBN
   as ISBN-13. Every book the API returns carries `cover` (`src/books/book-covers.ts`), and a
   deleted book takes its cover with it.
