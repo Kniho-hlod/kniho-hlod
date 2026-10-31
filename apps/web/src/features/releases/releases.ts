@@ -19,7 +19,7 @@ export interface Release {
 export const RELEASES: readonly Release[] = [
   {
     version: '1.20',
-    date: '2026-10-04',
+    date: '2026-10-31',
     title: { cs: 'Seznam přání', en: 'A wish list' },
     notes: {
       cs: [
@@ -27,6 +27,19 @@ export const RELEASES: readonly Release[] = [
       ],
       en: [
         'Books has a new “Wish list” for the books you would like to have. Friends who see your library find it on your page. They see whether they have the book to lend you, and with “I’ll give it” they claim it as a present. You won’t find out who, and other friends only see that it is taken. When you get the book, tap “Got it” and it moves into your library.',
+      ],
+    },
+  },
+  {
+    version: '1.19',
+    date: '2026-10-04',
+    title: { cs: 'Týdenní e-mail od přátel', en: 'A weekly e-mail about friends' },
+    notes: {
+      cs: [
+        'V neděli ráno vám pošleme krátký e-mail, co přátelé se sdílenou knihovnou ten týden začali číst, dočetli nebo si chtějí přečíst. Připomene i žádosti o přátelství, o půjčení knihy a doporučení, které na vás čekají. Když není co říct, nepřijde nic. Vypnout ho můžete v Účtu u sdílení s přáteli.',
+      ],
+      en: [
+        'On Sunday morning we send you a short e-mail about what your friends with a shared library started, finished or want to read that week. It also mentions the friend requests, borrow requests and recommendations waiting for you. With nothing to tell, nothing arrives. You can turn it off in Account, under sharing with friends.',
       ],
     },
   },

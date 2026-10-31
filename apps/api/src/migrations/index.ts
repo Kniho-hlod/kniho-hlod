@@ -7,6 +7,7 @@ import { friends } from './2026-09-27-friends';
 import { loanRequests } from './2026-09-27-loan-requests';
 import { comments } from './2026-09-27-comments';
 import { readingFeed } from './2026-09-29-reading-feed';
+import { weeklyDigest } from './2026-10-04-weekly-digest';
 import { wishes } from './2026-10-04-wishes';
 
 /**
@@ -23,5 +24,6 @@ export const migrations: Migration[] = [
   loanRequests,
   comments,
   readingFeed,
+  weeklyDigest,
   wishes,
 ];

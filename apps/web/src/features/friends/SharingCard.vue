@@ -7,17 +7,19 @@ import { useSessionStore } from '@/features/auth/session-store';
 
 /**
  * Sharing with friends, on the account page: whether friends see the library, what exactly they
- * see and never see, and e-mails about friend requests. Each switch saves at once.
+ * see and never see, e-mails about friend requests and the weekly e-mail about friends. Each
+ * switch saves at once.
  */
 const { t } = useI18n();
 const toast = useToast();
 const session = useSessionStore();
 
-type SharingSetting = 'shareLibrary' | 'emailNotifications';
+type SharingSetting = 'shareLibrary' | 'emailNotifications' | 'weeklyDigest';
 const saving = ref<SharingSetting | null>(null);
 
 const shareLibrary = computed(() => session.user?.shareLibrary ?? false);
 const emailNotifications = computed(() => session.user?.emailNotifications ?? true);
+const weeklyDigest = computed(() => session.user?.weeklyDigest ?? true);
 
 async function change(setting: SharingSetting, value: boolean): Promise<void> {
   saving.value = setting;
@@ -79,6 +81,19 @@ async function change(setting: SharingSetting, value: boolean): Promise<void> {
           :loading="saving === 'emailNotifications'"
           :aria-label="t('friends.sharing.emailNotifications')"
           @update:model-value="change('emailNotifications', $event)"
+        />
+      </UFormField>
+
+      <UFormField
+        :label="t('friends.sharing.weeklyDigest')"
+        :description="t('friends.sharing.weeklyDigestHint')"
+        orientation="horizontal"
+      >
+        <USwitch
+          :model-value="weeklyDigest"
+          :loading="saving === 'weeklyDigest'"
+          :aria-label="t('friends.sharing.weeklyDigest')"
+          @update:model-value="change('weeklyDigest', $event)"
         />
       </UFormField>
     </div>
