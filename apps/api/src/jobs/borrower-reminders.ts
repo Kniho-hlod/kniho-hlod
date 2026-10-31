@@ -15,6 +15,7 @@ import {
 import type { Locale } from '@kniho-hlod/domain';
 import { borrowedReminderEmail } from '../emails/borrowed-reminder';
 import type { BorrowedBook } from '../emails/borrowed-reminder';
+import { HAS_VERIFIED_EMAIL } from '../emails/verified-address';
 
 type Models = CoreInstance['models'];
 type Row = InstanceType<Models[string]>;
@@ -101,6 +102,7 @@ export async function sendBorrowerReminders({
     where: {
       id: [...new Set(open.map((loan) => borrowerOf.get(String(loan.get('contactId')))))],
       emailReminders: true,
+      ...HAS_VERIFIED_EMAIL,
     },
   });
   const [books, owners] = await Promise.all([

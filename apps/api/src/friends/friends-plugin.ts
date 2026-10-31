@@ -31,6 +31,7 @@ import type { FriendContact, FriendRequest, FriendRequests, Locale } from '@knih
 import type { Request, RequestHandler } from 'express';
 import { friendInvitationEmail } from '../emails/friend-invitation';
 import { friendRequestEmail } from '../emails/friend-request';
+import { HAS_VERIFIED_EMAIL, hasVerifiedEmail } from '../emails/verified-address';
 import { asyncHandler } from '../http/async-handler';
 import type { ModelClass, ModelRegistry } from '../models-registry';
 import type { Notify } from '../notifications/notifications-plugin';
@@ -38,6 +39,7 @@ import { acceptFriendship } from './accept-friendship';
 import { createFriendContact } from './friend-contact';
 import type { DescribeFriends } from './describe-friends';
 import type { Friendships } from './friendships';
+import { createInvitationThrottle } from './invitation-throttle';
 import type { InviteCodes } from './invite-codes';
 import type { People } from './people';
 
@@ -45,9 +47,10 @@ type Row = InstanceType<ModelClass>;
 
 const ACCEPTED = 202;
 const NO_CONTENT = 204;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-/** Per reader: enough to invite a book club, too few to spam. */
+const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
+/** Per reader and day: enough to invite a book club, too few to spam. */
 export const FRIEND_INVITATION_RATE_LIMIT: RateLimitConfig = {
   windowMs: RATE_LIMIT_WINDOW_MS,
   max: 20,
@@ -62,7 +65,10 @@ export interface FriendsPluginOptions {
   inviteCodes: InviteCodes;
   notify: Notify;
   appBaseUrl: string;
+  /** `'off'` also lifts the limits on invitation e-mails per address and per day. */
   rateLimit: RateLimitConfig | 'off';
+  /** The clock behind the limits on invitation e-mails. */
+  now?: () => Date;
 }
 
 function toLocale(value: unknown): Locale {
@@ -95,6 +101,8 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
   const rows = () => registry.get(friendshipEntity.config.name);
   const users = () => registry.get(userEntity.config.name);
   const friendsUrl = new URL(FRIENDS_PAGE_PATH, options.appBaseUrl).toString();
+  const invitationThrottle =
+    options.rateLimit === 'off' ? undefined : createInvitationThrottle(options.now);
 
   /** Takes back the giver's promises to give the owner a wished-for book. */
   async function dropGiftsBetween(giverId: string, ownerId: string): Promise<void> {
@@ -167,7 +175,7 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
       status: DEFAULT_FRIENDSHIP_STATUS,
     });
     await notify({ recipientId: invitedId, actorId: inviterId, kind: 'friendRequest' });
-    if (emailService && invited.get('emailNotifications') === true) {
+    if (emailService && invited.get('emailNotifications') === true && hasVerifiedEmail(invited)) {
       await emailService.send({
         to: String(invited.get('email')),
         ...friendRequestEmail({
@@ -179,14 +187,24 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
     }
   }
 
-  /** Invites someone without an account through the inviter's own link. */
+  /**
+   * Invites someone without an account (or whose address nobody has confirmed) through the
+   * inviter's own link — unless the address heard from us this week or the day's invitations
+   * have run out.
+   */
   async function inviteNewcomer(
     inviter: Row,
     email: string,
     emailService: EmailService | undefined
   ): Promise<void> {
     if (!emailService) return;
-    const code = await options.inviteCodes.codeOf(String(inviter.get('id')));
+    if (invitationThrottle && !invitationThrottle.allow(email)) {
+      console.warn(
+        'A friend invitation e-mail was held back: the address or the day is at its limit'
+      );
+      return;
+    }
+    const { code } = await options.inviteCodes.inviteOf(String(inviter.get('id')));
     await emailService.send({
       to: email,
       ...friendInvitationEmail({
@@ -233,11 +251,18 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
           const email = readInvitedEmail(req.body);
           const inviter = await users().findByPk(readerOf(req));
           if (!inviter) throw new HttpError(NOT_FOUND, 'reader not found');
+          if (!hasVerifiedEmail(inviter)) {
+            throw new HttpError(FORBIDDEN, 'confirm your e-mail address before inviting by e-mail');
+          }
+          // Only an account that confirmed the address is its owner's: anyone could have signed
+          // up with it. Everyone else is invited as a newcomer, through the inviter's link.
           const invited = await users().findOne({
-            where: sequelize.where(
-              sequelize.fn('lower', sequelize.col('email')),
-              email.toLowerCase()
-            ),
+            where: {
+              [Op.and]: [
+                sequelize.where(sequelize.fn('lower', sequelize.col('email')), email.toLowerCase()),
+                HAS_VERIFIED_EMAIL,
+              ],
+            },
           });
           try {
             if (!invited) await inviteNewcomer(inviter, email, emailService);

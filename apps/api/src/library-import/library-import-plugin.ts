@@ -1,5 +1,5 @@
 import { createVerifyToken, generateId, HttpError } from '@eleansphere/be-core';
-import type { ProjectPlugin, Sequelize } from '@eleansphere/be-core';
+import type { ProjectPlugin, RateLimitConfig, Sequelize } from '@eleansphere/be-core';
 import {
   bookEntity,
   bookShelfEntity,
@@ -13,6 +13,7 @@ import {
 } from '@kniho-hlod/domain';
 import type { ImportedBook, LibraryImportResult } from '@kniho-hlod/domain';
 import { asyncHandler } from '../http/async-handler';
+import { perReaderLimit } from '../http/per-reader-limit';
 import type { ModelRegistry } from '../models-registry';
 
 /** Sequelize's transaction, which be-core doesn't re-export: what `sequelize.transaction()` opens. */
@@ -22,11 +23,14 @@ const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const PAYLOAD_TOO_LARGE = 413;
 const MILLISECONDS_PER_SECOND = 1000;
+/** Per reader and hour: a library of thousands of books fits, an endless loop doesn't. */
+export const LIBRARY_IMPORT_RATE_LIMIT: RateLimitConfig = { windowMs: 60 * 60 * 1000, max: 60 };
 
 export interface LibraryImportPluginOptions {
   jwtSecret: string;
   registry: ModelRegistry;
   now?: () => Date;
+  rateLimit: RateLimitConfig | 'off';
 }
 
 /**
@@ -38,6 +42,7 @@ export function createLibraryImportPlugin({
   jwtSecret,
   registry,
   now = () => new Date(),
+  rateLimit,
 }: LibraryImportPluginOptions): ProjectPlugin {
   const model = (entity: typeof bookEntity | typeof shelfEntity | typeof bookShelfEntity) =>
     registry.get(entity.config.name);
@@ -141,6 +146,7 @@ export function createLibraryImportPlugin({
       app.post(
         LIBRARY_IMPORT_PATH,
         createVerifyToken(jwtSecret),
+        ...perReaderLimit('library-import', rateLimit),
         asyncHandler(async (req, res) => {
           const { books } = (req.body ?? {}) as { books?: unknown };
           if (!Array.isArray(books)) throw new HttpError(BAD_REQUEST, 'books must be a list');

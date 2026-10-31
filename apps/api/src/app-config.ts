@@ -23,6 +23,7 @@ import {
   REGISTRATION_FIELDS,
   shelfEntity,
   SINGLE_FILE_ROLES,
+  FILE_ROLES,
   systemNotificationEntity,
   toIsbn13,
   userEntity,
@@ -48,8 +49,14 @@ import { createReturnLoanPlugin } from './loans/return-loan-plugin';
 import { createBookShelves } from './shelves/book-shelves';
 import { createBookShelvesPlugin } from './shelves/book-shelves-plugin';
 import { createShelfNameCheck } from './shelves/shelf-names';
-import { createSampleLibraryPlugin } from './sample-library/sample-library-plugin';
-import { createLibraryImportPlugin } from './library-import/library-import-plugin';
+import {
+  createSampleLibraryPlugin,
+  SAMPLE_LIBRARY_RATE_LIMIT,
+} from './sample-library/sample-library-plugin';
+import {
+  createLibraryImportPlugin,
+  LIBRARY_IMPORT_RATE_LIMIT,
+} from './library-import/library-import-plugin';
 import { createStatsPlugin } from './stats/stats-plugin';
 import { createFriendDescriber } from './friends/describe-friends';
 import { createFriendLibrary } from './friends/friend-library';
@@ -61,7 +68,7 @@ import { createInvitesPlugin } from './friends/invites-plugin';
 import { createPeople } from './friends/people';
 import { createNotificationsPlugin, createNotifier } from './notifications/notifications-plugin';
 import { createBookSummaries } from './lending/book-summaries';
-import { createLendingPlugin } from './lending/lending-plugin';
+import { createLendingPlugin, LOAN_REQUEST_RATE_LIMIT } from './lending/lending-plugin';
 import { createCommentCounts } from './comments/comment-counts';
 import { COMMENT_RATE_LIMIT, createCommentsPlugin } from './comments/comments-plugin';
 import { createFeedPlugin } from './feed/feed-plugin';
@@ -71,9 +78,14 @@ import {
   RECOMMENDATION_RATE_LIMIT,
 } from './recommendations/recommendations-plugin';
 import { passwordResetEmail } from './emails/password-reset';
+import { verifyEmail } from './emails/verify-email';
 import { migrations } from './migrations';
 
-const ACCESS_TOKEN_LIFETIME = '15m';
+/**
+ * Short, because an access token can't be revoked: after a password change or sign-out
+ * everywhere, a token taken before still works this long.
+ */
+const ACCESS_TOKEN_LIFETIME = '5m';
 const REFRESH_TOKEN_LIFETIME = '60d';
 const ROLE_CLAIM = 'role';
 
@@ -87,6 +99,8 @@ export interface AppConfigOverrides {
   fetch?: typeof fetch;
   /** The clock behind "today" (returning a loan, due dates in the stats). */
   now?: () => Date;
+  /** bcrypt's cost for new passwords; tests lower it to stay fast. Default be-core's (12). */
+  passwordHashRounds?: number;
 }
 
 interface BookInput {
@@ -189,7 +203,7 @@ export function buildAppConfig(
   const friendships = createFriendships(models);
   const friendLibrary = createFriendLibrary(models, bookCovers, bookShelves);
   const describeFriends = createFriendDescriber(people, friendships, friendLibrary);
-  const inviteCodes = createInviteCodes(models);
+  const inviteCodes = createInviteCodes(models, overrides.now);
   const notify = createNotifier(models);
   const copyBook = createCopyBook(models, bookCovers);
   const bookSummaries = createBookSummaries(models, bookCovers);
@@ -284,6 +298,7 @@ export function buildAppConfig(
         ...friendsContext,
         appBaseUrl: environment.appBaseUrl,
         rateLimit: rateLimitsOff ? 'off' : FRIEND_INVITATION_RATE_LIMIT,
+        now: overrides.now,
       }),
       createInvitesPlugin(friendsContext),
       createFriendLibraryPlugin({
@@ -314,6 +329,7 @@ export function buildAppConfig(
         readerToday,
         notify,
         appBaseUrl: environment.appBaseUrl,
+        rateLimit: rateLimitsOff ? 'off' : LOAN_REQUEST_RATE_LIMIT,
       }),
       createCommentsPlugin({
         jwtSecret: environment.jwtSecret,
@@ -339,6 +355,7 @@ export function buildAppConfig(
         registry: models,
         bookCovers,
         now: overrides.now,
+        rateLimit: rateLimitsOff ? 'off' : SAMPLE_LIBRARY_RATE_LIMIT,
       }),
       createWishesPlugin({
         jwtSecret: environment.jwtSecret,
@@ -350,6 +367,7 @@ export function buildAppConfig(
         jwtSecret: environment.jwtSecret,
         registry: models,
         now: overrides.now,
+        rateLimit: rateLimitsOff ? 'off' : LIBRARY_IMPORT_RATE_LIMIT,
       }),
     ],
     email: {
@@ -359,6 +377,7 @@ export function buildAppConfig(
     storage: {
       adapter: storageAdapter,
       singleRoles: SINGLE_FILE_ROLES,
+      privateRoles: [FILE_ROLES.screenshot],
       authorize: createFileAuthorizer(models),
     },
     auth: {
@@ -371,6 +390,8 @@ export function buildAppConfig(
       profileFields: [...PROFILE_FIELDS],
       deleteAccount: true,
       passwordReset: { appBaseUrl: environment.appBaseUrl, template: passwordResetEmail },
+      emailVerification: { appBaseUrl: environment.appBaseUrl, template: verifyEmail },
+      passwordHashRounds: overrides.passwordHashRounds,
       rateLimit: rateLimitsOff ? 'off' : overrides.rateLimit,
     },
   };

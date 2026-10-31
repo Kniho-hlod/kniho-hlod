@@ -41,6 +41,11 @@ export const userFields = {
     maxLength: DISPLAY_NAME_MAX_LENGTH,
   },
   role: { type: 'ENUM', values: USER_ROLES, default: DEFAULT_USER_ROLE, readOnly: true },
+  /**
+   * When the reader opened the link that confirms their address (be-core's e-mail verification);
+   * empty until then. E-mail invitations wait for it.
+   */
+  emailVerifiedAt: { type: 'DATE', readOnly: true },
   locale: { type: 'ENUM', values: LOCALES, default: DEFAULT_LOCALE },
   timezone: { type: 'STRING', default: DEFAULT_TIMEZONE, maxLength: TIMEZONE_MAX_LENGTH },
   emailReminders: { type: 'BOOLEAN', default: true },
@@ -79,4 +84,6 @@ export const userFields = {
     writeOnly: true,
     maxLength: INVITE_CODE_MAX_LENGTH,
   },
+  /** When the invite code was made; the link stops working `INVITE_LINK_DAYS` later. */
+  inviteCodeIssuedAt: { type: 'DATE', readOnly: true, writeOnly: true },
 } as const satisfies Fields;

@@ -11,7 +11,8 @@ export const DEFAULT_LOCALE: Locale = 'cs';
 export const DEFAULT_TIMEZONE = 'Europe/Prague';
 
 export const PASSWORD_MIN_LENGTH = 8;
-export const PASSWORD_MAX_LENGTH = 128;
+/** bcrypt reads 72 bytes; be-core refuses a longer password (in bytes) on its own as well. */
+export const PASSWORD_MAX_LENGTH = 72;
 
 export const NOTIFICATION_SEVERITIES = ['info', 'warning', 'critical'] as const;
 export type NotificationSeverity = (typeof NOTIFICATION_SEVERITIES)[number];

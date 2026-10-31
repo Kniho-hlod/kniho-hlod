@@ -1,6 +1,12 @@
 import { defaultFileAuthorizer } from '@eleansphere/be-core';
 import type { FileAccessRequest, FileAuthorizer } from '@eleansphere/be-core';
-import { bookEntity, feedbackEntity, FILE_REF_TYPES, FILE_ROLES } from '@kniho-hlod/domain';
+import {
+  ADMIN_ROLE,
+  bookEntity,
+  feedbackEntity,
+  FILE_REF_TYPES,
+  FILE_ROLES,
+} from '@kniho-hlod/domain';
 import type { ModelRegistry } from '../models-registry';
 
 function isOwnAvatar(access: FileAccessRequest, userId: string): boolean {
@@ -20,10 +26,22 @@ function isReportScreenshot(access: FileAccessRequest): boolean {
 }
 
 /**
+ * A report's screenshot may show anything on the reader's screen: only the reporter and the
+ * administrators see it, whatever visibility an older upload was stored with, and only the
+ * reporter deletes it (administrators delete it with the report).
+ */
+function mayReachScreenshot(access: FileAccessRequest): boolean {
+  const user = access.req.user;
+  if (!user) return false;
+  if (access.action === 'read' && user.role === ADMIN_ROLE) return true;
+  return access.file?.ownerId === user.id;
+}
+
+/**
  * Uploads: a signed-in reader may upload their own avatar, the covers of their own books and a
- * screenshot to a report they sent.
- * Reads and deletes follow be-core's defaults: public files for everyone, private files and
- * deletion for the uploader.
+ * screenshot to a report they sent (stored private: `storage.privateRoles`).
+ * Reads and deletes follow be-core's defaults — public files for everyone, private files and
+ * deletion for the uploader — except for report screenshots (`mayReachScreenshot`).
  */
 export function createFileAuthorizer(registry: ModelRegistry): FileAuthorizer {
   async function ownsBook(userId: string, bookId: string | null): Promise<boolean> {
@@ -43,7 +61,10 @@ export function createFileAuthorizer(registry: ModelRegistry): FileAuthorizer {
   }
 
   return async (access) => {
-    if (access.action !== 'create') return defaultFileAuthorizer(access);
+    if (access.action !== 'create') {
+      if (isReportScreenshot(access)) return mayReachScreenshot(access);
+      return defaultFileAuthorizer(access);
+    }
     const userId = access.req.user?.id;
     if (userId === undefined) return false;
     if (isOwnAvatar(access, userId)) return true;

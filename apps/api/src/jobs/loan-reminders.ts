@@ -14,6 +14,7 @@ import {
 import type { Locale, LoanReminderKind } from '@kniho-hlod/domain';
 import { loanReminderEmail } from '../emails/loan-reminder';
 import type { RemindedLoan } from '../emails/loan-reminder';
+import { HAS_VERIFIED_EMAIL } from '../emails/verified-address';
 
 type Models = CoreInstance['models'];
 type Row = InstanceType<Models[string]>;
@@ -93,6 +94,7 @@ async function findReadersWithDueLoans(models: Models, now: Date): Promise<Reade
     where: {
       id: [...new Set(openLoans.map((loan) => loan.get('ownerId') as string))],
       emailReminders: true,
+      ...HAS_VERIFIED_EMAIL,
     },
   });
   return readers

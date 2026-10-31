@@ -1,5 +1,5 @@
 import { createVerifyToken, generateId, HttpError, Op } from '@eleansphere/be-core';
-import type { ProjectPlugin, Sequelize, WhereOptions } from '@eleansphere/be-core';
+import type { ProjectPlugin, RateLimitConfig, Sequelize, WhereOptions } from '@eleansphere/be-core';
 import {
   bookEntity,
   bookShelfEntity,
@@ -15,6 +15,7 @@ import {
 import type { Locale, SampleLibraryState } from '@kniho-hlod/domain';
 import type { BookCovers } from '../books/book-covers';
 import { asyncHandler } from '../http/async-handler';
+import { perReaderLimit } from '../http/per-reader-limit';
 import type { ModelRegistry } from '../models-registry';
 import { buildSampleLibrary } from './build-sample-library';
 import { SAMPLE_LIBRARIES } from './sample-library-content';
@@ -30,6 +31,8 @@ const CONFLICT = 409;
 /** Everything a reader's library holds; a loan always comes with a book and a contact. */
 const LIBRARY_ENTITIES = [bookEntity, shelfEntity, contactEntity, loanEntity];
 const SAMPLE_ROWS = { isSample: true };
+/** Per reader and hour: each fill writes a few dozen rows and their removal as many. */
+export const SAMPLE_LIBRARY_RATE_LIMIT: RateLimitConfig = { windowMs: 60 * 60 * 1000, max: 10 };
 
 export interface SampleLibraryPluginOptions {
   jwtSecret: string;
@@ -38,6 +41,8 @@ export interface SampleLibraryPluginOptions {
   bookCovers: BookCovers;
   /** The clock the sample dates count from, for tests. */
   now?: () => Date;
+  /** For filling in and removing the samples. */
+  rateLimit: RateLimitConfig | 'off';
 }
 
 function toLocale(value: unknown): Locale {
@@ -54,6 +59,7 @@ export function createSampleLibraryPlugin({
   registry,
   bookCovers,
   now = () => new Date(),
+  rateLimit,
 }: SampleLibraryPluginOptions): ProjectPlugin {
   const model = (entity: (typeof LIBRARY_ENTITIES)[number] | typeof bookShelfEntity) =>
     registry.get(entity.config.name);
@@ -143,9 +149,12 @@ export function createSampleLibraryPlugin({
         })
       );
 
+      const limitWrites = perReaderLimit('sample-library', rateLimit);
+
       app.post(
         SAMPLE_LIBRARY_PATH,
         requireUser,
+        ...limitWrites,
         asyncHandler(async (req, res) => {
           const ownerId = String(req.user?.id);
           await sequelize.transaction((transaction) => fill(ownerId, transaction));
@@ -156,6 +165,7 @@ export function createSampleLibraryPlugin({
       app.delete(
         SAMPLE_LIBRARY_PATH,
         requireUser,
+        ...limitWrites,
         asyncHandler(async (req, res) => {
           const ownerId = String(req.user?.id);
           const removedBooks = await sequelize.transaction((transaction) =>

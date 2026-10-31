@@ -7,7 +7,9 @@ const ACCEPTED = 202;
 const NO_CONTENT = 204;
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const NOW = new Date('2026-09-27T10:00:00Z');
 const ALL = { limit: 200 };
@@ -36,13 +38,14 @@ describe('Friends', () => {
       app.api().delete(path).set('Authorization', bearer(token)).send(body),
   });
 
-  const signUp = async (displayName: string, profile: object = {}): Promise<Account> => {
+  const signUp = async (
+    displayName: string,
+    profile: object = {},
+    { verified = true }: { verified?: boolean } = {}
+  ): Promise<Account> => {
     registered += 1;
     const email = `friend-${registered}@kniho-hlod.test`;
-    const { body } = await app
-      .api()
-      .post('/api/auth/register')
-      .send({ email, password: PASSWORD, displayName });
+    const { body } = await app.register(email, { displayName, verified });
     const account = { id: body.id ?? body.user.id, email, token: body.token, displayName };
     await as(account).patch('/api/auth/me', profile);
     return account;
@@ -120,6 +123,25 @@ describe('Friends', () => {
       expect((await as(other).post(`/api/invites/${code}/accept`)).status).toBe(NOT_FOUND);
       expect((await as(other).get(`/api/invites/${replaced}`)).status).toBe(OK);
     });
+
+    it('runs out after 30 days, and the next ask makes a new one', async () => {
+      const owner = await signUp('Krátký odkaz');
+      const other = await signUp('Pozdě');
+      const invite = (await as(owner).get('/api/me/invite')).body;
+      expect(invite.expiresAt).toBe(new Date(NOW.getTime() + 30 * DAY_MS).toISOString());
+
+      await app.core.models.user.update(
+        { inviteCodeIssuedAt: new Date(NOW.getTime() - 31 * DAY_MS) },
+        { where: { id: owner.id } }
+      );
+
+      expect((await app.api().get(`/api/invites/${invite.code}`)).status).toBe(NOT_FOUND);
+      expect((await as(other).post(`/api/invites/${invite.code}/accept`)).status).toBe(NOT_FOUND);
+      const renewed = (await as(owner).get('/api/me/invite')).body;
+      expect(renewed.code).not.toBe(invite.code);
+      expect(renewed.expiresAt).toBe(invite.expiresAt);
+      expect((await as(other).get(`/api/invites/${renewed.code}`)).status).toBe(OK);
+    });
   });
 
   describe('an invitation by e-mail', () => {
@@ -156,6 +178,34 @@ describe('Friends', () => {
       expect((await as(cyril).get('/api/notifications')).body.data).toMatchObject([
         { kind: 'friendAccepted', actor: { id: dana.id } },
       ]);
+    });
+
+    it('waits until the inviter has confirmed their own address', async () => {
+      const inviter = await signUp('Nepotvrzený', {}, { verified: false });
+      app.outbox.clear();
+
+      const invited = await as(inviter).post('/api/friends/invitations', {
+        email: 'someone@kniho-hlod.test',
+      });
+
+      expect(invited.status).toBe(FORBIDDEN);
+      expect(app.outbox.sent).toEqual([]);
+    });
+
+    it('treats an account nobody confirmed as a newcomer, not as the address’s owner', async () => {
+      const inviter = await signUp('Opatrná');
+      const squatter = await signUp('Na cizí adresu', {}, { verified: false });
+      const { code } = (await as(inviter).get('/api/me/invite')).body;
+      app.outbox.clear();
+
+      expect(
+        (await as(inviter).post('/api/friends/invitations', { email: squatter.email })).status
+      ).toBe(ACCEPTED);
+
+      expect((await as(squatter).get('/api/friends/requests')).body.incoming).toEqual([]);
+      const [email] = emailsTo(squatter);
+      expect(email?.subject).toBe('Opatrná vás zve do Kniho-hlodu');
+      expect(email?.text).toContain(`${APP_BASE_URL}/invite/${code}`);
     });
 
     it('invites someone without an account through the inviter’s link', async () => {

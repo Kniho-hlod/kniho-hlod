@@ -9,6 +9,7 @@ import { comments } from './2026-09-27-comments';
 import { readingFeed } from './2026-09-29-reading-feed';
 import { weeklyDigest } from './2026-10-04-weekly-digest';
 import { wishes } from './2026-10-04-wishes';
+import { emailVerification } from './2026-10-31-email-verification';
 
 /**
  * Every change to the database schema, in the order it was made; the API applies the pending ones
@@ -26,4 +27,5 @@ export const migrations: Migration[] = [
   readingFeed,
   weeklyDigest,
   wishes,
+  emailVerification,
 ];
