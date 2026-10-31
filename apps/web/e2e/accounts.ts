@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { expect } from '@playwright/test';
 import type { APIRequestContext, Page } from '@playwright/test';
+import { findLink, waitForEmail } from './mailpit';
 
 export const PASSWORD = 'correct-horse-battery';
 export const API_URL = 'http://localhost:3000';
@@ -11,8 +12,8 @@ export function uniqueEmail(kind: string): string {
 }
 
 /**
- * Registers an account straight through the API, as a reader who has had the tour. Answers the
- * account's access token.
+ * Registers an account straight through the API, as a reader who has had the tour and confirmed
+ * their address with the e-mailed link. Answers the account's access token.
  */
 export async function register(
   request: APIRequestContext,
@@ -29,7 +30,17 @@ export async function register(
     data: { onboardedAt: new Date().toISOString() },
   });
   expect(onboarded.ok()).toBe(true);
+  await confirmEmail(request, email);
   return token;
+}
+
+/** Opens the link the API e-mailed to confirm the address, as the reader would. */
+export async function confirmEmail(request: APIRequestContext, email: string): Promise<void> {
+  const link = new URL(findLink(await waitForEmail(email)));
+  const confirmed = await request.post(`${API_URL}/api/auth/verify-email`, {
+    data: { token: link.searchParams.get('token') },
+  });
+  expect(confirmed.ok()).toBe(true);
 }
 
 /** A new reader is greeted with the tour on the home page; tests about other things skip it. */

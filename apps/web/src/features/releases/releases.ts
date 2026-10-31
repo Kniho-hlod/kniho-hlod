@@ -18,6 +18,23 @@ export interface Release {
 /** Newest first. The first one is the version the app runs. */
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.21',
+    date: '2026-10-31',
+    title: { cs: 'Bezpečnější účet', en: 'A safer account' },
+    notes: {
+      cs: [
+        'Nový účet potvrdíte odkazem, který vám po registraci pošleme e-mailem. Dokud ho neotevřete, nechodí vám e-mailem upozornění ani připomínky a nemůžete zvát přátele e-mailem. Kdo Kniho-hlod používá už teď, nemusí dělat nic.',
+        'Odkaz s pozvánkou platí 30 dní, pak vám v Přátelích vytvoříme nový. Kdo ho otevře a pozvání přijme, uvidí, co s přáteli sdílíte, tak ho posílejte jen známým.',
+        'Snímek obrazovky u hlášení chyby vidíte jen vy a správci aplikace. Nové heslo může mít nejvýš 72 znaků.',
+      ],
+      en: [
+        'You confirm a new account with a link we e-mail you after signing up. Until you open it, you get no notifications or reminders by e-mail and can’t invite friends by e-mail. If you already use Kniho-hlod, there is nothing to do.',
+        'An invite link works for 30 days; after that you get a new one in Friends. Whoever opens it and accepts sees what you share with friends, so send it only to people you know.',
+        'Only you and the app’s administrators see the screenshot in a bug report. A new password can be at most 72 characters long.',
+      ],
+    },
+  },
+  {
     version: '1.20',
     date: '2026-10-31',
     title: { cs: 'Seznam přání', en: 'A wish list' },

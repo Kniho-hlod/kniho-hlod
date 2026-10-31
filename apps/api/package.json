@@ -16,8 +16,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@eleansphere/be-core": "^3.1.0",
-    "@eleansphere/entity-core": "^4.1.0",
+    "@eleansphere/be-core": "^4.0.0",
+    "@eleansphere/entity-core": "^5.0.0",
     "@eleansphere/schema": "^1.1.0",
     "@kniho-hlod/domain": "workspace:*",
     "bcrypt": "^6.0.0"

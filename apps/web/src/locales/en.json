@@ -62,7 +62,21 @@
     "send": "Send",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
-    "privacyNotice": "How we handle your data"
+    "privacyNotice": "How we handle your data",
+    "verifyEmail": {
+      "bannerTitle": "Confirm your email",
+      "bannerText": "We sent a link to {email}. Until you open it, you won't get notifications or reminders by email and can't invite friends by email.",
+      "resend": "Send the link again",
+      "resent": "A new link is on its way.",
+      "later": "Not now",
+      "title": "Email confirmation",
+      "checking": "Checking the link…",
+      "done": "Done, {email} is confirmed.",
+      "invalid": "The link isn't valid or has expired.",
+      "invalidHint": "The app sends you a new one once you're signed in.",
+      "invalidHintSignedIn": "Send yourself a new one from the notice at the top of the app.",
+      "toApp": "To the app"
+    }
   },
   "account": {
     "title": "Account",
@@ -669,7 +683,7 @@
     },
     "invite": {
       "title": "Invite friends",
-      "linkHint": "Send the link or show the QR code. Whoever opens it and accepts is your friend.",
+      "linkHint": "Send the link or show the QR code. Whoever opens it and accepts becomes your friend and sees what you share with friends, so send it only to people you know and don't post it publicly.",
       "link": "Your invite link",
       "copy": "Copy",
       "copied": "The link is copied.",
@@ -686,7 +700,9 @@
       "byEmailHint": "Readers already on Kniho-hlod get a friend request; others get an invitation.",
       "emailPlaceholder": "friend{'@'}example.com",
       "send": "Invite",
-      "sent": "The invitation for {email} is on its way."
+      "sent": "The invitation for {email} is on its way.",
+      "expires": "The link works until {date}; after that you get a new one here.",
+      "verifyFirst": "Confirm your email first, with the link we sent you. Then you can invite by email."
     },
     "sharing": {
       "title": "Sharing with friends",
@@ -739,7 +755,7 @@
       "already": "You are friends already.",
       "openLibrary": "Open their library",
       "invalid": "This invitation no longer works",
-      "invalidHint": "The link may have been replaced. Ask for a new one.",
+      "invalidHint": "A link works for 30 days and may have been replaced by a new one. Ask for a new one.",
       "toApp": "Go to Kniho-hlod"
     },
     "readingStatus": {

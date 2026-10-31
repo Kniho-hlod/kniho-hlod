@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n';
 import type { DropdownMenuItem } from '@nuxt/ui';
 import { DEFAULT_FEEDBACK_KIND, DEFAULT_FEEDBACK_STATUS } from '@kniho-hlod/domain';
 import type { FeedbackKind, FeedbackStatus, FeedbackWithDetails } from '@kniho-hlod/domain';
-import { fileUrl } from '@/app/api';
 import { formatDateTime } from '@/app/dates';
 import PersonAvatar from '@/components/PersonAvatar.vue';
+import { usePrivateFileUrl } from '@/shared/private-file';
 
 interface KindStyle {
   icon: string;
@@ -39,7 +39,8 @@ const { t } = useI18n();
 
 const kind = computed(() => props.report.kind ?? DEFAULT_FEEDBACK_KIND);
 const isResolved = computed(() => props.report.status === 'resolved');
-const screenshotUrl = computed(() => fileUrl(props.report.screenshot));
+/** The screenshot is private: downloaded with the administrator's token. */
+const screenshotUrl = usePrivateFileUrl(computed(() => props.report.screenshot));
 
 /** What the reader's app sent along, the parts it knew. */
 const contextRows = computed(() =>

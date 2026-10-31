@@ -3,7 +3,9 @@ import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from '@nuxt/ui/composables';
 import { renderSVG } from 'uqr';
+import { ApiError } from '@eleansphere/entity-core';
 import { friendInvitationFields } from '@kniho-hlod/domain';
+import { formatDay } from '@/app/dates';
 import { describeError } from '@/app/errors';
 import { formSchema, VALIDATE_ON } from '@/app/validation';
 import { TOUR_TARGETS } from '@/features/onboarding/tour-steps';
@@ -13,11 +15,14 @@ import { inviteLink, useInviteByEmail, useMyInvite, useReplaceInvite } from './a
  * Ways to bring friends in: the reader's own invite link — copied, shared or shown as a QR code
  * to a phone across the table — or an invitation by e-mail.
  */
+const FORBIDDEN = 403;
+
 const { t } = useI18n();
 const toast = useToast();
 
 const { data: invite } = useMyInvite();
 const link = computed(() => (invite.value ? inviteLink(invite.value.code) : ''));
+const expiresOn = computed(() => (invite.value ? formatDay(invite.value.expiresAt) : ''));
 const qrCode = computed(() => (link.value ? renderSVG(link.value, { border: 2 }) : ''));
 const isShowingQrCode = ref(false);
 const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
@@ -63,7 +68,12 @@ async function sendInvitation(): Promise<void> {
     toast.add({ title: t('friends.invite.sent', { email: state.email.trim() }), color: 'success' });
     state.email = '';
   } catch (err) {
-    toast.add({ title: describeError(err), color: 'error' });
+    // The API invites by e-mail only once the reader's own address is confirmed.
+    const needsConfirmedEmail = err instanceof ApiError && err.status === FORBIDDEN;
+    toast.add({
+      title: needsConfirmedEmail ? t('friends.invite.verifyFirst') : describeError(err),
+      color: 'error',
+    });
   }
 }
 </script>
@@ -121,6 +131,9 @@ async function sendInvitation(): Promise<void> {
             {{ t('friends.invite.replace') }}
           </UButton>
         </div>
+        <p v-if="expiresOn" class="text-xs text-muted">
+          {{ t('friends.invite.expires', { date: expiresOn }) }}
+        </p>
         <!-- White all around, so a phone reads it in dark mode too. The SVG is uqr's drawing of
              our own link: nothing a reader typed reaches the markup. -->
         <!-- eslint-disable vue/no-v-html -->

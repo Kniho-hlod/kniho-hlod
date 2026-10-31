@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { RouteLocationRaw } from 'vue-router';
 import { ADMIN_ROLE } from '@kniho-hlod/domain';
 import { useSessionStore } from '@/features/auth/session-store';
+import VerifyEmailBanner from '@/features/auth/VerifyEmailBanner.vue';
 import { useFriendRequests } from '@/features/friends/api';
 import { useLoanRequests } from '@/features/lending/api';
 import { useLibraryStats } from '@/features/loans/api';
@@ -123,6 +124,7 @@ function administrationItem(): NavigationItem {
 
     <main class="app-content mx-auto w-full max-w-5xl px-4 py-6 flex flex-col gap-5">
       <SystemNotificationBanner />
+      <VerifyEmailBanner />
       <SampleLibraryBanner />
       <RouterView />
     </main>

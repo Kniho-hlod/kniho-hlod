@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@eleansphere/entity-core": "^4.1.0",
+    "@eleansphere/entity-core": "^5.0.0",
     "@eleansphere/schema": "^1.1.0"
   },
   "devDependencies": {
