@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { sendBorrowerReminders } from './jobs/borrower-reminders';
 import { sendLoanReminders } from './jobs/loan-reminders';
-import { APP_BASE_URL, bearer, PASSWORD, startTestApp } from './test-support/test-app';
+import { APP_BASE_URL, bearer, startTestApp } from './test-support/test-app';
 import type { TestApp } from './test-support/test-app';
 
 const UNAUTHORIZED = 401;
@@ -43,10 +43,7 @@ describe('Lending between friends', () => {
   const signUp = async (displayName: string, profile: object = {}): Promise<Account> => {
     registered += 1;
     const email = `lender-${registered}@kniho-hlod.test`;
-    const { body } = await app
-      .api()
-      .post('/api/auth/register')
-      .send({ email, password: PASSWORD, displayName });
+    const { body } = await app.register(email, { displayName });
     const account = { id: body.user.id, email, token: body.token };
     await as(account).patch('/api/auth/me', profile);
     return account;

@@ -6,6 +6,8 @@ import { findInGoogleBooks } from './google-books';
 import { findInOpenLibrary } from './open-library';
 import { findInTrhKnih } from './trh-knih';
 import type { FetchPage } from './trh-knih';
+import { fetchWithin, readCapped } from './bounded-fetch';
+import type { HostCheck } from './bounded-fetch';
 
 export type { CatalogueEntry } from './catalogue-entry';
 
@@ -51,6 +53,13 @@ const USER_AGENT = 'Kniho-hlod/1.0 (+https://github.com/Kniho-hlod/kniho-hlod)';
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 1_000;
 const MAX_COVER_BYTES = 5 * 1024 * 1024;
+/** A catalogue's JSON or a book page; anything longer isn't an answer about one book. */
+const MAX_DOCUMENT_BYTES = 2 * 1024 * 1024;
+/**
+ * Where a cover's address may lead besides its own host: Open Library keeps its cover files at
+ * the Internet Archive, Google Books on its user-content hosts.
+ */
+const COVER_STORAGE_DOMAINS = ['archive.org', 'googleusercontent.com'];
 /** Smaller images are "no image" placeholders a catalogue may send instead of a cover. */
 const MIN_COVER_BYTES = 3 * 1024;
 const COVER_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -61,6 +70,24 @@ function withCoverFrom(found: CatalogueEntry | null, entry: CatalogueEntry): Cat
 
 function describeFailure(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+const sameHostAs =
+  (url: string): HostCheck =>
+  (hostname) =>
+    hostname === new URL(url).hostname;
+
+const coverHostsFor =
+  (url: string): HostCheck =>
+  (hostname) =>
+    sameHostAs(url)(hostname) ||
+    COVER_STORAGE_DOMAINS.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
+
+/** The body as text, or an error once it is longer than any catalogue answer should be. */
+async function readDocument(response: Response, url: string): Promise<string> {
+  const bytes = await readCapped(response, MAX_DOCUMENT_BYTES);
+  if (!bytes) throw new Error(`${new URL(url).hostname} sent too long an answer`);
+  return bytes.toString('utf8');
 }
 
 /**
@@ -89,11 +116,16 @@ export function createIsbnCatalogue({
     now,
   });
 
-  const request = (url: string, accept: string) =>
-    fetchImpl(url, {
-      headers: { Accept: accept, 'User-Agent': USER_AGENT },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    });
+  const request = (url: string, accept: string, allowed: HostCheck) =>
+    fetchWithin(
+      fetchImpl,
+      url,
+      {
+        headers: { Accept: accept, 'User-Agent': USER_AGENT },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      },
+      allowed
+    );
 
   const fetchPage: FetchPage = async (url) => {
     const response = await fetchImpl(url, {
@@ -104,17 +136,18 @@ export function createIsbnCatalogue({
     return {
       status: response.status,
       location: response.headers.get('location'),
-      body: await response.text(),
+      body: await readDocument(response, url),
     };
   };
   const czechProviders: readonly CatalogueProvider[] = [findInTrhKnih(fetchPage), ...everywhere];
 
   const fetchJson: FetchJson = async <T>(url: string) => {
-    const response = await request(url, 'application/json');
+    // An edition redirects to its record on the same host, never further.
+    const response = await request(url, 'application/json', sameHostAs(url));
     if (response.status === NOT_FOUND) return null;
     // The hostname only: the URL may carry an API key.
     if (!response.ok) throw new Error(`${new URL(url).hostname} answered ${response.status}`);
-    return (await response.json()) as T;
+    return JSON.parse(await readDocument(response, url)) as T;
   };
 
   async function find(isbn: string): Promise<CatalogueEntry | null> {
@@ -147,11 +180,14 @@ export function createIsbnCatalogue({
   async function fetchCover(entry: CatalogueEntry): Promise<CoverImage | null> {
     if (!entry.coverUrl) return null;
     try {
-      const response = await request(entry.coverUrl, 'image/*');
+      const response = await request(entry.coverUrl, 'image/*', coverHostsFor(entry.coverUrl));
       const mimeType = response.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
-      if (!response.ok || !COVER_MIME_TYPES.includes(mimeType)) return null;
-      const bytes = Buffer.from(await response.arrayBuffer());
-      if (bytes.length < MIN_COVER_BYTES || bytes.length > MAX_COVER_BYTES) return null;
+      if (!response.ok || !COVER_MIME_TYPES.includes(mimeType)) {
+        await response.body?.cancel();
+        return null;
+      }
+      const bytes = await readCapped(response, MAX_COVER_BYTES);
+      if (!bytes || bytes.length < MIN_COVER_BYTES) return null;
       return { mimeType, bytes };
     } catch (err) {
       console.warn(`Cover download from ${entry.coverUrl} failed: ${describeFailure(err)}`);

@@ -7,6 +7,7 @@ import {
   startTestApp,
 } from './test-support/test-app';
 import type { TestApp } from './test-support/test-app';
+import { privatizeReportScreenshots } from './feedback/private-screenshots';
 
 const OK = 200;
 const CREATED = 201;
@@ -14,6 +15,7 @@ const NO_CONTENT = 204;
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
 const FORBIDDEN = 403;
+const NOT_FOUND = 404;
 
 const USER_AGENT = 'Mozilla/5.0 (Test) KnihoHlodBrowser/1.0';
 const REPORT = {
@@ -142,6 +144,50 @@ describe('Feedback', () => {
 
     expect((await uploadScreenshot(stranger, report.id)).status).toBe(FORBIDDEN);
     expect((await uploadScreenshot(admin, report.id)).status).toBe(FORBIDDEN);
+  });
+
+  it('shows a screenshot to its reporter and the administrators only', async () => {
+    const { body: report } = await as(reader).post('/api/feedback', REPORT);
+    const { body: screenshot } = await uploadScreenshot(reader, report.id);
+    const stranger = await signUp('nosy@kniho-hlod.test');
+    const file = `/api/files/${screenshot.id}`;
+
+    expect(screenshot).toMatchObject({ visibility: 'private', url: file });
+    expect(screenshot).not.toHaveProperty('storageKey');
+    expect((await app.api().get(file)).status).toBe(NOT_FOUND);
+    expect((await as(stranger).get(file)).status).toBe(NOT_FOUND);
+    expect((await as(reader).get(file)).status).toBe(OK);
+    expect((await as(admin).get(file)).status).toBe(OK);
+    expect((await as(stranger).delete(file)).status).toBe(NOT_FOUND);
+    expect((await as(admin).delete(file)).status).toBe(NOT_FOUND);
+    const listed = await as(stranger)
+      .get('/api/files')
+      .query({ refType: 'feedback', refId: report.id });
+    expect(listed.body.data).toEqual([]);
+    expect((await app.api().get('/api/files')).status).toBe(UNAUTHORIZED);
+  });
+
+  it('moves screenshots stored public before to private, unguessable keys', async () => {
+    const { body: report } = await as(reader).post('/api/feedback', REPORT);
+    const { body: screenshot } = await uploadScreenshot(reader, report.id);
+    const storage = app.core.storage!;
+    const File = app.core.models.File;
+    const oldKey = `feedback/${screenshot.id}.png`;
+    await storage.put(oldKey, PNG_SIGNATURE, { contentType: 'image/png', visibility: 'public' });
+    await File.update(
+      { storageKey: oldKey, visibility: 'public' },
+      { where: { id: screenshot.id } }
+    );
+
+    expect(await privatizeReportScreenshots(app.core.models, storage)).toBe(1);
+
+    const moved = await File.findByPk(screenshot.id);
+    expect(moved?.get('visibility')).toBe('private');
+    const newKey = String(moved?.get('storageKey'));
+    expect(newKey).toMatch(new RegExp(`^feedback/${screenshot.id}-[0-9a-f]{32}\\.png$`));
+    await expect(storage.getStream(oldKey)).rejects.toThrow();
+    expect((await as(reader).get(`/api/files/${screenshot.id}`)).body).toEqual(PNG_SIGNATURE);
+    expect(await privatizeReportScreenshots(app.core.models, storage)).toBe(0);
   });
 
   it('lets administrators resolve and delete reports, but nothing else', async () => {

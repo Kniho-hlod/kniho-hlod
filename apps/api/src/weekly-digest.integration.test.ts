@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sendWeeklyDigests } from './jobs/weekly-digest';
-import { APP_BASE_URL, bearer, PASSWORD, startTestApp } from './test-support/test-app';
+import { APP_BASE_URL, bearer, startTestApp } from './test-support/test-app';
 import type { TestApp } from './test-support/test-app';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -36,10 +36,7 @@ describe('The weekly e-mail', () => {
   const signUp = async (displayName: string, profile: object = {}): Promise<Account> => {
     registered += 1;
     const email = `digest-${registered}@kniho-hlod.test`;
-    const { body } = await app
-      .api()
-      .post('/api/auth/register')
-      .send({ email, password: PASSWORD, displayName });
+    const { body } = await app.register(email, { displayName });
     const account = { id: body.user.id, email, token: body.token };
     await as(account).patch('/api/auth/me', profile);
     return account;

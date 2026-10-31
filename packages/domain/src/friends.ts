@@ -145,9 +145,14 @@ export interface FriendBookListRequest {
   sort?: string;
 }
 
+/** How long an invite link works after it was made; asking for the link afterwards makes a new one. */
+export const INVITE_LINK_DAYS = 30;
+
 /** The reader's own invite code; the link is `<app>/invite/<code>`. */
 export interface MyInvite {
   code: string;
+  /** When the link stops working (ISO); the next `GET` after that makes a new one. */
+  expiresAt: string;
 }
 
 /**

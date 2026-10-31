@@ -6,7 +6,12 @@ import {
   validateFields,
   ValidationError,
 } from '@eleansphere/be-core';
-import type { EmailMessage, EmailService, ProjectPlugin } from '@eleansphere/be-core';
+import type {
+  EmailMessage,
+  EmailService,
+  ProjectPlugin,
+  RateLimitConfig,
+} from '@eleansphere/be-core';
 import {
   bookEntity,
   BORROWED_PATH,
@@ -38,7 +43,9 @@ import type { LoanRequestAnswer } from '../emails/loan-request-answer';
 import type { FriendLibrary } from '../friends/friend-library';
 import type { Friendships } from '../friends/friendships';
 import type { People } from '../friends/people';
+import { EMAIL_VERIFIED_AT_FIELD, hasVerifiedEmail } from '../emails/verified-address';
 import { asyncHandler } from '../http/async-handler';
+import { perReaderLimit } from '../http/per-reader-limit';
 import type { ReaderToday } from '../loans/reader-today';
 import type { ModelClass, ModelRegistry } from '../models-registry';
 import type { Notify } from '../notifications/notifications-plugin';
@@ -57,6 +64,11 @@ const DUE_AT_FIELD = 'dueAt';
 const BORROWED_TAB_QUERY = '?tab=borrowed';
 /** Sorts a borrowed book without a due date after every dated one. */
 const NO_DUE_DATE = '9999-12-31';
+/**
+ * Per reader and hour, for asking to borrow: each request rings the friend's bell and may e-mail
+ * them, and a cancelled request can be sent again.
+ */
+export const LOAN_REQUEST_RATE_LIMIT: RateLimitConfig = { windowMs: 60 * 60 * 1000, max: 30 };
 
 export interface LendingPluginOptions {
   jwtSecret: string;
@@ -68,6 +80,7 @@ export interface LendingPluginOptions {
   readerToday: ReaderToday;
   notify: Notify;
   appBaseUrl: string;
+  rateLimit: RateLimitConfig | 'off';
 }
 
 function toLocale(value: unknown): Locale {
@@ -130,7 +143,10 @@ export function createLendingPlugin(options: LendingPluginOptions): ProjectPlugi
     });
   }
 
-  /** E-mails a reader who wants e-mails about requests; a failed e-mail is only logged. */
+  /**
+   * E-mails a reader who wants e-mails about requests and confirmed their address; a failed
+   * e-mail is only logged.
+   */
   async function emailIfWanted(
     emailService: EmailService | undefined,
     userId: string,
@@ -138,9 +154,9 @@ export function createLendingPlugin(options: LendingPluginOptions): ProjectPlugi
   ): Promise<void> {
     if (!emailService) return;
     const user = await users().findByPk(userId, {
-      attributes: ['email', 'locale', 'emailNotifications'],
+      attributes: ['email', 'locale', 'emailNotifications', EMAIL_VERIFIED_AT_FIELD],
     });
-    if (!user || user.get('emailNotifications') !== true) return;
+    if (!user || user.get('emailNotifications') !== true || !hasVerifiedEmail(user)) return;
     try {
       await emailService.send({
         to: String(user.get('email')),
@@ -206,6 +222,7 @@ export function createLendingPlugin(options: LendingPluginOptions): ProjectPlugi
       app.post(
         `${FRIENDS_PATH}/:userId/books/:bookId/requests`,
         requireUser,
+        ...perReaderLimit('loan-requests', options.rateLimit),
         asyncHandler(async (req, res) => {
           const readerId = String(req.user?.id);
           const lenderId = String(req.params.userId);

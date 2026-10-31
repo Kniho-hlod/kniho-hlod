@@ -238,6 +238,78 @@ describe('ISBN catalogue', () => {
     ).toBeNull();
   });
 
+  it('follows a cover only to the catalogue’s own storage, and only up to a size', async () => {
+    const entry = { details: {} as never, coverUrl: COVER_URL };
+    const ARCHIVE = 'https://ia800100.us.archive.org/view_archive.php?file=42-L.jpg';
+    const redirectTo = (location: string) => () =>
+      new Response(null, { status: 302, headers: { location } });
+    const image =
+      (headers: Record<string, string> = {}) =>
+      () =>
+        new Response(COVER_BYTES, { headers: { 'content-type': 'image/png', ...headers } });
+    const toArchive = fakeFetch({ [COVER_URL]: redirectTo(ARCHIVE), [ARCHIVE]: image() });
+    const toElsewhere = fakeFetch({ [COVER_URL]: redirectTo('https://169.254.169.254/latest') });
+    const toPlainHttp = fakeFetch({ [COVER_URL]: redirectTo('http://ia800100.us.archive.org/x') });
+    const tooLarge = fakeFetch({
+      [COVER_URL]: image({ 'content-length': String(6 * 1024 * 1024) }),
+    });
+
+    expect(await createIsbnCatalogue({ fetch: toArchive }).fetchCover(entry)).toEqual({
+      mimeType: 'image/png',
+      bytes: COVER_BYTES,
+    });
+    expect(toArchive).toHaveBeenCalledWith(
+      COVER_URL,
+      expect.objectContaining({ redirect: 'manual' })
+    );
+    expect(await createIsbnCatalogue({ fetch: toElsewhere }).fetchCover(entry)).toBeNull();
+    expect(toElsewhere).toHaveBeenCalledTimes(1);
+    expect(await createIsbnCatalogue({ fetch: toPlainHttp }).fetchCover(entry)).toBeNull();
+    expect(await createIsbnCatalogue({ fetch: tooLarge }).fetchCover(entry)).toBeNull();
+  });
+
+  it('asks Open Library only about author records, whatever the edition says', async () => {
+    const fetch = fakeFetch({
+      [OPEN_LIBRARY_EDITION]: () =>
+        Response.json({
+          title: 'Hobit',
+          authors: [
+            { key: '@evil.test/steal' },
+            { key: '/authors/../admin' },
+            { key: '/authors/OL1A' },
+          ],
+          covers: [42],
+        }),
+      [OPEN_LIBRARY_AUTHORS]: openLibraryAuthor,
+    });
+
+    const entry = await createIsbnCatalogue({ fetch }).find(ISBN);
+
+    expect(entry?.details.author).toBe('J. R. R. Tolkien');
+    expect(fetch.mock.calls.map(([url]) => String(url))).toEqual([
+      OPEN_LIBRARY_EDITION,
+      `${OPEN_LIBRARY_AUTHORS}OL1A.json`,
+    ]);
+  });
+
+  it('follows an edition’s redirect on Open Library itself, nowhere else', async () => {
+    const RECORD = 'https://openlibrary.org/books/OL1M.json';
+    const fetch = fakeFetch({
+      [OPEN_LIBRARY_EDITION]: () =>
+        new Response(null, { status: 302, headers: { location: '/books/OL1M.json' } }),
+      [RECORD]: () => Response.json({ title: 'Hobit', covers: [42] }),
+    });
+    const astray = fakeFetch({
+      [OPEN_LIBRARY_EDITION]: () =>
+        new Response(null, { status: 302, headers: { location: 'https://evil.test/x.json' } }),
+      [GOOGLE_BOOKS]: noVolumes,
+    });
+
+    expect((await createIsbnCatalogue({ fetch }).find(ISBN))?.details.title).toBe('Hobit');
+    expect(await createIsbnCatalogue({ fetch: astray }).find(ISBN)).toBeNull();
+    expect(astray).not.toHaveBeenCalledWith('https://evil.test/x.json', expect.anything());
+  });
+
   describe('Trh knih, for Czech and Slovak ISBNs', () => {
     const CZECH_ISBN = '9788075775955';
     const SEARCH = `https://www.trhknih.cz/hledat?q=${CZECH_ISBN}`;

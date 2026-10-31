@@ -35,14 +35,29 @@ export const testEnvironment: Environment = {
 
 export const bearer = (token: string) => `Bearer ${token}`;
 
+export interface RegisterOptions {
+  displayName?: string;
+  /** Default `true`: the reader has opened the link that confirms their address. */
+  verified?: boolean;
+}
+
+/** What the e-mail confirming a new account's address links to. */
+const VERIFY_LINK = `${APP_BASE_URL}/verify-email?token=`;
+
 export interface TestApp {
   core: CoreInstance;
   /** The Postgres schema holding this app's tables. */
   schema: string;
   outbox: MemoryEmailTransport;
   api: () => ReturnType<typeof request>;
-  /** Registers a reader; the response body holds `token`, `refreshToken`, `id` and `user`. */
-  register: (email: string) => request.Test;
+  /**
+   * Registers a reader; the response body holds `token`, `refreshToken`, `id` and `user`. The
+   * address counts as confirmed (and the confirmation e-mail is taken out of the outbox) unless
+   * `verified: false`.
+   */
+  register: (email: string, options?: RegisterOptions) => Promise<request.Response>;
+  /** Marks the reader's address as confirmed, as opening the e-mailed link does. */
+  verifyEmail: (userId: string) => Promise<void>;
   close: () => Promise<void>;
 }
 
@@ -62,6 +77,7 @@ export async function startTestApp(
     buildAppConfig(testEnvironment, {
       storageAdapter: new MemoryStorageAdapter(),
       rateLimit: 'off',
+      passwordHashRounds: 4,
       ...overrides,
       schema,
       emailTransport: outbox,
@@ -69,13 +85,32 @@ export async function startTestApp(
   );
 
   const api = () => request(core.app);
+  const verifyEmail = async (userId: string) => {
+    await core.sequelize.query(
+      `UPDATE "${schema}"."users" SET "emailVerifiedAt" = now() WHERE "id" = :userId`,
+      { replacements: { userId } }
+    );
+  };
   return {
     core,
     schema,
     outbox,
     api,
-    register: (email) =>
-      api().post('/api/auth/register').send({ email, password: PASSWORD, displayName: 'Reader' }),
+    async register(email, { displayName = 'Reader', verified = true } = {}) {
+      const res = await api()
+        .post('/api/auth/register')
+        .send({ email, password: PASSWORD, displayName });
+      if (verified && res.status === 201) {
+        await verifyEmail(String(res.body.id ?? res.body.user.id));
+        const address = email.trim().toLowerCase();
+        const confirmation = outbox.sent.findIndex(
+          ({ to, text }) => to === address && text?.includes(VERIFY_LINK)
+        );
+        if (confirmation !== -1) outbox.sent.splice(confirmation, 1);
+      }
+      return res;
+    },
+    verifyEmail,
     async close() {
       await core.close();
       await database.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);

@@ -186,6 +186,18 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    // The link in the e-mail that confirms an address: opened signed in or not, on any device.
+    path: '/verify-email',
+    component: () => import('@/layouts/GuestLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'verify-email',
+        component: () => import('@/pages/VerifyEmailPage.vue'),
+      },
+    ],
+  },
+  {
     // For visitors and readers alike, linked from sign-up and the account page.
     path: '/privacy',
     name: 'privacy',

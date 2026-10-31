@@ -30,9 +30,10 @@ export interface InvitesPluginOptions {
 }
 
 /**
- * Invite links. `GET /api/me/invite` gives the reader their code (made on first ask), `POST`
- * replaces it. `GET /api/invites/:code` says who invites — to anyone, so a visitor sees whose
- * invitation it is before signing up — and, to a signed-in reader, how they stand with them.
+ * Invite links. `GET /api/me/invite` gives the reader their code and when it runs out (made on
+ * first ask and again after `INVITE_LINK_DAYS`), `POST` replaces it. `GET /api/invites/:code`
+ * says who invites — to anyone, so a visitor sees whose invitation it is before signing up — and,
+ * to a signed-in reader, how they stand with them.
  * `POST /api/invites/:code/accept` makes the two friends: the inviter shared the link on purpose.
  */
 export function createInvitesPlugin(options: InvitesPluginOptions): ProjectPlugin {
@@ -82,7 +83,7 @@ export function createInvitesPlugin(options: InvitesPluginOptions): ProjectPlugi
         MY_INVITE_PATH,
         requireUser,
         asyncHandler(async (req, res) => {
-          const invite: MyInvite = { code: await inviteCodes.codeOf(String(req.user?.id)) };
+          const invite: MyInvite = await inviteCodes.inviteOf(String(req.user?.id));
           res.json(invite);
         })
       );
@@ -91,7 +92,7 @@ export function createInvitesPlugin(options: InvitesPluginOptions): ProjectPlugi
         MY_INVITE_PATH,
         requireUser,
         asyncHandler(async (req, res) => {
-          const invite: MyInvite = { code: await inviteCodes.replace(String(req.user?.id)) };
+          const invite: MyInvite = await inviteCodes.replace(String(req.user?.id));
           res.json(invite);
         })
       );

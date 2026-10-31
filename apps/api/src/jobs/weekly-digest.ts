@@ -21,6 +21,7 @@ import {
 import type { FeedItemKind, Locale, ReadingStatus } from '@kniho-hlod/domain';
 import { weeklyDigestEmail } from '../emails/weekly-digest';
 import type { DigestActivity, DigestWaiting } from '../emails/weekly-digest';
+import { HAS_VERIFIED_EMAIL } from '../emails/verified-address';
 
 type Models = CoreInstance['models'];
 type Row = InstanceType<Models[string]>;
@@ -157,9 +158,9 @@ export async function sendWeeklyDigests({
   const runAt = now();
   const result: WeeklyDigestResult = { readers: 0, failed: 0 };
   const users = models[userEntity.config.name];
-  const readers = (await users.findAll({ where: { weeklyDigest: true } })).filter((reader) =>
-    isDue(reader, runAt)
-  );
+  const readers = (
+    await users.findAll({ where: { weeklyDigest: true, ...HAS_VERIFIED_EMAIL } })
+  ).filter((reader) => isDue(reader, runAt));
   if (readers.length === 0) return result;
   const readerIds = readers.map((reader) => String(reader.get('id')));
 

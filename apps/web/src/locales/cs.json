@@ -62,7 +62,21 @@
     "send": "Odeslat",
     "showPassword": "Zobrazit heslo",
     "hidePassword": "Skrýt heslo",
-    "privacyNotice": "Jak zacházíme s vašimi údaji"
+    "privacyNotice": "Jak zacházíme s vašimi údaji",
+    "verifyEmail": {
+      "bannerTitle": "Potvrďte svůj e-mail",
+      "bannerText": "Poslali jsme odkaz na {email}. Dokud ho neotevřete, nechodí vám e-mailem upozornění ani připomínky a nemůžete zvát přátele e-mailem.",
+      "resend": "Poslat odkaz znovu",
+      "resent": "Nový odkaz je na cestě.",
+      "later": "Teď ne",
+      "title": "Potvrzení e-mailu",
+      "checking": "Ověřujeme odkaz…",
+      "done": "Hotovo, e-mail {email} je potvrzený.",
+      "invalid": "Odkaz neplatí nebo už vypršel.",
+      "invalidHint": "Nový odkaz vám pošleme z aplikace, stačí se přihlásit.",
+      "invalidHintSignedIn": "Nový odkaz si pošlete z upozornění nahoře v aplikaci.",
+      "toApp": "Do aplikace"
+    }
   },
   "account": {
     "title": "Účet",
@@ -669,7 +683,7 @@
     },
     "invite": {
       "title": "Pozvat přátele",
-      "linkHint": "Pošlete odkaz nebo ukažte QR kód. Kdo ho otevře a pozvání přijme, bude váš přítel.",
+      "linkHint": "Pošlete odkaz nebo ukažte QR kód. Kdo ho otevře a pozvání přijme, bude váš přítel a uvidí, co s přáteli sdílíte. Proto ho posílejte jen těm, koho znáte, a nevěšte ho veřejně.",
       "link": "Váš odkaz s pozvánkou",
       "copy": "Zkopírovat",
       "copied": "Odkaz je zkopírovaný.",
@@ -686,7 +700,9 @@
       "byEmailHint": "Kdo už Kniho-hlod používá, dostane žádost o přátelství; ostatním přijde pozvánka.",
       "emailPlaceholder": "kamarad{'@'}example.cz",
       "send": "Pozvat",
-      "sent": "Pozvánka pro {email} je na cestě."
+      "sent": "Pozvánka pro {email} je na cestě.",
+      "expires": "Odkaz platí do {date}, pak vám tu vytvoříme nový.",
+      "verifyFirst": "Nejdřív potvrďte svůj e-mail odkazem, který jsme vám poslali. Pak můžete zvát e-mailem."
     },
     "sharing": {
       "title": "Sdílení s přáteli",
@@ -739,7 +755,7 @@
       "already": "Už jste přátelé.",
       "openLibrary": "Otevřít knihovnu",
       "invalid": "Tahle pozvánka už neplatí",
-      "invalidHint": "Odkaz mohl být nahrazený novým. Požádejte o nový.",
+      "invalidHint": "Odkaz platí 30 dní a mohl být mezitím nahrazený novým. Požádejte o nový.",
       "toApp": "Do Kniho-hlodu"
     },
     "readingStatus": {

@@ -77,6 +77,38 @@ describe('Kniho-hlod API', () => {
     expect(app.outbox.sent[0].text).toContain(`${APP_BASE_URL}/reset-password?token=`);
   });
 
+  it('e-mails a new reader a link that confirms their address, in their language', async () => {
+    app.outbox.clear();
+    const { body: session } = await api()
+      .post('/api/auth/register')
+      .send({ email: 'New.Reader@Test.cz', password: PASSWORD, displayName: 'Nová', locale: 'en' });
+
+    expect(session.user).toMatchObject({ email: 'new.reader@test.cz', emailVerifiedAt: null });
+    expect(session.user).not.toHaveProperty('inviteCodeIssuedAt');
+    const [email] = app.outbox.sent;
+    expect(email).toMatchObject({
+      to: 'new.reader@test.cz',
+      subject: 'Confirm your email — Kniho-hlod',
+    });
+    expect(email.text).toContain('Hello Nová,');
+    const link = new URL(/https:\S+/.exec(email.text ?? '')?.[0] ?? '');
+    expect(`${link.origin}${link.pathname}`).toBe(`${APP_BASE_URL}/verify-email`);
+
+    const verified = await api()
+      .post('/api/auth/verify-email')
+      .send({ token: link.searchParams.get('token') });
+    expect(verified.status).toBe(200);
+    expect(verified.body.emailVerifiedAt).toBeTypeOf('string');
+    const me = await api().get('/api/auth/me').set('Authorization', bearer(session.token));
+    expect(me.body.emailVerifiedAt).toBe(verified.body.emailVerifiedAt);
+    // Nobody confirms an address by editing their profile.
+    const patched = await api()
+      .patch('/api/auth/me')
+      .set('Authorization', bearer(session.token))
+      .send({ emailVerifiedAt: null });
+    expect(patched.body.emailVerifiedAt).toBe(verified.body.emailVerifiedAt);
+  });
+
   it('lets only administrators manage announcements, and shows active ones to everyone', async () => {
     const adminToken = await signInAsAdmin();
     const { body: reader } = await register('announcements@test.cz');

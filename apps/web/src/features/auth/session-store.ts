@@ -18,6 +18,8 @@ export const useSessionStore = defineStore('session', () => {
 
   const isSignedIn = computed(() => user.value !== null);
   const isAdmin = computed(() => user.value?.role === ADMIN_ROLE);
+  /** Whether the reader opened the link that confirms their address; `false` while signed out. */
+  const isEmailVerified = computed(() => Boolean(user.value?.emailVerifiedAt));
 
   function remember(startedSession: LoginResponse<User>): void {
     session.start(startedSession);
@@ -86,6 +88,21 @@ export const useSessionStore = defineStore('session', () => {
     remember(await services.auth.changePassword(currentPassword, newPassword));
   }
 
+  /**
+   * Confirms an address with the e-mailed link's token, signed in or not; the signed-in reader
+   * sees it at once when it is their own.
+   */
+  async function verifyEmail(token: string): Promise<User> {
+    const verified = await services.auth.verifyEmail(token);
+    if (user.value?.id === verified.id) setUser(verified);
+    return verified;
+  }
+
+  /** Sends the signed-in reader a new confirmation link. */
+  async function sendVerificationEmail(): Promise<void> {
+    await services.auth.sendVerificationEmail();
+  }
+
   async function deleteAccount(password: string): Promise<void> {
     await services.auth.deleteMe(password);
     forget();
@@ -96,6 +113,7 @@ export const useSessionStore = defineStore('session', () => {
     isRestoring,
     isSignedIn,
     isAdmin,
+    isEmailVerified,
     restore,
     signIn,
     register,
@@ -103,6 +121,8 @@ export const useSessionStore = defineStore('session', () => {
     forget,
     updateProfile,
     changePassword,
+    verifyEmail,
+    sendVerificationEmail,
     deleteAccount,
   };
 });

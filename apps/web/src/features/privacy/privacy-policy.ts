@@ -24,11 +24,11 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
     {
       title: 'Co o vás ukládáme',
       paragraphs: [
-        'Účet: e-mail, jméno, heslo (jen jako otisk, který nejde převést zpět), profilový obrázek, jazyk, časové pásmo a vaše nastavení.',
+        'Účet: e-mail a kdy jste ho potvrdili, jméno, heslo (jen jako otisk, který nejde převést zpět), profilový obrázek, jazyk, časové pásmo a vaše nastavení.',
         'Knihovnu: knihy, obálky, poličky, stav čtení, hodnocení, recenze a poznámky, a seznam přání.',
         'Lidi, kterým půjčujete, a výpůjčky: jméno a kontakt, které zadáte, a kdy a co jste půjčili.',
-        'Přátele: komu jste poslali žádost o přátelství, přátelství, komentáře, žádosti o půjčení, doporučení a upozornění. Když někoho pozvete e-mailem, pošleme mu jedinou zprávu s vaším odkazem a jeho adresu si neukládáme.',
-        'Hlášení chyb a nápadů: text, případný snímek obrazovky, stránku, velikost okna a typ prohlížeče.',
+        'Přátele: komu jste poslali žádost o přátelství, přátelství, komentáře, žádosti o půjčení, doporučení a upozornění. Když někoho pozvete e-mailem, pošleme mu jedinou zprávu s vaším odkazem a jeho adresu do databáze neukládáme. Aby jedna adresa nedostala víc než jednu pozvánku za týden, server si ji týden pamatuje, jen v paměti.',
+        'Hlášení chyb a nápadů: text, případný snímek obrazovky, stránku, velikost okna a typ prohlížeče. Snímek vidíte jen vy a správci aplikace.',
         'Přihlášení: kdy jste se přihlásili nebo vrátili do aplikace. Podle toho počítáme, kolik čtenářů aplikaci používá.',
       ],
     },
@@ -93,11 +93,11 @@ export const PRIVACY_POLICY: Readonly<Record<Locale, readonly PrivacySection[]>>
     {
       title: 'What we store about you',
       paragraphs: [
-        'Your account: e-mail, name, password (only as a hash that cannot be turned back), profile picture, language, time zone and your settings.',
+        'Your account: e-mail and when you confirmed it, name, password (only as a hash that cannot be turned back), profile picture, language, time zone and your settings.',
         'Your library: books, covers, shelves, reading status, ratings, reviews and notes, and your wish list.',
         'The people you lend to and your loans: the name and contact details you enter, and what you lent when.',
-        'Friends: whom you sent a friend request, friendships, comments, borrow requests, recommendations and notifications. When you invite someone by e-mail, we send them a single message with your link and don’t keep their address.',
-        'Bug reports and ideas: the text, a screenshot if you add one, the page, the window size and the kind of browser.',
+        'Friends: whom you sent a friend request, friendships, comments, borrow requests, recommendations and notifications. When you invite someone by e-mail, we send them a single message with your link and don’t store their address in the database. So that one address gets no more than one invitation a week, the server remembers it for a week, in memory only.',
+        'Bug reports and ideas: the text, a screenshot if you add one, the page, the window size and the kind of browser. Only you and the app’s administrators see the screenshot.',
         'Sign-ins: when you signed in or came back to the app. We use this to count how many readers use it.',
       ],
     },

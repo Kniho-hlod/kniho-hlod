@@ -45,7 +45,14 @@ changing `fields.ts` — never the API and the app separately.
 and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only starts it.
 
 - Auth is be-core's: registration, login with rotating refresh tokens, `GET/PATCH/DELETE /api/auth/me`,
-  password change and single-use reset links, rate limiting.
+  password change and single-use reset links, rate limiting (per address and per account too).
+  Access tokens live 5 minutes: they can't be revoked. E-mail addresses are stored in lower case.
+  A new account is e-mailed a link (`emails/verify-email.ts`, in its locale) to `/verify-email`,
+  which sets `user.emailVerifiedAt` (`readOnly`; `POST /api/auth/verify-email`,
+  `…/verification-email` sends a new one); migration `2026-10-31-email-verification` counted
+  every earlier account as confirmed. **Nothing but the confirmation and password links is
+  e-mailed to an unconfirmed address** (`emails/verified-address.ts`: reminders, the weekly
+  e-mail, friend and loan requests), and an unconfirmed reader can't invite by e-mail (403).
 - Access: `user` is `admin`-only; `systemNotification` is `admin`-only, with a public
   `GET /api/system-notifications/active`; `book`, `contact`, `loan` and `shelf` are `owner`-only
   (another reader's row answers 404).
@@ -63,7 +70,9 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `POST /api/feedback` (rate-limited per reader); the plugin stores it with `reporterId` and the
   request's `User-Agent`, e-mails every administrator in their language (a failed e-mail is only
   logged) and answers the report, whose id the web uploads a `screenshot` file to — only the
-  reporter may. Administrators own the CRUD routes at `/api/admin/feedback` (list with
+  reporter may. Screenshots are stored private (`storage.privateRoles`) and read only by the
+  reporter and administrators; `index.ts` moves screenshots stored public before to new keys on
+  startup (`feedback/private-screenshots.ts`). Administrators own the CRUD routes at `/api/admin/feedback` (list with
   `reporter` and `screenshot`, PATCH `status`, DELETE); POST there is refused, every other field
   is `readOnly`. `newFeedback` in the admin stats counts unresolved reports.
 - Onboarding: `user.onboardedAt` is empty until the reader finishes or skips the tour (the app
@@ -78,9 +87,12 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `friendship` (requester, addressee, `pending`/`accepted`) and `notification` have no CRUD
   routes — their plugins know both sides. `GET /api/friends` (each with `readingNow`),
   `…/requests`, `POST …/invitations` (by e-mail, rate-limited; the answer is the same whether
-  the address has an account: a reader gets a request, anyone else the inviter's link),
+  the address has an account: a reader who confirmed it gets a request, anyone else the
+  inviter's link — at most once a week per address and `NEWCOMER_INVITATIONS_PER_DAY` a day for
+  the whole app, held in memory by `friends/invitation-throttle.ts`),
   accept/decline/take back, `DELETE /api/friends/:userId`. Invite links: `GET/POST /api/me/invite`
-  (the code is `user.inviteCode`, `readOnly` + `writeOnly`, never in a response of its own),
+  (the code is `user.inviteCode`, `readOnly` + `writeOnly`, never in a response of its own; it
+  works `INVITE_LINK_DAYS` from `inviteCodeIssuedAt`, and the next `GET` after makes a new one),
   `GET /api/invites/:code` (public: who invites), `POST …/accept` (friends at once).
   **A friend's library goes through its own routes** (`friend-library-plugin.ts`:
   `/api/friends/:userId/books|shelves`) with a whitelisted `FriendBook` — never widen `/api/books`
@@ -165,7 +177,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   means "unknown", not an outage. Google's anonymous quota is shared and usually used up (429):
   set `GOOGLE_BOOKS_API_KEY` for a quota of our own. `…/cover` hands the cover over as base64
   JSON, which the app imports like an upload. Covers are only downloaded from the catalogues' own
-  image hosts, and images under 3 kB are "no cover" placeholders. Tests pass a fake `fetch`.
+  image hosts, and images under 3 kB are "no cover" placeholders. Redirects are followed by hand
+  (`isbn/bounded-fetch.ts`): JSON only on its own host, covers also to the Internet Archive and
+  Google's user content, over HTTPS; bodies are read up to a cap (5 MB covers, 2 MB documents).
+  Open Library author keys must look like `/authors/OL…A`. Tests pass a fake `fetch`.
 - knihovny.cz, the Czech libraries' joint catalogue, answers our server (Railway) with 418 but
   lets any web page read its API, so the **app** asks it, from the reader's browser
   (`findInKnihovnyCz` in the domain package: search type `ISN`, records merged and stripped of
@@ -195,7 +210,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
 - Cross-field rules check `{ ...stored, ...data }`: be-core hands `beforeUpdate` the stored row, so a
   PATCH of one date is still compared with the other.
 - Files go through be-core's `/api/files`. `src/files/authorize-file-access.ts` decides who may
-  upload what: your own avatar and covers of your own books.
+  upload what: your own avatar, covers of your own books and a screenshot to your own report.
+  Listing files needs a signed-in reader and a `refType` + `refId`.
+- Library import, borrow requests and the sample library are rate-limited per reader
+  (`http/per-reader-limit.ts`), like comments, recommendations and invitations.
 - Callbacks that run per request but are declared before the models exist (`enrich`,
   `beforeDelete`, the file authorizer) get models from `src/models-registry.ts`.
 - Tests are integration tests (`*.integration.test.ts` / `app.integration.test.ts`) against the
@@ -269,7 +287,10 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `src/shared/install-prompt.ts` keeps Chrome's `beforeinstallprompt` (listened for in `main.ts`)
   and tells iOS readers to use the Share menu. The app's mark is the bookworm from the first
   Kniho-hlod's favicon, redrawn in `src/assets/bookworm.svg`: `AppLogo` shows it, and the web's
-  `icons` script draws the favicon and the PWA icons from it into `public/`. A shared link's
+  `icons` script draws the favicon and the PWA icons from it into `public/`. `vercel.json` sends
+  a Content-Security-Policy and other security headers: its `connect-src` names the API's
+  address (`.env.production`) and knihovny.cz — **a new API address or browser-side service
+  goes there too**. A shared link's
   preview is Open Graph in `index.html` (no `og:url`, so invite links stay themselves); its picture
   `public/og-image.jpg` comes from the `share-image` script (splash + logo card). Czech plurals use
   `czechPluralForm` (`žádná | 1 | 2–4 | 5+`); shelves are „poličky“ in Czech.
@@ -293,8 +314,14 @@ and storage. `src/env.ts` reads and checks the environment; `src/index.ts` only 
   `SampleLibraryBanner` over every other page (once the tour is closed; "Zatím nechat" hides it
   until a reload) remove the samples, and sample books wear an "Ukázka" badge. A new element the
   tour points at needs a `data-tour` mark.
-  E2E accounts made through the API are marked onboarded (`e2e/accounts.ts`); a test that
-  registers on screen calls `skipTour` first — the greeting hides the page from `getByRole`.
+  E2E accounts made through the API are marked onboarded and confirm their address with the
+  link from Mailpit (`e2e/accounts.ts`); a test that registers on screen calls `skipTour`
+  first — the greeting hides the page from `getByRole`.
+- E-mail confirmation (`src/features/auth/`): `VerifyEmailBanner` over every page until
+  `emailVerifiedAt` is set (resend, "Teď ne" for the visit; not during the tour) and
+  `VerifyEmailPage` at `/verify-email` (signed in or out, GuestLayout). A private file (a report's
+  screenshot) can't go into an `<img>` by URL: `usePrivateFileUrl` (`src/shared/private-file.ts`)
+  downloads it with the token into an object URL.
 - Friends (`src/features/friends/`, pages `Friends`, `Friend`, `FriendBook`, `Invite`): the
   Friends tab (its badge counts incoming requests; on a phone administration moved to the
   account menu to make room), `InviteCard` (link, share, QR code drawn by `uqr` in the browser,

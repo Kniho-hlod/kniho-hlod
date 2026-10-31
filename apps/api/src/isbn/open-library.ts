@@ -15,6 +15,11 @@ const COVER_HOST = 'covers.openlibrary.org';
 const COVER_URL = `https://${COVER_HOST}/b/id`;
 /** Authors are separate records, fetched one by one; the first few names fill the form. */
 const MAX_AUTHORS = 3;
+/**
+ * An author record's key, the only shape that goes into a URL: the edition is a wiki page anyone
+ * can edit, so a key such as `@elsewhere.example/x` must not choose what our server fetches.
+ */
+const AUTHOR_KEY = /^\/authors\/OL\d+A$/;
 
 interface OpenLibraryRef {
   key?: string;
@@ -56,7 +61,7 @@ function authorNames(
 ): Promise<(string | undefined)[]> {
   const keys = (authors ?? [])
     .map((author) => author.key)
-    .filter((key): key is string => Boolean(key))
+    .filter((key): key is string => typeof key === 'string' && AUTHOR_KEY.test(key))
     .slice(0, MAX_AUTHORS);
   return Promise.all(
     keys.map(async (key) => {

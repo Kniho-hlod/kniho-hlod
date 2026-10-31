@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createCore, createSequelize, MIGRATIONS_TABLE } from '@eleansphere/be-core';
 import type { Sequelize } from '@eleansphere/be-core';
 import { buildAppConfig } from './app-config';
+import { emailVerification } from './migrations/2026-10-31-email-verification';
 import { startTestApp, TEST_DATABASE_URL, testEnvironment } from './test-support/test-app';
 import type { TestApp } from './test-support/test-app';
 
@@ -76,5 +77,51 @@ describe('Migrations', () => {
     // They run in array order; the table records only names, so compare them as a set.
     const expected = (config.migrations ?? []).map(({ name }) => ({ name }));
     expect(applied).toEqual(expected.sort((left, right) => left.name.localeCompare(right.name)));
+  });
+
+  it('count earlier readers as confirmed, date their invites and lower their addresses', async () => {
+    const { sequelize } = migrated.core;
+    const createdAt = '2026-09-01T08:00:00Z';
+    const insert = (id: string, email: string, inviteCode: string | null = null) =>
+      sequelize.query(
+        `INSERT INTO "users" ("id", "email", "password", "displayName", "inviteCode", "createdAt", "updatedAt")
+         VALUES (:id, :email, 'x', 'Reader', :inviteCode, :createdAt, :createdAt)`,
+        { replacements: { id, email, inviteCode, createdAt } }
+      );
+    await insert('u_old', ' Old.Reader@Test.cz', 'oldcode');
+    await insert('u_twin1', 'Twin@Test.cz');
+    await insert('u_twin2', 'twin@TEST.cz');
+
+    await emailVerification.up({
+      sequelize,
+      queryInterface: sequelize.getQueryInterface(),
+      schema: migrated.schema,
+    });
+
+    const [rows] = await sequelize.query(
+      `SELECT "id", "email", "emailVerifiedAt", "inviteCodeIssuedAt" FROM "users"
+        WHERE "id" IN ('u_old', 'u_twin1', 'u_twin2') ORDER BY "id"`
+    );
+    expect(rows).toEqual([
+      {
+        id: 'u_old',
+        email: 'old.reader@test.cz',
+        emailVerifiedAt: new Date(createdAt),
+        inviteCodeIssuedAt: expect.any(Date),
+      },
+      // Lowering either would make two accounts of one address: both stay as they were.
+      {
+        id: 'u_twin1',
+        email: 'Twin@Test.cz',
+        emailVerifiedAt: new Date(createdAt),
+        inviteCodeIssuedAt: null,
+      },
+      {
+        id: 'u_twin2',
+        email: 'twin@TEST.cz',
+        emailVerifiedAt: new Date(createdAt),
+        inviteCodeIssuedAt: null,
+      },
+    ]);
   });
 });

@@ -9,7 +9,9 @@ function uniqueEmail(): string {
   return `e2e-${Date.now()}-${Math.round(Math.random() * 1000)}@kniho-hlod.test`;
 }
 
-test('a reader registers, signs out, resets their password and signs back in', async ({ page }) => {
+test('a reader registers, confirms their address, signs out, resets their password and signs back in', async ({
+  page,
+}) => {
   const email = uniqueEmail();
   await clearInbox();
 
@@ -21,6 +23,16 @@ test('a reader registers, signs out, resets their password and signs back in', a
     await page.getByRole('button', { name: 'Založit účet' }).click();
     await skipTour(page);
     await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
+  });
+
+  await test.step('confirm the address with the e-mailed link', async () => {
+    await expect(page.getByText('Potvrďte svůj e-mail', { exact: true })).toBeVisible();
+    await page.goto(findLink(await waitForEmail(email)));
+    await expect(page.getByText(`Hotovo, e-mail ${email} je potvrzený.`)).toBeVisible();
+    await page.getByRole('link', { name: 'Do aplikace' }).click();
+    await expect(page.getByRole('heading', { name: /Ahoj, E2E!/ })).toBeVisible();
+    await expect(page.getByText('Potvrďte svůj e-mail', { exact: true })).toBeHidden();
+    await clearInbox();
   });
 
   await test.step('stay signed in across a reload, without the tour again', async () => {
