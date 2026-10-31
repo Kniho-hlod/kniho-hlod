@@ -26,6 +26,7 @@ import {
   systemNotificationEntity,
   toIsbn13,
   userEntity,
+  wishEntity,
 } from '@kniho-hlod/domain';
 import type { Environment, StorageSettings } from './env';
 import { createModelRegistry } from './models-registry';
@@ -64,6 +65,7 @@ import { createLendingPlugin } from './lending/lending-plugin';
 import { createCommentCounts } from './comments/comment-counts';
 import { COMMENT_RATE_LIMIT, createCommentsPlugin } from './comments/comments-plugin';
 import { createFeedPlugin } from './feed/feed-plugin';
+import { createWishesPlugin } from './wishes/wishes-plugin';
 import {
   createRecommendationsPlugin,
   RECOMMENDATION_RATE_LIMIT,
@@ -145,6 +147,15 @@ function chainHooks(...hooks: CrudHook[]): CrudHook {
 }
 
 const beforeSavingBook = chainHooks(rejectInvalidBook, storeIsbnAsIsbn13);
+
+/** A wish's ISBN, when it has one, is valid and kept as ISBN-13 like a book's. */
+const rejectInvalidIsbn: CrudHook = async (data) => {
+  const issues = findIsbnIssues(data as BookInput);
+  if (issues.length > 0) throw new ValidationError(issues);
+  return data;
+};
+
+const beforeSavingWish = chainHooks(rejectInvalidIsbn, storeIsbnAsIsbn13);
 
 function buildStorageAdapter(
   settings: StorageSettings,
@@ -238,6 +249,9 @@ export function buildAppConfig(
         enrich: bookShelves.countBooks,
       },
       [feedbackEntity.config.name]: feedbackDetails.routes,
+      [wishEntity.config.name]: {
+        hooks: { beforeCreate: beforeSavingWish, beforeUpdate: beforeSavingWish },
+      },
     },
     plugins: [
       models.plugin,
@@ -325,6 +339,12 @@ export function buildAppConfig(
         registry: models,
         bookCovers,
         now: overrides.now,
+      }),
+      createWishesPlugin({
+        jwtSecret: environment.jwtSecret,
+        registry: models,
+        friendships,
+        bookDetails,
       }),
       createLibraryImportPlugin({
         jwtSecret: environment.jwtSecret,

@@ -9,6 +9,7 @@ import {
   shelfEntity,
   systemNotificationEntity,
   userEntity,
+  wishEntity,
 } from './entities';
 import { CommentsService } from './comments';
 import { FeedService } from './feed';
@@ -20,6 +21,7 @@ import { NotificationsService } from './notifications';
 import { RecommendationsService } from './recommendations';
 import { SampleLibraryService } from './sample-library';
 import { StatsService } from './stats';
+import { FriendWishesService } from './wishes';
 
 /** Every API client the web app uses, sharing one base URL and session. */
 export function createServices(baseUrl: string, tokenSource: AccessTokenSource) {
@@ -43,6 +45,8 @@ export function createServices(baseUrl: string, tokenSource: AccessTokenSource) 
       feed: FeedService,
       recommendations: RecommendationsService,
       libraryImport: LibraryImportService,
+      wishes: wishEntity,
+      friendWishes: FriendWishesService,
     },
     baseUrl,
     tokenSource

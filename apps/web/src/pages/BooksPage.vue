@@ -114,7 +114,18 @@ useOnVisible(listEnd, loadMore);
 <template>
   <section class="flex flex-col gap-4">
     <header class="flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <h1 class="text-3xl font-extrabold text-highlighted">{{ t('books.title') }}</h1>
+        <UButton
+          :to="{ name: 'wishlist' }"
+          icon="i-lucide-gift"
+          color="neutral"
+          variant="ghost"
+          size="sm"
+        >
+          {{ t('wishes.title') }}
+        </UButton>
+      </div>
       <!-- On a phone the actions line up in a grid of two columns, the scans first. -->
       <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
         <UButton

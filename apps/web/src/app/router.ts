@@ -44,6 +44,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/pages/ShelvesPage.vue'),
           },
           {
+            path: 'wishes',
+            name: 'wishlist',
+            component: () => import('@/pages/WishlistPage.vue'),
+          },
+          {
             path: ':id',
             name: 'book',
             component: () => import('@/pages/BookDetailPage.vue'),

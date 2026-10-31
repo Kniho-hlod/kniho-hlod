@@ -24,6 +24,8 @@ import {
   LOCALES,
   recommendationEntity,
   userEntity,
+  wishEntity,
+  wishReservationEntity,
 } from '@kniho-hlod/domain';
 import type { FriendContact, FriendRequest, FriendRequests, Locale } from '@kniho-hlod/domain';
 import type { Request, RequestHandler } from 'express';
@@ -93,6 +95,17 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
   const rows = () => registry.get(friendshipEntity.config.name);
   const users = () => registry.get(userEntity.config.name);
   const friendsUrl = new URL(FRIENDS_PAGE_PATH, options.appBaseUrl).toString();
+
+  /** Takes back the giver's promises to give the owner a wished-for book. */
+  async function dropGiftsBetween(giverId: string, ownerId: string): Promise<void> {
+    const owned = await registry
+      .get(wishEntity.config.name)
+      .findAll({ where: { ownerId }, attributes: ['id'] });
+    if (owned.length === 0) return;
+    await registry.get(wishReservationEntity.config.name).destroy({
+      where: { giverId, wishId: owned.map((wish) => String(wish.get('id'))) },
+    });
+  }
 
   async function pendingRequestTo(readerId: string, requestId: string): Promise<Row | null> {
     const request = await rows().findByPk(requestId);
@@ -333,6 +346,9 @@ export function createFriendsPlugin(options: FriendsPluginOptions): ProjectPlugi
               ],
             },
           });
+          // Promises to give each other a wished-for book lapse too.
+          await dropGiftsBetween(readerId, friendId);
+          await dropGiftsBetween(friendId, readerId);
           res.status(NO_CONTENT).send();
         })
       );
